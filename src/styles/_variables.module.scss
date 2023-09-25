@@ -1,0 +1,110 @@
+/* General */
+$primary-color: #11065e;
+$secondary-color: #17c1ce;
+$disable-color: #d3e3ed;
+$positive-color: #00a63c;
+$positive-color-light: #11caa1;
+$negative-color: #d81414;
+$negative-color-light: #ff8e8e;
+$background-color: #f7f7f9;
+$dominant-color: #33b0d0;
+$background-child-color: #ffffff;
+$option-menu-color: linear-gradient(262.17deg, #45bcd5 39.9%, #357bab 126.87%);
+$border-select-color: #bfbfc1;
+
+/* Background color */
+$background-avatar-color: white;
+$background-item-table-odd-color: #f4f4f4;
+$background-item-table-even-color: #fbfbfb;
+
+// Text Color
+$Text-black-color: #676a6c;
+
+/* Border-color and box shadow */
+$border-radius-btn: 3px;
+$border-button-color: #e7eaec;
+$border-color: #c8c8c8;
+$box-header-shadow: 0px 5px 40px rgba(0, 0, 0, 0.05);
+$box-input-shadow: 0px 4px 4px rgba(0, 0, 0, 0.08);
+$font-menu-color: var(--clr-gray-0);
+
+/* button color */
+$button-active-color: linear-gradient(262.17deg, #45bcd5 39.9%, #357bab 126.87%);
+$button-active-color: #33b0d0;
+$text-button-contained-color: #fdfdfd;
+$bg-button-contained-disabled: #cfcecd;
+$bg-button-outlined: #fdfdfd;
+$bg-button-outlined-disabled: #fbfafc;
+$text-button-outlined-disabled: #c2c3c4;
+$option-child-active-color: linear-gradient(262.17deg, #45bcd5 39.9%, #357bab 126.87%);
+$option-parent-active-color: rgba(19, 144, 171, 0.1);
+$chilren-active-black-color: black;
+$font-menu-color: var(--clr-gray-0);
+
+// Text color
+$text-placeholder-color: #979797;
+$text-required-color: #ff0f00;
+
+// Select field
+$bg-select-item-selected: rgba(19, 144, 171, 0.1);
+// Text color placeholder
+$text-placeholder-color: #979797;
+$text-isRequired-color: #ff0f00;
+
+/* Fonts */
+$primary-font: "Nunito Sans";
+$primary-font-bold: "Nunito Sans Bold";
+$primary-font-extra-bold: "Nunito Sans ExtraBold";
+
+/* Font sizes */
+$pixels-for-a-rem: 10px; // 1rem
+
+$font-size-xxxxlarge: 2.4rem; // 24px
+$font-size-xxxlarge: 2.2rem; // 22px
+$font-size-xxlarge: 2rem; // 20px
+$font-size-xlarge: 1.8rem; // 18px
+$font-size-large: 1.6rem; // 16px
+$font-size-medium: 1.4rem; // 14px
+$font-size-small: 1.3rem; // 13px
+$font-size-xsmall: 1.2rem; // 12px
+$font-size-xxsmall: 1.1rem; // 11px
+$font-size-xxxsmall: 1rem; // 10px
+$font-size-xxxxsmall: 0.8rem; // 8px
+
+$font-size-default: $font-size-medium;
+
+/* Responsive breakpoints */
+$grid-breakpoints: (
+  xs: 0,
+  sm: 576px,
+  md: 768px,
+  lg: 992px,
+  xl: 1200px,
+);
+
+$device-breakpoints: (
+  mobile: 0,
+  tablet: 577px,
+  laptop: 769px,
+  desktop: 1025px,
+  large-desktop: 1201px,
+);
+
+$orientation-landscape: landscape;
+$orientation-portrait: portrait;
+
+/*Menu sidebar*/
+$option-menu-background-color: #f7f7f9;
+$background-color-dark: rgba(255, 255, 255, 0.05);
+$background-color-no-dark: rgba(0, 0, 0, 0.03);
+
+:export {
+  optionMenuBackgroundColor: $option-menu-background-color;
+  backgroundColorDark: $background-color-dark;
+  backgroundColorNoDark: $background-color-no-dark;
+  fontBreadcrumbs: $primary-font;
+  borderSelectColor: $border-select-color;
+  backgroundItemTableOddColor: $background-item-table-odd-color;
+  backgroundItemTableEvenColor: $background-item-table-even-color;
+  borderShadowHeader: $box-header-shadow;
+}

@@ -1,0 +1,248 @@
+@import "variables.module.scss";
+@import "functions";
+@import "mixins";
+
+// Declare fonts
+@font-face {
+  font-family: $primary-font;
+  src: url("../statics/fonts/NunitoSans/NunitoSans-Regular.ttf");
+}
+
+@font-face {
+  font-family: "Nunito Sans";
+  src: url("../statics/fonts/NunitoSans/NunitoSans-Regular.ttf");
+}
+
+body {
+  font-family: $primary-font;
+}
+
+input[type="text"],
+input[type="password"],
+textarea {
+  outline: none !important;
+  color: var(--clr-gray-500);
+  &:focus {
+    border: 1px solid $dominant-color;
+    --tw-ring-color: $dominant-color !important;
+  }
+}
+// Select field
+.MuiSelect-select {
+  font-family: var(--font-primary);
+  font-size: 13px;
+  color: var(--clr-gray-500) !important;
+}
+
+.MuiSelected,
+.MuiMenuItem-root.Mui-selected {
+  background-color: rgba(25, 118, 210, 0.08);
+  font-family: var(--font-primary);
+}
+
+.MuiMenuItem-root {
+  font-family: var(--font-primary);
+  font-size: 13px;
+  color: var(--clr-gray-500);
+}
+
+.MuiFormLabel-asterisk.MuiInputLabel-asterisk {
+  color: $text-required-color;
+}
+
+.MuiFormLabel-root.MuiInputLabel-root.Mui-focused {
+  color: $dominant-color;
+}
+
+.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: $dominant-color !important;
+  border-width: 1px !important;
+}
+
+.MuiChip-label {
+  color: var(--clr-gray-500);
+  font-family: var(--font-primary);
+}
+.MuiOutlinedInput-notchedOutline {
+  border: 1px solid rgba(200, 200, 200, 0.5);
+}
+/* InputTextField */
+.MuiInputBase-input[type="text"],
+.MuiInputBase-input[type="password"] {
+  border: none;
+  outline: none;
+  &:focus {
+    border: none;
+    --tw-ring-color: none;
+  }
+}
+.MuiInputBase-input:focus {
+  box-shadow: none;
+}
+
+.MuiFormLabel-root {
+  font-size: 14px;
+  font-weight: 400;
+  color: $text-placeholder-color;
+}
+
+.MuiFormLabel-root.Mui-focused {
+  color: $dominant-color;
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.MuiFormLabel-asterisk {
+  color: $text-required-color;
+}
+
+.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: $dominant-color !important;
+  border-width: 1px !important;
+}
+
+/* Custom Button */
+// Button contained
+.MuiButton-root {
+  text-transform: none !important;
+  font-size: 13px;
+  line-height: 16px;
+  height: 33px;
+}
+
+.MuiButton-contained {
+  background-color: $button-active-color !important;
+  color: $text-button-contained-color !important;
+}
+
+.MuiButton-contained.Mui-disabled {
+  background-color: $bg-button-contained-disabled !important;
+  color: $text-button-contained-color !important;
+}
+
+//Button outlined
+.MuiButton-outlined {
+  background-color: $bg-button-outlined;
+  border: 1px solid rgba(207, 206, 205, 0.5);
+  color: $font-menu-color;
+}
+
+.MuiButton-outlined.Mui-disabled {
+  background-color: $bg-button-outlined-disabled;
+  color: $text-button-outlined-disabled;
+  border: none;
+}
+
+// Tab
+.MuiTab-root.Mui-selected {
+  color: $dominant-color !important;
+}
+
+.MuiTabs-indicator {
+  background-color: $dominant-color !important;
+}
+
+//List select
+.MuiList-root.MuiMenu-list {
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.MuiSelect-select.MuiSelect-outlined.MuiInputBase-input.MuiOutlinedInput-input {
+  padding-right: 5px !important;
+}
+
+// Checkbox
+.MuiCheckbox-root.Mui-checked {
+  color: $dominant-color !important;
+}
+
+.text-13 {
+  font-size: 0.813rem !important;
+  line-height: 1rem !important;
+}
+
+.search__employees {
+  height: 34px;
+  border: 1px solid $border-color;
+  box-shadow: $box-input-shadow;
+  border-radius: 3px;
+}
+
+.text-13 {
+  font-size: 0.813rem !important;
+  line-height: 1rem !important;
+}
+
+.search__employees {
+  height: 34px;
+  border: 1px solid $border-color;
+  box-shadow: $box-input-shadow;
+  border-radius: 3px;
+}
+
+.MuiAutocomplete-inputRoot {
+  padding-right: 40px !important;
+}
+
+.MuiAutocomplete-root .MuiInputBase-root {
+  border: "none";
+}
+
+.MuiTableCell-root {
+  font-family: "Nunito Sans" !important;
+}
+
+.MuiTextField-root {
+  font-family: "Nunito Sans" !important;
+  color: var(--clr-gray-500) !important;
+}
+
+fieldset {
+  border: 1px solid var(--clr-gray-75);
+}
+
+::-webkit-calendar-picker-indicator {
+  display: none;
+}
+
+.MuiFormHelperText-root.Mui-error {
+  margin-left: 0;
+  color: var(--clr-red-400) !important;
+}
+
+.reactEasyCrop_Container {
+  width: 300px !important;
+  height: 300px !important;
+  transform: translate(-32px, -80px);
+}
+
+.MuiModal-root {
+  z-index: 1001 !important;
+}
+
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
+}
+
+.fc-prev-button.fc-button.fc-button-primary:active {
+  background: transparent !important;
+}
+
+.fc-prev-button.fc-button.fc-button-primary:focus {
+  background: transparent !important;
+}
+
+.fc-next-button.fc-button.fc-button-primary:active {
+  background: transparent !important;
+}
+
+.fc-next-button.fc-button.fc-button-primary:focus {
+  background: transparent !important;
+}
+
+.fc-today-button.fc-button.fc-button-primary {
+  background: var(--clr-blue-500) !important;
+  color: white !important;
+}

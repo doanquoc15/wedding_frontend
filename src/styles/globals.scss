@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import "variables";
+@import "functions";
+@import "mixins";
+@import "base.scss";
+
+
+.Toastify__toast-body {
+  font-family: var(--font-primary);
+  font-size: 13px;
+  color: var(--clr-gray-500);
+}
+
+.Toastify__toast--success {
+  background: rgb(237, 247, 237) !important;
+}
+
+.Toastify__toast--error {
+  background: rgb(253, 237, 237) !important;
+}
