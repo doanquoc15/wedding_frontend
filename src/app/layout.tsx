@@ -6,6 +6,8 @@ import { ThemeProvider } from "@emotion/react";
 import { createTheme } from "@mui/material/styles";
 import ProviderStore from "./context/ProviderStore";
 import { ToastContainer } from "react-toastify";
+import Header from "@/pages/Header";
+import NavBar from "@/pages/NavBar";
 
 function RootLayout({ children }: { children: React.ReactNode }) {
   const THEME = createTheme({
@@ -13,14 +15,18 @@ function RootLayout({ children }: { children: React.ReactNode }) {
       fontFamily: "var(--font-primary)",
     },
   });
-  
+
   return (
     <html lang="en">
       <body>
         <Providers>
           <ThemeProvider theme={THEME}>
             <ToastContainer />
-            <ProviderStore>{children}</ProviderStore>
+            <ProviderStore>
+              <Header />
+              <NavBar />
+              <div>{children}</div>
+            </ProviderStore>
           </ThemeProvider>
         </Providers>
       </body>

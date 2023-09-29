@@ -1,0 +1,29 @@
+.navbar {
+  margin-left: 90px;
+}
+//.navbar a {
+//  display: inline-block;
+//  position: relative;
+//}
+
+//.navbar a::after {
+//  content: "";
+//  position: absolute;
+//  width: 100%;
+//  transform: scaleX(0);
+//  height: 2px;
+//  bottom: 0;
+//  left: 0;
+//  background: linear-gradient(to left, #0087ca, #b92025);
+//  transform-origin: bottom right;
+//  transition: transform 0.25s ease-out;
+//}
+
+//.navbar a:hover::after {
+//  transform: scaleX(1);
+//  transform-origin: bottom left;
+//}
+
+.navbar .active {
+  border-bottom: 1px solid red !important;
+}

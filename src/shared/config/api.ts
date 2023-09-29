@@ -9,7 +9,7 @@ import axios from "./axiosClient";
 import { CookiesStorage } from "./cookie";
 
 const defaultOptions = {};
-const API_URL = "http://localhost:3001";
+const API_URL = "http://localhost:8080";
 
 export const generateToken = () => ({
   Authorization: `${CookiesStorage.getAccessToken()}`,
@@ -149,6 +149,8 @@ function handleErrorStatus(error: any) {
   switch (status) {
     case 401:
       //window.location.href = ROUTE.SIGN_IN;
+      console.log(100);
+
       return error;
     case 403: {
       window.location.href = ROUTER.FORBIDDEN;
@@ -187,6 +189,8 @@ axios.interceptors.response.use(
     return Promise.reject(handleErrorStatus(errorResponse));
   }
 );
+const accessToken = CookiesStorage.getCookieData("token") || null;
+console.log(accessToken)
 
 axios.interceptors.request.use(
   (config) => {
@@ -202,6 +206,7 @@ axios.interceptors.request.use(
     if (config.data) {
       newConfig.data = camelizeKeys(config.data);
     }
+    newConfig.headers.Authorization = `Bearer ${accessToken}`;
     return newConfig;
   },
   (error) => {

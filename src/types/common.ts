@@ -14,3 +14,11 @@ export interface IResponse {
   data?: any;
   total?: number;
 }
+
+export type MailMessageType = MailType & {
+  message: string;
+};
+
+export type MailType = {
+  email: string;
+};

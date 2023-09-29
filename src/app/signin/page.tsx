@@ -19,25 +19,31 @@ import { SignInType } from "@/types/common";
 import { SignInAPI } from "@/services/auth";
 import { statusApiReducer } from "@/stores/reducers/statusAPI";
 
-import { useAppDispatch } from "@/stores/hook";
+import { useAppDispatch, useAppSelector } from "@/stores/hook";
 import { CookiesStorage } from "@/shared/config/cookie";
-import { cookies } from "next/headers";
+import { usersReducer } from "@/stores/reducers/user";
+import { useSelector } from "react-redux";
 
 const SignInPage = () => {
   const { register, handleSubmit } = useForm();
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
-  const dispatch = useAppDispatch();
   //variable
+  const dispatch = useAppDispatch();
   const router = useRouter();
-  const onSubmit = async (values: any) => {
+
+  //Function
+  const onSubmit = async (values: SignInType | any) => {
+    setIsSubmit(true);
     try {
-      const data = await SignInAPI(values);
-      console.log(data);
-      CookiesStorage.setCookieData("token", data.accessToken);
+      const {data} = await SignInAPI(values);
+      setIsSubmit(false);
+      CookiesStorage.setCookieData("token", data.data.accessToken);
       router.push("/");
       dispatch(statusApiReducer.actions.setMessageSuccess("Login"));
     } catch (e) {
-      console.log("123");
+      dispatch(statusApiReducer.actions.setMessageError(""));
+    } finally {
+      setIsSubmit(false);
     }
   };
 

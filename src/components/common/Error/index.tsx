@@ -1,4 +1,4 @@
-import { MailMessageType } from "types/common";
+import { MailMessageType } from "@/types/common";
 
 export default function Error(props: Pick<MailMessageType, "message">) {
   return (
