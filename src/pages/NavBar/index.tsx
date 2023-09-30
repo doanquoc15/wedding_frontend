@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -35,6 +35,7 @@ function NavBar() {
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
   const [selectedItem, setSelectedItem] = useState<number>(0);
+  const [isHeaderFixed, setHeaderFixed] = useState<Boolean>(false);
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
@@ -55,11 +56,32 @@ function NavBar() {
     setSelectedItem(index);
   };
 
+  const handleScroll = useCallback(() => {
+    if (window.scrollY > 100) {
+      setHeaderFixed(true);
+    } else {
+      setHeaderFixed(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [handleScroll]);
+
+  const handleFixedHeader = () => {
+    if (isHeaderFixed) return "fixed";
+    return "static";
+  };
+
   return (
     <AppBar
       style={{ background: "white" }}
-      position="static"
-      className=" text-gray-700"
+      position={handleFixedHeader()}
+      className="text-gray-700"
     >
       <Container maxWidth="xl">
         <Toolbar disableGutters>
@@ -112,12 +134,18 @@ function NavBar() {
               </Box>
               <Box sx={{ flexGrow: 0 }}>
                 <Tooltip title="Open settings">
-                  <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                    <Avatar
-                      alt="avatar of customer"
-                      src="https://inkythuatso.com/uploads/thumbnails/800/2022/03/4a7f73035bb4743ee57c0e351b3c8bed-29-13-53-17.jpg"
-                    />
-                  </IconButton>
+                  <Box
+                    onClick={handleOpenUserMenu}
+                    sx={{ display: "flex", gap: 1, alignItems: "center" }}
+                  >
+                    <IconButton sx={{ p: 0 }}>
+                      <Avatar
+                        alt="avatar of customer"
+                        src="https://inkythuatso.com/uploads/thumbnails/800/2022/03/4a7f73035bb4743ee57c0e351b3c8bed-29-13-53-17.jpg"
+                      />
+                    </IconButton>
+                    <Typography>Tuan</Typography>
+                  </Box>
                 </Tooltip>
                 <Menu
                   sx={{ mt: "52px", marginLeft: "25px" }}

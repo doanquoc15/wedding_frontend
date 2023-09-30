@@ -8,6 +8,9 @@ import ProviderStore from "./context/ProviderStore";
 import { ToastContainer } from "react-toastify";
 import Header from "@/pages/Header";
 import NavBar from "@/pages/NavBar";
+import Footer from "@/pages/Footer";
+import CustomChatMessage from "@/components/MesssageChat";
+import Slider from "@/components/common/SliderBar";
 
 function RootLayout({ children }: { children: React.ReactNode }) {
   const THEME = createTheme({
@@ -25,7 +28,10 @@ function RootLayout({ children }: { children: React.ReactNode }) {
             <ProviderStore>
               <Header />
               <NavBar />
-              <div>{children}</div>
+              <Slider />
+              <div className="py-8 px-9">{children}</div>
+              <CustomChatMessage />
+              <Footer />
             </ProviderStore>
           </ThemeProvider>
         </Providers>
