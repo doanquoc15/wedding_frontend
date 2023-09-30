@@ -2,6 +2,7 @@
 
 import CustomChatMessage from "@/components/MesssageChat";
 import Slider from "@/components/common/SliderBar";
+import Footer from "@/pages/Footer";
 import { GetUserById } from "@/services/user";
 import { useEffect } from "react";
 
@@ -16,8 +17,9 @@ export default function Home() {
 
   return (
     <main>
-      {/*<Slider />*/}
+      <Slider />
       <CustomChatMessage />
+      <Footer />
     </main>
   );
 }

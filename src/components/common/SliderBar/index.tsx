@@ -4,32 +4,25 @@ export default function Slider() {
     {
       image:
         "https://media.mia.vn/uploads/blog-du-lich/sky-view-restaurant-nha-hang-lang-man-ly-tuong-cho-cac-cap-doi-tai-da-nang-3-1636459839.jpg",
-      caption: "San Francisco",
+      caption: "",
     },
     {
       image:
         "https://nhahangdep.vn/wp-content/uploads/2019/06/lung-linh-anh-sang-trong-thiet-ke-nha-hang-sky-view-ngoai-troi-12.jpg",
-      caption: "Scotland",
+      caption: "",
     },
     {
       image:
         "https://media.mia.vn/uploads/blog-du-lich/sky-view-restaurant-nha-hang-lang-man-ly-tuong-cho-cac-cap-doi-tai-da-nang-10-1636459839.jpg",
-      caption: "Darjeeling",
+      caption: "",
     },
     {
       image:
         "https://media.mia.vn/uploads/blog-du-lich/sky-view-restaurant-nha-hang-lang-man-ly-tuong-cho-cac-cap-doi-tai-da-nang-2-1636459839.jpg",
-      caption: "San Francisco",
+      caption: "",
     },
   ];
-
-  const captionStyle = {
-    display: "none",
-  };
-  const slideNumberStyle = {
-    fontSize: "20px",
-    fontWeight: "bold",
-  };
+  
   return (
     <div>
       <div style={{ textAlign: "center" }}>

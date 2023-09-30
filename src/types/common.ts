@@ -22,3 +22,13 @@ export type MailMessageType = MailType & {
 export type MailType = {
   email: string;
 };
+
+export interface CustomButtonProps {
+  height?: string | number;
+  bg?: string;
+  color?: string;
+  width?: string | number;
+  sx?: any;
+  children: React.ReactNode;
+  isLoading?: boolean;
+}

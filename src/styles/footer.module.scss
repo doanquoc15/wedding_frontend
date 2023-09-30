@@ -1,0 +1,43 @@
+.social_links {
+  display: flex;
+}
+
+.social_links a {
+  display: flex;
+  width: 40px;
+  height: 40px;
+  color: #000;
+  box-shadow: 0 0 20px 10px rgba(0, 0, 0, 0.1);
+  margin: 0 30px;
+  border-radius: 50%;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.social_links a .icon_item {
+  font-size: 25px;
+  position: relative;
+  z-index: 10;
+  transition: color 0.5s;
+}
+
+.social_links a::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: -40px;
+  background: linear-gradient(-45deg, #ed1c94, #ffec17);
+  transition: 0.5s;
+}
+
+.social_links a:hover::after {
+  top: 0;
+}
+
+.social_links a:hover .icon_item {
+  color: #fff;
+}
