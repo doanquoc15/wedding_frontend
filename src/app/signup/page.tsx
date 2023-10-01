@@ -10,6 +10,7 @@ import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import { Container } from "@mui/material";
 import { useForm } from "react-hook-form";
+
 import { SignUpType } from "@/types/common";
 import LoadingButton from "@/components/common/Loading";
 import { SignUpAPI } from "@/services/auth";

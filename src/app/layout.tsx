@@ -1,40 +1,22 @@
-"use client";
-import "../styles/globals.scss";
-import "react-toastify/dist/ReactToastify.css";
-import Providers from "@/stores/Providers";
-import { ThemeProvider } from "@emotion/react";
-import { createTheme } from "@mui/material/styles";
-import ProviderStore from "./context/ProviderStore";
-import { ToastContainer } from "react-toastify";
-import Header from "@/pages/Header";
-import NavBar from "@/pages/NavBar";
-import Footer from "@/pages/Footer";
-import CustomChatMessage from "@/components/MesssageChat";
-import Slider from "@/components/common/SliderBar";
+import { ReactNode } from "react";
 
-function RootLayout({ children }: { children: React.ReactNode }) {
-  const THEME = createTheme({
-    typography: {
-      fontFamily: "var(--font-primary)",
-    },
-  });
+import ClientComponent from "./context/ClientComponent";
 
+export const metadata = {
+  title: {
+    default:"Sky View",
+    template:"%s | Sky View"
+  },
+  description:"..."
+};
+
+function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <body>
-        <Providers>
-          <ThemeProvider theme={THEME}>
-            <ToastContainer />
-            <ProviderStore>
-              <Header />
-              <NavBar />
-              <Slider />
-              <div className="py-8 px-9">{children}</div>
-              <CustomChatMessage />
-              <Footer />
-            </ProviderStore>
-          </ThemeProvider>
-        </Providers>
+        <ClientComponent>
+          {children}
+        </ClientComponent>
       </body>
     </html>
   );

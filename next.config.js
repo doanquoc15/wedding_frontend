@@ -10,6 +10,9 @@ const nextConfig = {
       "www.pngkey.com",
     ], // <== Domain name link image
   },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
 };
 
 module.exports = nextConfig;

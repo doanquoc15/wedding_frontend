@@ -1,5 +1,6 @@
 import { createAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { HYDRATE } from "next-redux-wrapper";
+
 import { RootState } from "../store";
 
 const REDUCER_NAME = "users";

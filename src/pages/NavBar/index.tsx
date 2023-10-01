@@ -11,23 +11,51 @@ import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import Image from "next/image";
-import logo_sky_view from "@/statics/images/logo-c-skyview.png";
 import Link from "next/link";
-import style from "@/styles/navbar.module.scss";
 import Badge from "@mui/material/Badge";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 
+import style from "@/styles/navbar.module.scss";
+import logo_sky_view from "@/statics/images/logo-c-skyview.png";
+
 const pages = [
-  "Trang chủ",
-  "Giới thiệu",
-  "Trãi nghiệm",
-  "Menu",
-  "Dịch vụ",
-  "Đặt dịch vụ",
-  "Tin tức",
-  "Liên hệ",
-  "Tiệc đã tổ chức",
+  {
+    title: "Trang chủ",
+    link: "/",
+  },
+  {
+    title: "Giới thiệu",
+    link: "/introduction",
+  },
+  {
+    title: "Trãi nghiệm",
+    link: "/",
+  },
+  {
+    title: "Menu",
+    link: "/",
+  },
+  {
+    title: "Dịch vụ",
+    link: "/",
+  },
+  {
+    title: "Đặt dịch vụ",
+    link: "/",
+  },
+  {
+    title: "Tin tức",
+    link: "/",
+  },
+  {
+    title: "Liên hệ",
+    link: "/",
+  },
+  {
+    title: "Tiệc đã tổ chức",
+    link: "/",
+  },
 ];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
@@ -99,14 +127,15 @@ function NavBar() {
             >
               {pages.map((page, index) => (
                 <Link
+                  style={{ color:"var(--clt-gray-500)" }}
                   className={`whitespace-nowrap ${style.navbarItem} ${
                     index === selectedItem ? style.selected : ""
                   }`}
                   onClick={() => handleItemClick(index)}
                   key={index}
-                  href="/"
+                  href={page.link}
                 >
-                  {page}
+                  {page.title}
                 </Link>
               ))}
             </Box>

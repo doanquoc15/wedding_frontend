@@ -1,10 +1,12 @@
 import React from "react";
 import Image from "next/image";
+
 import { IconDot } from "../Icons";
 
-const MainChefDetail = ({chef}:any) => {
+const MainChefDetail = ({ chef }: any) => {
   return (
     <div className="h-[200px] w-[900px] rounded-[120px] bg-[--clr-orange-500] flex gap-10">
+
       <div className="h-[200px] w-[200px] rounded-[50%] overflow-hidden bg-white border-[10px] border-white">
         <Image
           src={chef?.img}
@@ -28,18 +30,15 @@ const MainChefDetail = ({chef}:any) => {
           <span>
             <IconDot />
           </span>
-          <span className="w-[100px]">{chef?.age}</span>
-          <span>45</span>
+          <span className="w-[100px]">Tuổi</span>
+          <span>{chef?.age}</span>
         </p>
         <p className="flex items-center gap-2">
           <span>
             <IconDot />
           </span>
           <span className="w-[100px]">Địa chỉ</span>
-          <span>
-            {" "}
-            {chef?.address}
-          </span>
+          <span> {chef?.address}</span>
         </p>
 
         <p className="flex items-center gap-2">

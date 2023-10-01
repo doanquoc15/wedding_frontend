@@ -190,7 +190,7 @@ axios.interceptors.response.use(
   }
 );
 const accessToken = CookiesStorage.getCookieData("token") || null;
-console.log(accessToken)
+console.log(accessToken);
 
 axios.interceptors.request.use(
   (config) => {

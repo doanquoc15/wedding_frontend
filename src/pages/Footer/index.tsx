@@ -1,14 +1,13 @@
 "use client";
 import React, { useState } from "react";
-import MapIFrame from "@/components/Map";
 import Image from "next/image";
-import logo_sky_view_footer from "@/statics/images/logo_ft.png";
 import { BiLogoFacebook } from "react-icons/bi";
-import { AiFillYoutube } from "react-icons/ai";
+import { AiFillYoutube , AiOutlineInstagram , AiOutlineTwitter } from "react-icons/ai";
 import { BsLinkedin } from "react-icons/bs";
-import { AiOutlineInstagram } from "react-icons/ai";
-import { AiOutlineTwitter } from "react-icons/ai";
 import Link from "next/link";
+
+import logo_sky_view_footer from "@/statics/images/logo_ft.png";
+import MapIFrame from "@/components/Map";
 import style from "@/styles/footer.module.scss";
 const Footer = () => {
   return (
@@ -46,7 +45,7 @@ const Footer = () => {
             <AiOutlineInstagram className={`${style.icon_item}`} />
           </Link>
           <Link href="">
-              <AiOutlineTwitter className={`${style.icon_item}`} />
+            <AiOutlineTwitter className={`${style.icon_item}`} />
           </Link>
         </div>
       </section>

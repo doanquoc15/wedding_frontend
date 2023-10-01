@@ -13,5 +13,5 @@ export const SignInAPI = async (params: SignInType) => {
 
 export const SignUpAPI = async (params: SignUpType) => {
   const data: IResponse = await Api.post(Apis.SIGN_UP, params);
-  return {data};
+  return { data };
 };

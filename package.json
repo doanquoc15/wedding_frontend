@@ -3,10 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next lint && next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "lint:css": "stylelint **/*.{scss,css}",
+    "lint:css:fix": "stylelint --fix **/*.{scss,css}",
+    "db:push": "prisma db push --preview-feature",
+    "migrate:deploy": "prisma migrate deploy"
   },
   "dependencies": {
     "@emotion/core": "^11.0.0",
@@ -16,6 +20,7 @@
     "@mui/icons-material": "^5.14.9",
     "@mui/material": "^5.14.11",
     "@mui/utils": "^5.14.11",
+    "@next/eslint-plugin-next": "^13.5.3",
     "@reduxjs/toolkit": "^1.9.5",
     "@types/node": "20.6.3",
     "@types/react": "18.2.22",

@@ -1,8 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { combineReducers } from "redux";
-import statusApiReducer from "./reducers/statusAPI";
-import usersReducer from "./reducers/user";
 import { setupListeners } from "@reduxjs/toolkit/dist/query";
+
+// eslint-disable-next-line import/no-named-as-default
+import statusApiReducer from "./reducers/statusAPI";
+// eslint-disable-next-line import/no-named-as-default
+import usersReducer from "./reducers/user";
 
 const rootReducer = combineReducers({
   statusApi: statusApiReducer,

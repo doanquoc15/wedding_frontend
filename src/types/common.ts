@@ -1,3 +1,5 @@
+import { ReactNode } from "react";
+
 export interface SignInType {
   email: string;
   password: string;
@@ -29,6 +31,6 @@ export interface CustomButtonProps {
   color?: string;
   width?: string | number;
   sx?: any;
-  children: React.ReactNode;
+  children: ReactNode;
   isLoading?: boolean;
 }

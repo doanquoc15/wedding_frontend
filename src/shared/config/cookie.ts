@@ -12,7 +12,7 @@ export const CookiesStorage = {
   setCookieData(key:string, data:any) {
     const currentTime = new Date();
     const expires = addMonths(currentTime, 1);
-    console.log(expires)
+    console.log(expires);
     cookies.set(key, data, { expires, path: "/" });
   },
   clearCookieData(key:string) {

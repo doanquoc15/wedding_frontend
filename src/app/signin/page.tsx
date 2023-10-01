@@ -12,18 +12,20 @@ import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import { Container } from "@mui/material";
 import { useForm } from "react-hook-form";
-import LoadingButton from "@/components/common/Loading";
 import { useRouter } from "next/navigation";
+import { useSelector } from "react-redux";
 
+import LoadingButton from "@/components/common/Loading";
 import { SignInType } from "@/types/common";
 import { SignInAPI } from "@/services/auth";
 import { statusApiReducer } from "@/stores/reducers/statusAPI";
-
 import { useAppDispatch, useAppSelector } from "@/stores/hook";
 import { CookiesStorage } from "@/shared/config/cookie";
 import { usersReducer } from "@/stores/reducers/user";
-import { useSelector } from "react-redux";
 
+import { generateMetaData } from "../context/metadata";
+
+generateMetaData("DDDDD");
 const SignInPage = () => {
   const { register, handleSubmit } = useForm();
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
@@ -35,7 +37,7 @@ const SignInPage = () => {
   const onSubmit = async (values: SignInType | any) => {
     setIsSubmit(true);
     try {
-      const {data} = await SignInAPI(values);
+      const { data } = await SignInAPI(values);
       setIsSubmit(false);
       CookiesStorage.setCookieData("token", data.data.accessToken);
       router.push("/");
