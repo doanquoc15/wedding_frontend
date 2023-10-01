@@ -34,3 +34,8 @@ export interface CustomButtonProps {
   children: ReactNode;
   isLoading?: boolean;
 }
+
+export interface TitleHeadType {
+  title: string;
+  content?: string
+}

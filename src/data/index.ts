@@ -24,3 +24,38 @@ export const chefsData = [
     position: "Đầu bếp trưởng",
   },
 ];
+
+export const dataRestaurant = [
+  {
+    title:"Địa chỉ",
+    description: "216 Võ Nguyên Giáp, Phước Mỹ, Sơn Trà, Đà Nẵng."
+  },
+  {
+    title:"Giờ mở cửa",
+    description: "11h00 – 23h00"
+  },
+  {
+    title:"Mức giá",
+    description: "98,000đ – 722,000đ"
+  },
+  {
+    title:"Sức chứa",
+    description: "08  khách (trong nhà 52 khách, ngoài trời 56 khách)"
+  },
+  {
+    title:"Điện thoại",
+    description: "0236 3928 688 - 0917248688 - 0917623311"
+  },
+  {
+    title:"Instagram",
+    description: "@skyview.danang"
+  },
+  {
+    title:"Facebook",
+    description: " Sky View Restaurant"
+  },
+  {
+    title:"Website",
+    description: "chưa deploy nên chưa có"
+  },
+];
