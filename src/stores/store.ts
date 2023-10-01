@@ -6,10 +6,13 @@ import { setupListeners } from "@reduxjs/toolkit/dist/query";
 import statusApiReducer from "./reducers/statusAPI";
 // eslint-disable-next-line import/no-named-as-default
 import usersReducer from "./reducers/user";
+// eslint-disable-next-line import/no-named-as-default
+import tabReducer from "./reducers/tab";
 
 const rootReducer = combineReducers({
   statusApi: statusApiReducer,
-  users: usersReducer
+  users: usersReducer,
+  tab: tabReducer
 });
 
 export const store = configureStore({

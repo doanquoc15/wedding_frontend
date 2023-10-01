@@ -15,9 +15,12 @@ import Link from "next/link";
 import Badge from "@mui/material/Badge";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
+import { useSelector } from "react-redux";
 
 import style from "@/styles/navbar.module.scss";
 import logo_sky_view from "@/statics/images/logo-c-skyview.png";
+import tab, { selectTabIndex, tabReducer } from "@/stores/reducers/tab";
+import { useAppDispatch } from "@/stores/hook";
 
 const pages = [
   {
@@ -26,11 +29,11 @@ const pages = [
   },
   {
     title: "Giới thiệu",
-    link: "/introduction",
+    link: "/gioi-thieu",
   },
   {
     title: "Trãi nghiệm",
-    link: "/",
+    link: "/trai-nghiem",
   },
   {
     title: "Menu",
@@ -60,10 +63,13 @@ const pages = [
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
 function NavBar() {
+
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
-  const [selectedItem, setSelectedItem] = useState<number>(0);
+  const [selectedItem, setSelectedItem] = useState<number>(useSelector(selectTabIndex()));
   const [isHeaderFixed, setHeaderFixed] = useState<Boolean>(false);
+
+  const dispatch = useAppDispatch();
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
@@ -82,15 +88,16 @@ function NavBar() {
 
   const handleItemClick = (index) => {
     setSelectedItem(index);
+    dispatch(tabReducer.actions.setTabIndexCurrent(index));
   };
 
-  const handleScroll = useCallback(() => {
-    if (window.scrollY > 100) {
+  const handleScroll = () => {
+    if (window.scrollY > 0) {
       setHeaderFixed(true);
     } else {
       setHeaderFixed(false);
     }
-  }, []);
+  };
 
   useEffect(() => {
     window.addEventListener("scroll", handleScroll);
@@ -98,16 +105,18 @@ function NavBar() {
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, [handleScroll]);
+  }, []);
 
   const handleFixedHeader = () => {
     if (isHeaderFixed) return "fixed";
-    return "static";
+    return "sticky";
   };
+
+  console.log("d",selectedItem);
 
   return (
     <AppBar
-      style={{ background: "white" }}
+      style={{ background: "white", color: "var(--clr-gray-500)" }}
       position={handleFixedHeader()}
       className="text-gray-700"
     >

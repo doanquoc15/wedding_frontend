@@ -42,8 +42,9 @@ export default function Slider() {
             thumbnailWidth="100px"
             style={{
               textAlign: "center",
-              minHeight: "calc(100vh - 95px)",
               maxWidth: "100vw",
+              maxHeight:"calc(100vh - 95px)",
+              overflow: "hidden"
             }}
           />
         </div>

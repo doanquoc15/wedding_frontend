@@ -13,7 +13,6 @@ import Typography from "@mui/material/Typography";
 import { Container } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
-import { useSelector } from "react-redux";
 
 import LoadingButton from "@/components/common/Loading";
 import { SignInType } from "@/types/common";
@@ -25,7 +24,6 @@ import { usersReducer } from "@/stores/reducers/user";
 
 import { generateMetaData } from "../context/metadata";
 
-generateMetaData("DDDDD");
 const SignInPage = () => {
   const { register, handleSubmit } = useForm();
   const [isSubmit, setIsSubmit] = useState<boolean>(false);

@@ -14,7 +14,6 @@ const MainChefDetail = ({ chef }: any) => {
           height={300}
           alt="image of chef"
           priority={true}
-          objectFit="cover"
         />
       </div>
       {/* Information of chef */}

@@ -5,7 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { ThemeProvider } from "@emotion/react";
 import { createTheme } from "@mui/material/styles";
 import { ToastContainer } from "react-toastify";
-import { ReactNode } from "react";
+import { ReactNode , Suspense } from "react";
 
 import Providers from "@/stores/Providers";
 import Header from "@/pages/Header";

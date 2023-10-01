@@ -9,7 +9,6 @@ import { useAppDispatch } from "@/stores/hook";
 const ProviderStore = ({ children }: { children: ReactNode }) => {
   const dispatch = useAppDispatch();
   const statusApiMessage = useSelector(statusApiM()).statusApi;
-  console.log(statusApiMessage);
 
   useEffect(() => {
     if (statusApiMessage && Object.values(statusApiMessage)[0]) {
@@ -19,7 +18,7 @@ const ProviderStore = ({ children }: { children: ReactNode }) => {
   
       dispatch(statusApiReducer.actions.resetMessage());
     }
-  }, [statusApiMessage]);
+  }, [dispatch, statusApiMessage]);
   return <div>{children}</div>;
 };
 
