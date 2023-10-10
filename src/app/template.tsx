@@ -5,17 +5,16 @@ import "react-toastify/dist/ReactToastify.css";
 import { ThemeProvider } from "@emotion/react";
 import { createTheme } from "@mui/material/styles";
 import { ToastContainer } from "react-toastify";
-import { ReactNode , Suspense } from "react";
+import { ReactNode } from "react";
 
 import Providers from "@/stores/Providers";
 import Header from "@/pages/Header";
 import NavBar from "@/pages/NavBar";
 import Footer from "@/pages/Footer";
 import CustomChatMessage from "@/components/MesssageChat";
-import Slider from "@/components/common/SliderBar";
 
-import ProviderStore from "./context/ProviderStore";
-import WithoutContent from "./context/WithoutContent";
+import ProviderStore from "../context/ProviderStore";
+import WithoutContent from "../context/WithoutContent";
 
 function RootLayout({ children }: { children: ReactNode }) {
   const THEME = createTheme({
@@ -35,7 +34,6 @@ function RootLayout({ children }: { children: ReactNode }) {
                 <>
                   <Header />
                   <NavBar />
-                  <Slider />
                 </>
               </WithoutContent>
               <div className="py-8 px-9">{children}</div>

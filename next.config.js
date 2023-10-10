@@ -8,6 +8,7 @@ const nextConfig = {
       "image2.tin247.news",
       "cdn.sgtiepthi.vn",
       "www.pngkey.com",
+      "lavenderstudio.com.vn"
     ], // <== Domain name link image
   },
   eslint: {

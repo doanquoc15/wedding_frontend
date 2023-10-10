@@ -22,8 +22,6 @@ import { useAppDispatch, useAppSelector } from "@/stores/hook";
 import { CookiesStorage } from "@/shared/config/cookie";
 import { usersReducer } from "@/stores/reducers/user";
 
-import { generateMetaData } from "../context/metadata";
-
 const SignInPage = () => {
   const { register, handleSubmit } = useForm();
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
@@ -37,11 +35,14 @@ const SignInPage = () => {
     try {
       const { data } = await SignInAPI(values);
       setIsSubmit(false);
+      console.log(data.data.accessToken);
       CookiesStorage.setCookieData("token", data.data.accessToken);
       router.push("/");
-      dispatch(statusApiReducer.actions.setMessageSuccess("Login"));
-    } catch (e) {
-      dispatch(statusApiReducer.actions.setMessageError(""));
+      dispatch(
+        statusApiReducer.actions.setMessageSuccess("Login successfully!")
+      );
+    } catch (e: any) {
+      dispatch(statusApiReducer.actions.setMessageError("Error login"));
     } finally {
       setIsSubmit(false);
     }
@@ -92,7 +93,7 @@ const SignInPage = () => {
               }}
             >
               <Typography component="h1" variant="h5">
-                Sign In
+                ĐĂNG NHẬP
               </Typography>
               <form onSubmit={handleSubmit(onSubmit)}>
                 <TextField
@@ -138,8 +139,8 @@ const SignInPage = () => {
                     </Link>
                   </Grid>
                   <Grid item>
-                    <Link href="#" variant="body2">
-                      {"Don't have an account? Sign Up"}
+                    <Link href="/dang-ky" variant="body2">
+                      {"Chưa có tài khoản ? Đăng ký"}
                     </Link>
                   </Grid>
                 </Grid>

@@ -10,13 +10,21 @@ import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import { Container } from "@mui/material";
 import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import Image from "next/image";
 
 import { SignUpType } from "@/types/common";
 import LoadingButton from "@/components/common/Loading";
 import { SignUpAPI } from "@/services/auth";
+import { signInSchema } from "@/libs/validation/signupSchema";
+import Restaurant_gif from "@/statics/images/animation_restaurant.gif";
 
 export default function SignUpPage() {
-  const { register, handleSubmit } = useForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SignUpType>({ resolver: yupResolver(signInSchema) });
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
 
   //variable
@@ -24,7 +32,6 @@ export default function SignUpPage() {
   const onSubmit: any = async (values: SignUpType) => {
     try {
       const data = await SignUpAPI(values);
-      console.log(data);
     } catch (error) {
       console.log(error);
     }
@@ -49,43 +56,60 @@ export default function SignUpPage() {
             elevation={6}
             square
           >
-            <form className="my-8 mx-4" onSubmit={handleSubmit(onSubmit)}>
+            <form className="mx-8 mt-6" onSubmit={handleSubmit(onSubmit)}>
               <Typography component="h1" variant="h5">
-                Sign Up
+                Đăng ký
               </Typography>
-              <TextField
-                {...register("email")}
-                margin="normal"
-                required
-                fullWidth
-                id="email"
-                label="Email Address"
-                name="email"
-                autoComplete="email"
-                autoFocus
-              />
-              <TextField
-                {...register("password")}
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label="Password"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-              />
-
               <TextField
                 {...register("name")}
                 margin="normal"
                 required
                 fullWidth
                 name="name"
-                label="Name"
+                label="Tên đăng nhập"
                 type="text"
                 id="name"
+                error={!!errors?.name}
+                helperText={errors?.confirmPassword && errors?.name?.message}
               />
+              <TextField
+                {...register("email")}
+                margin="normal"
+                fullWidth
+                id="email"
+                label="Email"
+                name="email"
+                autoComplete="email"
+                error={!!errors?.email}
+                helperText={errors?.email && errors?.email?.message}
+              />
+              <TextField
+                {...register("password")}
+                margin="normal"
+                fullWidth
+                name="password"
+                label="Mật khẩu"
+                type="password"
+                id="password"
+                autoComplete="current-password"
+                error={!!errors?.password}
+              />
+
+              <TextField
+                {...register("confirmPassword")}
+                margin="normal"
+                fullWidth
+                name="confirmPassword"
+                label="Xác thực mật khẩu"
+                type="confirm password"
+                id="confirm password"
+                autoComplete="current-password"
+                error={!!errors?.confirmPassword}
+                helperText={
+                  errors?.confirmPassword && errors?.confirmPassword?.message
+                }
+              />
+
               <Button
                 startIcon={isSubmit && <LoadingButton />}
                 type="submit"
@@ -94,12 +118,12 @@ export default function SignUpPage() {
                 className="bg-blue-500"
                 sx={{ mt: 3, mb: 2 }}
               >
-                Sign Up
+                Đăng ký
               </Button>
               <Grid container>
                 <Grid item>
-                  <Link href="/login" variant="body2">
-                    {"Do have an account? Sign In"}
+                  <Link href="/dang-nhap" variant="body2">
+                    {"Bạn có tài khoản chưa? Đăng nhập"}
                   </Link>
                 </Grid>
               </Grid>
@@ -110,18 +134,15 @@ export default function SignUpPage() {
             xs={false}
             sm={4}
             md={7}
-            sx={{
-              backgroundImage:
-                "url(https://media.mia.vn/uploads/blog-du-lich/sky-view-restaurant-nha-hang-lang-man-ly-tuong-cho-cac-cap-doi-tai-da-nang-2-1636459839.jpg)",
-              backgroundRepeat: "no-repeat",
-              backgroundColor: (t: any) =>
-                t.palette.mode === "light"
-                  ? t.palette.grey[50]
-                  : t.palette.grey[900],
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
-          />
+            sx={{ objectFit: "contain", height: "100%", overflow: "hidden" }}
+          >
+            <Image
+              src={Restaurant_gif}
+              alt="restaurant gif"
+              objectFit="cover"
+              width={1000}
+            />
+          </Grid>
         </Grid>
       </Box>
     </Container>

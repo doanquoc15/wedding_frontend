@@ -149,7 +149,6 @@ function handleErrorStatus(error: any) {
   switch (status) {
     case 401:
       //window.location.href = ROUTE.SIGN_IN;
-      console.log(100);
 
       return error;
     case 403: {
@@ -190,7 +189,7 @@ axios.interceptors.response.use(
   }
 );
 const accessToken = CookiesStorage.getCookieData("token") || null;
-console.log(accessToken);
+console.log("s",accessToken);
 
 axios.interceptors.request.use(
   (config) => {

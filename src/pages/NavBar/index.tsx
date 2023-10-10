@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -11,84 +11,36 @@ import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import Image from "next/image";
-import Link from "next/link";
 import Badge from "@mui/material/Badge";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
-import { useSelector } from "react-redux";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import style from "@/styles/navbar.module.scss";
 import logo_sky_view from "@/statics/images/logo-c-skyview.png";
-import tab, { selectTabIndex, tabReducer } from "@/stores/reducers/tab";
-import { useAppDispatch } from "@/stores/hook";
-
-const pages = [
-  {
-    title: "Trang chủ",
-    link: "/",
-  },
-  {
-    title: "Giới thiệu",
-    link: "/gioi-thieu",
-  },
-  {
-    title: "Trãi nghiệm",
-    link: "/trai-nghiem",
-  },
-  {
-    title: "Menu",
-    link: "/",
-  },
-  {
-    title: "Dịch vụ",
-    link: "/",
-  },
-  {
-    title: "Đặt dịch vụ",
-    link: "/",
-  },
-  {
-    title: "Tin tức",
-    link: "/",
-  },
-  {
-    title: "Liên hệ",
-    link: "/",
-  },
-  {
-    title: "Tiệc đã tổ chức",
-    link: "/",
-  },
-];
-const settings = ["Profile", "Account", "Dashboard", "Logout"];
+import { dataPages, dataSettings } from "@/data";
+import { LocalStorage } from "@/shared/config/localStorage";
 
 function NavBar() {
-
-  const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
-  const [selectedItem, setSelectedItem] = useState<number>(useSelector(selectTabIndex()));
+
+  const [selectedItem, setSelectedItem] = useState<any>(
+    LocalStorage.get("selectedItem")
+  );
+
   const [isHeaderFixed, setHeaderFixed] = useState<Boolean>(false);
 
-  const dispatch = useAppDispatch();
-
-  const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElNav(event.currentTarget);
-  };
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
-  };
-
-  const handleCloseNavMenu = () => {
-    setAnchorElNav(null);
   };
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
 
-  const handleItemClick = (index) => {
+  const handleItemClick = (index: any) => {
     setSelectedItem(index);
-    dispatch(tabReducer.actions.setTabIndexCurrent(index));
   };
 
   const handleScroll = () => {
@@ -98,6 +50,10 @@ function NavBar() {
       setHeaderFixed(false);
     }
   };
+
+  useEffect(() => {
+    LocalStorage.add("selectedItem", selectedItem);
+  }, [selectedItem]);
 
   useEffect(() => {
     window.addEventListener("scroll", handleScroll);
@@ -111,9 +67,6 @@ function NavBar() {
     if (isHeaderFixed) return "fixed";
     return "sticky";
   };
-
-  console.log("d",selectedItem);
-
   return (
     <AppBar
       style={{ background: "white", color: "var(--clr-gray-500)" }}
@@ -134,12 +87,13 @@ function NavBar() {
               className={`${style.navbar}`}
               sx={{ flexGrow: 0, display: "flex", gap: 4 }}
             >
-              {pages.map((page, index) => (
+              {dataPages.map((page, index) => (
                 <Link
-                  style={{ color:"var(--clt-gray-500)" }}
-                  className={`whitespace-nowrap ${style.navbarItem} ${
-                    index === selectedItem ? style.selected : ""
-                  }`}
+                  replace
+                  style={{ color: "var(--clr-gray-500)" }}
+                  className={`whitespace-nowrap ${
+                    index === JSON.parse(selectedItem) && style.navbarItem
+                  } ${index === JSON.parse(selectedItem) && style.selected}`}
                   onClick={() => handleItemClick(index)}
                   key={index}
                   href={page.link}
@@ -205,7 +159,7 @@ function NavBar() {
                     },
                   }}
                 >
-                  {settings.map((setting, index) => (
+                  {dataSettings.map((setting, index) => (
                     <MenuItem
                       className="pl-8 whitespace-nowrap"
                       key={index}

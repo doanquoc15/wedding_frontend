@@ -6,10 +6,12 @@ import Image from "next/image";
 import MainChefDetail from "@/components/MainChefDetail";
 import { chefsData } from "@/data";
 import TitleHead from "@/components/TitleHead";
+import Slider from "@/components/common/SliderBar";
 
 export default function Home() {
   return (
     <main>
+      <Slider />
       <TitleHead title="Trang Chủ" />
       <div className="flex flex-col gap-8 items-center bg-[#f8ece0] py-7 rounded-[5px] mb-[30px]">
         <p className="text-[25px]">ĐẦU BẾP</p>

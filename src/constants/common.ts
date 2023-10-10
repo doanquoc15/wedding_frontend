@@ -9,4 +9,6 @@ export const ROUTER = {
   FORBIDDEN: "/403",
 };
 
-export const WITHOUT_CONTENT = ["dashboard","signin","signup"];
+export const WITHOUT_CONTENT = ["quan-tri","dang-nhap","dang-ky","not-found"];
+
+export const MENU_PAGE_SIZE = 6;

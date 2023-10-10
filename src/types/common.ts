@@ -4,17 +4,17 @@ export interface SignInType {
   email: string;
   password: string;
 }
+export interface IResponse {
+  error?: string | null;
+  data?: any;
+  total?: number;
+}
 
 export interface SignUpType {
   name: string;
   email: string;
   password: string;
-}
-
-export interface IResponse {
-  error?: string | null;
-  data?: any;
-  total?: number;
+  confirmPassword: string
 }
 
 export type MailMessageType = MailType & {
@@ -38,4 +38,30 @@ export interface CustomButtonProps {
 export interface TitleHeadType {
   title: string;
   content?: string
+}
+
+export type SearchProps = {
+  wordSearch?: string;
+  onSearch?: Function;
+  onChange?: Function;
+  width?: string;
+  className?: string;
+  handleSearch?: Function;
+  typeQuery?: string;
+  isResetAll?: boolean;
+};
+
+export interface MenuItem{
+  id: number;
+  dishName: string;
+  description ?: string;
+  price: number;
+  image ?: string;
+  typeId: number;
+}
+
+export interface TypeDish {
+  id: number;
+  typeName: string;
+  menuItems: MenuItem[];
 }

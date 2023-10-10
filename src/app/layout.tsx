@@ -1,22 +1,20 @@
 import { ReactNode } from "react";
 
-import ClientComponent from "./context/ClientComponent";
+import ClientComponent from "../context/ClientComponent";
 
 export const metadata = {
   title: {
-    default:"Sky View",
-    template:"%s | Sky View"
+    default: "Sky View",
+    template: "%s | Sky View",
   },
-  description:"..."
+  description: "...",
 };
 
 function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <body>
-        <ClientComponent>
-          {children}
-        </ClientComponent>
+        <ClientComponent>{children}</ClientComponent>
       </body>
     </html>
   );

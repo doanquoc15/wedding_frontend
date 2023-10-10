@@ -59,3 +59,94 @@ export const dataRestaurant = [
     description: "chưa deploy nên chưa có"
   },
 ];
+
+export const dataPages = [
+  {
+    title: "Trang chủ",
+    link: "/",
+  },
+  {
+    title: "Giới thiệu",
+    link: "/gioi-thieu",
+  },
+  {
+    title: "Trãi nghiệm",
+    link: "/trai-nghiem",
+  },
+  {
+    title: "Menu",
+    link: "/menu",
+  },
+  {
+    title: "Dịch vụ",
+    link: "/dich-vu",
+  },
+  {
+    title: "Đặt dịch vụ",
+    link: "/dat-dich-vu",
+  },
+  {
+    title: "Tin tức",
+    link: "/tin-tuc",
+  },
+  {
+    title: "Liên hệ",
+    link: "/lien-he",
+  },
+  {
+    title: "Tiệc đã tổ chức",
+    link: "/da-to-chuc",
+  },
+];
+export const dataSettings = ["Profile", "Account", "Dashboard", "Logout"];
+
+export const dataFoods = [
+  {
+    id: 1,
+    name : "Chứng dà chiên dới cái gì",
+    price: 30,
+    image:"https://lavenderstudio.com.vn/wp-content/uploads/2017/03/chup-san-pham.jpg"
+  },
+  {
+    id: 2,
+    name : "Chứng dà chiên dới cái gì",
+    price: 30,
+    image:"https://lavenderstudio.com.vn/wp-content/uploads/2017/03/chup-san-pham.jpg"
+  },
+  {
+    id: 3,
+    name : "Chứng dà chiên dới cái gì",
+    price: 30,
+    image:"https://lavenderstudio.com.vn/wp-content/uploads/2017/03/chup-san-pham.jpg"
+  },
+  {
+    id: 4,
+    name : "Chứng dà chiên dới cái gì",
+    price: 30,
+    image:"https://lavenderstudio.com.vn/wp-content/uploads/2017/03/chup-san-pham.jpg"
+  },
+  {
+    id: 5,
+    name : "Chứng dà chiên dới cái gì",
+    price: 30,
+    image:"https://lavenderstudio.com.vn/wp-content/uploads/2017/03/chup-san-pham.jpg"
+  },
+  {
+    id: 6,
+    name : "Chứng dà chiên dới cái gì",
+    price: 30,
+    image:"https://lavenderstudio.com.vn/wp-content/uploads/2017/03/chup-san-pham.jpg"
+  },
+  {
+    id: 7,
+    name : "Chứng dà chiên dới cái gì",
+    price: 30,
+    image:"https://lavenderstudio.com.vn/wp-content/uploads/2017/03/chup-san-pham.jpg"
+  },
+  {
+    id: 8,
+    name : "Chứng dà chiên dới cái gì",
+    price: 30,
+    image:"https://lavenderstudio.com.vn/wp-content/uploads/2017/03/chup-san-pham.jpg"
+  },
+];
