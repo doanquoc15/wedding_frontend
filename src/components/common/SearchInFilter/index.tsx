@@ -4,7 +4,7 @@ import { useRouter, useSearchParams, usePathname } from "next/navigation";
 
 import { SearchProps } from "@/types/common";
 import SearchIcon from "@/statics/svg/ic-search.svg";
-import { getQueryParam } from "@/utils/route";
+import { addMultipleQueryParams, getQueryParam } from "@/utils/route";
 
 const SearchInFilter = ({
   onSearch,
@@ -14,18 +14,14 @@ const SearchInFilter = ({
   onChange,
 }: SearchProps) => {
   const [input, setInput] = useState<any>(getQueryParam(`${typeQuery}`));
-  const router = useRouter();
-  const pathname = usePathname();
   const searchParams = useSearchParams();
 
   const handleChangeInput = (value: string) => {
-    const valueSearch = value.trim();
+    const valueSearch: any = value.trim();
     onSearch && onSearch(valueSearch);
-    router.replace(
-      valueSearch === ""
-        ? `${pathname}`
-        : `${pathname}?${typeQuery}=${valueSearch}`
-    );
+    addMultipleQueryParams(`${searchParams}`, {
+      [typeQuery]: valueSearch,
+    });
   };
 
   const onKeyDown = (event: React.KeyboardEvent<HTMLDivElement>): void => {

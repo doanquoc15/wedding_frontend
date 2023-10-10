@@ -12,7 +12,7 @@ import { getAllTypeDish } from "@/services/type-dish";
 import { TypeDish } from "@/types/common";
 import { MENU_PAGE_SIZE } from "@/constants/common";
 import { getAllFood } from "@/services/menu-item";
-import { getQueryParam, addQueryParam } from "@/utils/route";
+import { addMultipleQueryParams, getQueryParam } from "@/utils/route";
 import Button from "@/components/common/Button";
 
 const MenuPage = (querySearch: string) => {
@@ -27,10 +27,10 @@ const MenuPage = (querySearch: string) => {
   const [search, setSearch] = useState<any>(getQueryParam("search"));
 
   const [total, setTotal] = useState<any>();
+  const searchParams = useSearchParams();
 
   //const
   const pathname = usePathname();
-  const useSearchParam = useSearchParams();
 
   //function
   const getTypeDish = async () => {
@@ -69,9 +69,7 @@ const MenuPage = (querySearch: string) => {
     }
   };
 
-  console.log(search);
-
-  const handleSearch = (querySearch:string) => {
+  const handleSearch = (querySearch: string) => {
     setSearch(querySearch);
   };
 
