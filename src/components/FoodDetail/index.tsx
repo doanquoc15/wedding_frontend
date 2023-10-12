@@ -1,8 +1,11 @@
 //import { p } from "@mui/material";
 import Image from "next/image";
 import React from "react";
+import { Tooltip } from "@mui/material";
 
-import { MenuItem } from "@/types/common";
+import { getDecimal } from "@/utils/getDecimal";
+
+import { formatMoney } from "./../../utils/formatMoney";
 
 const FoodDetail = ({ food }) => {
   return (
@@ -22,10 +25,12 @@ const FoodDetail = ({ food }) => {
         </div>
         <section className="flex flex-col">
           <p className="text-[15px] font-semibold">{food?.dishName}</p>
-          <p className="text-[13px] flex-1 truncate w-[200px]">
-            {food.description}
-          </p>
-          <p>${food?.price}</p>
+          <Tooltip title={food.description}>
+            <p className="text-[13px] flex-1 truncate w-[200px]">
+              {food.description}
+            </p>
+          </Tooltip>
+          <p>{formatMoney(getDecimal(food?.price))} VND</p>
         </section>
       </div>
     </div>

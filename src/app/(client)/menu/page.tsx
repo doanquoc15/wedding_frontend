@@ -61,7 +61,6 @@ const MenuPage = (querySearch: string) => {
         typeId: selectActive || 0,
         search: search,
       });
-      console.log(data);
       setTotal(data.total);
       setFoodByType(data.menus);
     } catch (error) {

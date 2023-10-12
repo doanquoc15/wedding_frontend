@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { Box } from "@mui/material";
 import Image from "next/image";
 
@@ -7,19 +8,51 @@ import MainChefDetail from "@/components/MainChefDetail";
 import { chefsData } from "@/data";
 import TitleHead from "@/components/TitleHead";
 import Slider from "@/components/common/SliderBar";
+import { TypeEmployee } from "@/types/common";
+import { useAppDispatch } from "@/stores/hook";
+import { statusApiReducer } from "@/stores/reducers/statusAPI";
+import { getAllEmployee } from "@/services/employee";
 
 export default function Home() {
+  //useState
+  const [employeeChefs, setEmployeeChefs] = useState<TypeEmployee[]>();
+
+  //const
+  const dispatch = useAppDispatch();
+
+  //function
+  const getEmployee = async () => {
+    try {
+      const res = await getAllEmployee({});
+      setEmployeeChefs(
+        res?.employees?.filter(
+          (item: TypeEmployee) => item?.position === "CHEF"
+        )
+      );
+    } catch (error: any) {
+      console.log(error);
+      dispatch(statusApiReducer.actions.setMessageError(error?.data?.message));
+    }
+  };
+
+  //useEffect
+  useEffect(() => {
+    getEmployee();
+  }, []);
+
   return (
     <main>
       <Slider />
       <TitleHead title="Trang Chủ" />
-      <div className="flex flex-col gap-8 items-center bg-[#f8ece0] py-7 rounded-[5px] mb-[30px]">
-        <p className="text-[25px]">ĐẦU BẾP</p>
-        {chefsData?.map((chef, index) => (
-          <div key={index}>
-            <MainChefDetail chef={chef} />
-          </div>
-        ))}
+      <div className="w-full bg-[#f8ece0] py-7 px-7 rounded-[5px] mb-[30px]">
+        <p className="text-[25px] text-center">ĐẦU BẾP</p>
+        <div className="flex flex-wrap justify-between gap-10">
+          {employeeChefs?.map((chef: TypeEmployee) => (
+            <div key={chef?.id} className="">
+              <MainChefDetail chef={chef} />
+            </div>
+          ))}
+        </div>
       </div>
       <Box
         sx={{

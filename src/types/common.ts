@@ -1,5 +1,7 @@
 import { ReactNode } from "react";
 
+import { GENDER, REGENCY } from "./enums";
+
 export interface SignInType {
   email: string;
   password: string;
@@ -64,4 +66,17 @@ export interface TypeDish {
   id: number;
   typeName: string;
   menuItems: MenuItem[];
+}
+
+export interface TypeEmployee{
+  id: number;
+  employeeName : string;
+  age: number;
+  phone ?: string;
+  address ?: string;
+  gender ?: GENDER,
+  salary : number,
+  experience: number,
+  position: string,
+  regency: REGENCY
 }
