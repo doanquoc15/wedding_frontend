@@ -4,8 +4,7 @@ const Apis = {
   GET_ALL: "/employee",
 };
 
-export const getAllEmployee = async (params) => {
-  const { data }: any = await Api.get(Apis.GET_ALL, params);
+export const getAllEmployee = async (options) => {
+  const { data }: any = await Api.getWithParams(Apis.GET_ALL, options);
   return data;
 };
-

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
-import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 import { SearchProps } from "@/types/common";
 import SearchIcon from "@/statics/svg/ic-search.svg";
@@ -48,7 +48,12 @@ const SearchInFilter = ({
 
   return (
     <div
-      className={`w-[${width}] h-[34px] shadow-[0px_4px_4px_rgba(0,0,0,0.08)] 
+      style={{
+        minWidth: `${width}`,
+      }}
+      className={`${
+        width ? `max-w-[${width}]` : "w-full"
+      } h-[34px] shadow-[0px_4px_4px_rgba(0,0,0,0.08)] 
       border-[1px] border-clr-gray-200 rounded-[3px] flex flex-column items-center justify-around relative`}
     >
       <input

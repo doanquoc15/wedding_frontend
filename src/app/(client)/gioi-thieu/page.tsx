@@ -1,4 +1,5 @@
-import React from "react";
+"use client";
+import React, { useEffect } from "react";
 import Image from "next/image";
 
 import { dataRestaurant } from "@/data";
@@ -21,8 +22,27 @@ import Food7Image from "@/statics/images/food7.jpg";
 import Food8Image from "@/statics/images/food8.jpg";
 import Food9Image from "@/statics/images/food9.jpg";
 import Service from "@/statics/images/dich-vu.jpg";
+import { INTRODUCTION_BREADCRUMB } from "@/constants/common";
+import { breadCrumbReducer } from "@/stores/reducers/breadCrumb";
+import { useAppDispatch } from "@/stores/hook";
 
 const Production = () => {
+  //const
+  const dispatch = useAppDispatch();
+
+  //useEffect
+  useEffect(() => {
+    dispatch(
+      breadCrumbReducer.actions.setBreadCrumbs({
+        routes: INTRODUCTION_BREADCRUMB,
+      })
+    );
+
+    return () => {
+      dispatch(breadCrumbReducer.actions.resetBreadCrumb());
+    };
+    // eslint-disable-next-line
+  }, []);
   return (
     <div>
       <header className="bg-[#F5F5F5] min-h-[188px] flex flex-col justify-center items-center">

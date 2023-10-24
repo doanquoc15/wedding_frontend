@@ -4,7 +4,7 @@ const Apis = {
   GET_ALL: "/type-dish",
 };
 
-export const getAllTypeDish = async () => {
-  const data: any = await Api.get(Apis.GET_ALL);
+export const getAllTypeDish = async (params: object) => {
+  const data: any = await Api.getWithParams(Apis.GET_ALL, params);
   return data.data;
 };

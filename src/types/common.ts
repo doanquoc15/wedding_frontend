@@ -1,4 +1,5 @@
-import { ReactNode } from "react";
+import React, { ReactNode } from "react";
+import { SelectProps } from "@mui/material";
 
 import { GENDER, REGENCY } from "./enums";
 
@@ -16,7 +17,7 @@ export interface SignUpType {
   name: string;
   email: string;
   password: string;
-  confirmPassword: string
+  confirmPassword: string;
 }
 
 export type MailMessageType = MailType & {
@@ -39,7 +40,7 @@ export interface CustomButtonProps {
 
 export interface TitleHeadType {
   title: string;
-  content?: string
+  content?: string;
 }
 
 export type SearchProps = {
@@ -53,12 +54,12 @@ export type SearchProps = {
   isResetAll?: boolean;
 };
 
-export interface MenuItem{
+export interface MenuItem {
   id: number;
   dishName: string;
-  description ?: string;
+  description?: string;
   price: number;
-  image ?: string;
+  image?: string;
   typeId: number;
 }
 
@@ -68,15 +69,63 @@ export interface TypeDish {
   menuItems: MenuItem[];
 }
 
-export interface TypeEmployee{
+export interface TypeEmployee {
   id: number;
-  employeeName : string;
+  employeeName: string;
   age: number;
-  phone ?: string;
-  address ?: string;
-  gender ?: GENDER,
-  salary : number,
-  experience: number,
-  position: string,
-  regency: REGENCY
+  phone?: string;
+  address?: string;
+  gender?: GENDER;
+  salary: number;
+  experience: number;
+  position: string;
+  regency: REGENCY;
+}
+
+export interface TypeService {
+  id: number;
+  serviceName: string;
+  capacity: number;
+  price: number;
+  image?: string;
+  comboMenus?: ComboMenu[];
+  bookings?: any;
+}
+
+export interface ComboMenu {
+  id: number;
+  comboName: string;
+  totalPrice: number;
+  description: string;
+  serviceId: number;
+  comboItems?: ComboItem[];
+}
+
+export interface ModalProps {
+  open?: boolean;
+  setOpen?: React.Dispatch<React.SetStateAction<boolean>>;
+  title: String | ReactNode;
+  children: ReactNode;
+  className?: string;
+  closeModal?: Function;
+  style?: string;
+  styleParent?: string;
+  isBtnClose?: boolean;
+  sx?: any;
+}
+
+export interface ComboItem {
+  id: number;
+  quantity: number;
+  totalPrice: number;
+  menuItemId: number;
+  comboMenuId: number;
+}
+
+export interface CheckboxPropsType extends SelectProps<any> {
+  name: string;
+  label: string;
+  control: any;
+  defaultValue?: boolean;
+  sx?: any;
 }

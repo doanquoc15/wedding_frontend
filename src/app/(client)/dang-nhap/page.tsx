@@ -21,6 +21,7 @@ import { statusApiReducer } from "@/stores/reducers/statusAPI";
 import { useAppDispatch, useAppSelector } from "@/stores/hook";
 import { CookiesStorage } from "@/shared/config/cookie";
 import { usersReducer } from "@/stores/reducers/user";
+import { LocalStorage } from "@/shared/config/localStorage";
 
 const SignInPage = () => {
   const { register, handleSubmit } = useForm();
@@ -35,12 +36,14 @@ const SignInPage = () => {
     try {
       const { data } = await SignInAPI(values);
       setIsSubmit(false);
-      console.log(data.data.accessToken);
-      CookiesStorage.setCookieData("token", data.data.accessToken);
-      router.push("/");
+      LocalStorage.add("user", JSON.stringify(data?.data?.user));
+      CookiesStorage.setCookieData("token", data?.data?.tokens?.accessToken);
+      if (data?.data?.user.role.roleName === "CUSTOMER") router.push("/");
+      if (data?.data?.user.role.roleName === "ADMIN") router.push("/dashboard");
       dispatch(
         statusApiReducer.actions.setMessageSuccess("Login successfully!")
       );
+      dispatch(usersReducer.actions.setUserInfo(data?.data?.user));
     } catch (e: any) {
       dispatch(statusApiReducer.actions.setMessageError("Error login"));
     } finally {

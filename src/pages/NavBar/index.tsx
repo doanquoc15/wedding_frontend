@@ -21,16 +21,22 @@ import style from "@/styles/navbar.module.scss";
 import logo_sky_view from "@/statics/images/logo-c-skyview.png";
 import { dataPages, dataSettings } from "@/data";
 import { LocalStorage } from "@/shared/config/localStorage";
+import { useAppSelector } from "@/stores/hook";
+import { selectUsers } from "@/stores/reducers/user";
 
 function NavBar() {
+  //useState
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 
   const [selectedItem, setSelectedItem] = useState<any>(
-    LocalStorage.get("selectedItem")
+    JSON.parse(LocalStorage.get("selectedItem") as string)
   );
 
-  const [isHeaderFixed, setHeaderFixed] = useState<Boolean>(false);
+  const [isHeaderFixed, setHeaderFixed] = useState<boolean>(false);
+  const [user, setUser] = useState(null);
 
+  
+  //function
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
   };
@@ -40,7 +46,7 @@ function NavBar() {
   };
 
   const handleItemClick = (index: any) => {
-    setSelectedItem(index);
+    setSelectedItem(JSON.stringify(index));
   };
 
   const handleScroll = () => {
@@ -51,8 +57,15 @@ function NavBar() {
     }
   };
 
+  const handleFixedHeader = () => {
+    if (isHeaderFixed) return "fixed";
+    return "sticky";
+  };
+
+  //useEffect
+
   useEffect(() => {
-    LocalStorage.add("selectedItem", selectedItem);
+    LocalStorage.add("selectedItem", JSON.stringify(selectedItem));
   }, [selectedItem]);
 
   useEffect(() => {
@@ -63,13 +76,16 @@ function NavBar() {
     };
   }, []);
 
-  const handleFixedHeader = () => {
-    if (isHeaderFixed) return "fixed";
-    return "sticky";
-  };
+  useEffect(() => {
+    const savedUser = LocalStorage.get('user');
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
+    };
+  }, []);
+
   return (
     <AppBar
-      style={{ background: "white", color: "var(--clr-gray-500)" }}
+      style={{ background: "white", color: "var(--clr-gray-500)", zIndex: 1 }}
       position={handleFixedHeader()}
       className="text-gray-700"
     >
@@ -92,8 +108,8 @@ function NavBar() {
                   replace
                   style={{ color: "var(--clr-gray-500)" }}
                   className={`whitespace-nowrap ${
-                    index === JSON.parse(selectedItem) && style.navbarItem
-                  } ${index === JSON.parse(selectedItem) && style.selected}`}
+                    index === +selectedItem && style.navbarItem
+                  } ${index === +selectedItem && style.selected}`}
                   onClick={() => handleItemClick(index)}
                   key={index}
                   href={page.link}
@@ -136,7 +152,7 @@ function NavBar() {
                         src="https://inkythuatso.com/uploads/thumbnails/800/2022/03/4a7f73035bb4743ee57c0e351b3c8bed-29-13-53-17.jpg"
                       />
                     </IconButton>
-                    <Typography>Tuan</Typography>
+                    <Typography>{user?.name}</Typography>
                   </Box>
                 </Tooltip>
                 <Menu

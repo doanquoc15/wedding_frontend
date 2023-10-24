@@ -6,16 +6,15 @@ import { CookieKey } from "@/constants/common";
 const cookies = new Cookies();
 
 export const CookiesStorage = {
-  getCookieData(key:string) {
+  getCookieData(key: string) {
     return cookies.get(key);
   },
-  setCookieData(key:string, data:any) {
+  setCookieData(key: string, data: any) {
     const currentTime = new Date();
     const expires = addMonths(currentTime, 1);
-    console.log(expires);
     cookies.set(key, data, { expires, path: "/" });
   },
-  clearCookieData(key:string) {
+  clearCookieData(key: string) {
     cookies.remove(key, { path: "/" });
   },
 

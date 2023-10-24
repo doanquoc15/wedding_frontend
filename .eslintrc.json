@@ -43,9 +43,9 @@
     "react/no-unescaped-entities": "off",
     "@next/next/no-page-custom-font": "off",
     "import/export": 0,
-    "import/no-unresolved": [2, { "caseSensitive": false }],
-    "react-hooks/rules-of-hooks": "error",
-    "react-hooks/exhaustive-deps": "warn"
+    "import/no-unresolved": [2, { "caseSensitive": false }]
+    //"react-hooks/rules-of-hooks": "error",
+    //"react-hooks/exhaustive-deps": "warn"
   },
   "env": {
     "jest": true

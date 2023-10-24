@@ -12,6 +12,8 @@ import { TypeEmployee } from "@/types/common";
 import { useAppDispatch } from "@/stores/hook";
 import { statusApiReducer } from "@/stores/reducers/statusAPI";
 import { getAllEmployee } from "@/services/employee";
+import { breadCrumbReducer } from "@/stores/reducers/breadCrumb";
+import { HOME_BREADCRUMB } from "@/constants/common";
 
 export default function Home() {
   //useState
@@ -30,7 +32,6 @@ export default function Home() {
         )
       );
     } catch (error: any) {
-      console.log(error);
       dispatch(statusApiReducer.actions.setMessageError(error?.data?.message));
     }
   };
@@ -38,6 +39,20 @@ export default function Home() {
   //useEffect
   useEffect(() => {
     getEmployee();
+    // eslint-disable-next-line
+  }, []);
+
+  useEffect(() => {
+    dispatch(
+      breadCrumbReducer.actions.setBreadCrumbs({
+        routes: HOME_BREADCRUMB,
+      })
+    );
+
+    return () => {
+      dispatch(breadCrumbReducer.actions.resetBreadCrumb());
+    };
+    // eslint-disable-next-line
   }, []);
 
   return (

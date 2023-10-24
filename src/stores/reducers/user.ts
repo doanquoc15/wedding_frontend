@@ -34,7 +34,6 @@ export const fetchUsers = createAsyncThunk<
   { rejectValue: Error }
 >(`${REDUCER_NAME}/fetchUsers}`, async (data, { rejectWithValue }) => {
   try {
-    console.log(1);
     // TODO: call async request here
     const users: User[] = await new Promise((resolve) => {
       const user: User = {

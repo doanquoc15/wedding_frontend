@@ -3,17 +3,19 @@
 import { Grid } from "@mui/material";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 import TitleHead from "@/components/TitleHead";
 import FoodDetail from "@/components/FoodDetail";
 import SearchInFilter from "@/components/common/SearchInFilter";
 import { getAllTypeDish } from "@/services/type-dish";
 import { TypeDish } from "@/types/common";
-import { MENU_PAGE_SIZE } from "@/constants/common";
+import { MENU_BREADCRUMB, MENU_PAGE_SIZE } from "@/constants/common";
 import { getAllFood } from "@/services/menu-item";
-import { addMultipleQueryParams, getQueryParam } from "@/utils/route";
+import { getQueryParam } from "@/utils/route";
 import Button from "@/components/common/Button";
+import { useAppDispatch } from "@/stores/hook";
+import { breadCrumbReducer } from "@/stores/reducers/breadCrumb";
 
 const MenuPage = (querySearch: string) => {
   //state
@@ -27,15 +29,15 @@ const MenuPage = (querySearch: string) => {
   const [search, setSearch] = useState<any>(getQueryParam("search"));
 
   const [total, setTotal] = useState<any>();
-  const searchParams = useSearchParams();
 
   //const
   const pathname = usePathname();
+  const dispatch = useAppDispatch();
 
   //function
   const getTypeDish = async () => {
     try {
-      const type = await getAllTypeDish();
+      const type = await getAllTypeDish({ pageSize: 1000 });
       const getAllFood = type?.data.reduce(
         (total, item) => total?.concat(item.menuItems),
         []
@@ -91,8 +93,21 @@ const MenuPage = (querySearch: string) => {
 
   useEffect(() => {
     getFoods();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line
   }, [selectActive, pageSize, search]);
+
+  useEffect(() => {
+    dispatch(
+      breadCrumbReducer.actions.setBreadCrumbs({
+        routes: MENU_BREADCRUMB,
+      })
+    );
+
+    return () => {
+      dispatch(breadCrumbReducer.actions.resetBreadCrumb());
+    };
+    // eslint-disable-next-line
+  }, []);
 
   return (
     <div>

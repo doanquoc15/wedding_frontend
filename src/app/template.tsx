@@ -39,7 +39,7 @@ function RootLayout({ children }: { children: ReactNode }) {
               <div className="py-8 px-9">{children}</div>
               <WithoutContent>
                 <>
-                  <CustomChatMessage />
+                  {/*<CustomChatMessage />*/}
                   <Footer />
                 </>
               </WithoutContent>

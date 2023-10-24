@@ -12,7 +12,7 @@ const defaultOptions = {};
 const API_URL = "http://localhost:8080";
 
 export const generateToken = () => ({
-  Authorization: `${CookiesStorage.getAccessToken()}`,
+  Authorization: `Bearer ${CookiesStorage.getCookieData("token")}`,
 });
 
 function getNotAuthApi(path: string, options: any = {}, apiURL?: string) {
@@ -148,7 +148,7 @@ function handleErrorStatus(error: any) {
   const status = error?.status || error?.response?.status || null;
   switch (status) {
     case 401:
-      //window.location.href = ROUTE.SIGN_IN;
+      window.location.href = ROUTE.SIGN_IN;
 
       return error;
     case 403: {
@@ -188,15 +188,13 @@ axios.interceptors.response.use(
     return Promise.reject(handleErrorStatus(errorResponse));
   }
 );
-const accessToken = CookiesStorage.getCookieData("token") || null;
-console.log("s",accessToken);
 
 axios.interceptors.request.use(
   (config) => {
     const newConfig = { ...config };
     if (
       newConfig.headers &&
-      newConfig.headers["Content-Type"] === "multipart/form-data"
+      newConfig.headers["Content-Type"] === "application/json"
     )
       return newConfig;
     if (config.params) {
@@ -205,7 +203,7 @@ axios.interceptors.request.use(
     if (config.data) {
       newConfig.data = camelizeKeys(config.data);
     }
-    newConfig.headers.Authorization = `Bearer ${accessToken}`;
+    //newConfig.headers.Authorization = `Bearer ${accessToken}`;
     return newConfig;
   },
   (error) => {
