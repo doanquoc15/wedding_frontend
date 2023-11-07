@@ -18,7 +18,7 @@ import LoadingButton from "@/components/common/Loading";
 import { SignInType } from "@/types/common";
 import { SignInAPI } from "@/services/auth";
 import { statusApiReducer } from "@/stores/reducers/statusAPI";
-import { useAppDispatch, useAppSelector } from "@/stores/hook";
+import { useAppDispatch } from "@/stores/hook";
 import { CookiesStorage } from "@/shared/config/cookie";
 import { usersReducer } from "@/stores/reducers/user";
 import { LocalStorage } from "@/shared/config/localStorage";
@@ -41,11 +41,11 @@ const SignInPage = () => {
       if (data?.data?.user.role.roleName === "CUSTOMER") router.push("/");
       if (data?.data?.user.role.roleName === "ADMIN") router.push("/dashboard");
       dispatch(
-        statusApiReducer.actions.setMessageSuccess("Login successfully!")
+        statusApiReducer.actions.setMessageSuccess("Đăng nhập thành công!")
       );
       dispatch(usersReducer.actions.setUserInfo(data?.data?.user));
     } catch (e: any) {
-      dispatch(statusApiReducer.actions.setMessageError("Error login"));
+      dispatch(statusApiReducer.actions.setMessageError("Đăng nhập thất bại!"));
     } finally {
       setIsSubmit(false);
     }

@@ -24,7 +24,7 @@ const Footer = () => {
   return (
     <div className="w-full h-full">
       <div
-        className={`!${isContentShort} ? "absolute top-0 w-full" : "w-full" flex justify-between p-10 items-center bg-[--clr-gray-200] mt-12cleả`}
+        className={`!${isContentShort} ? "absolute top-0 w-full" : "w-full" flex justify-between p-10 items-center bg-[--clr-gray-200] mt-12`}
       >
         {/* Logo restaurant */}
         <section className="w-[100px] rounded-[50%] overflow-hidden">

@@ -1,5 +1,7 @@
 import React, { ReactNode } from "react";
-import { SelectProps } from "@mui/material";
+import { SelectProps, TextFieldProps } from "@mui/material";
+import { Control } from "react-hook-form";
+import { DesktopDatePickerProps } from "@mui/x-date-pickers";
 
 import { GENDER, REGENCY } from "./enums";
 
@@ -125,7 +127,23 @@ export interface ComboItem {
 export interface CheckboxPropsType extends SelectProps<any> {
   name: string;
   label: string;
-  control: any;
+  control: Control<any>;
   defaultValue?: boolean;
   sx?: any;
+}
+
+export type TextFieldPropsType = TextFieldProps & {
+  name: string;
+  control: Control<any>;
+  defaultValue?: unknown;
+  placeholder?: string;
+  minHeight?: string | number;
+};
+
+export interface DatePickerType extends Omit<DesktopDatePickerProps<any>, "onChange" | "value"> {
+  name: string;
+  control: Control<any>;
+  defaultValue?: unknown;
+  sx?: any;
+  id?: string | number;
 }

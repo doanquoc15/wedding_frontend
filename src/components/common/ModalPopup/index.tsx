@@ -37,12 +37,12 @@ const ModalPopup: React.FC<ModalProps | any> = ({
       onClose={() => handleClose()}
     >
       <div
-        className={`focus:border-0 focus:outline-none absolute top-1/2 left-1/2 bg-white
+        className={`focus:border-0 focus:outline-none absolute top-1/2 left-1/2 h-fit bg-white
       translate-y-[-50%] translate-x-[-50%] bg-clr-white rounded-[5px] overflow-auto max-h-[90vh] ${styleParent}`}
       >
         <div className="w-full">
           <header className="flex justify-between bg-[#F5F6F6] z-[1000]  shadow-[4px_4px_7px_rgba(0,0,0,0.08)] py-3 px-4">
-            <span className="text-[16px] text-clr-gray-500 font-bold">
+            <span className="text-[16px] text-clr-gray-500 font-bold ">
               {title}
             </span>
             {isBtnClose && (

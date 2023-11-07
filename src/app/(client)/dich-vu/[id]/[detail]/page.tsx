@@ -1,8 +1,10 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Typography, Button, Avatar, Checkbox } from "@mui/material";
+import { Typography, Button, Avatar, Tooltip, TextField } from "@mui/material";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
+import { jsPDF } from "jspdf";
+import html2canvas from "html2canvas";
 
 import { useAppDispatch } from "@/stores/hook";
 import { statusApiReducer } from "@/stores/reducers/statusAPI";
@@ -14,18 +16,29 @@ import { getDecimal } from "@/utils/getDecimal";
 import { formatMoney } from "@/utils/formatMoney";
 import { formatDecimal } from "@/utils/formatDecimal";
 import CheckBox from "@/components/common/Checkbox";
-import { getAllTypeDish } from "@/services/type-dish";
 import SearchInFilter from "@/components/common/SearchInFilter";
 import { getAllFood } from "@/services/menu-item";
 import { getQueryParam } from "@/utils/route";
+import { LocalStorage } from "@/shared/config/localStorage";
+import BookingPDF from "@/components/PDF/BookingPdf";
+import ModalPopup from "@/components/common/ModalPopup";
+import { CheckIcon } from "@/components/Icons";
+import DetailModalBook from "@/components/DetailModalBook";
+import LoadingButton from "@/components/common/Loading";
 
 const DetailMenu = () => {
   //useState
   const [menuData, setMenuData] = useState<any>();
   const [dataCombo, setDataCombo] = useState<any>();
-  const [isEdit, setIsEdit] = useState<boolean>(false);
+  const [isEdit, _] = useState<boolean>(false);
   const [menuItems, setMenuItems] = useState<any>();
   const [search, setSearch] = useState<any>(getQueryParam("search"));
+  const [checkedMenus, setCheckedMenus] = useState<any>([]);
+  const [dishQuantities, setDishQuantities] = useState({});
+  const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
+  const [isOpenModalChooseTable, setIsOpenModalChooseTable] =
+    useState<boolean>(false);
+  const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
   //const
   const dispatch = useAppDispatch();
@@ -34,39 +47,23 @@ const DetailMenu = () => {
   const breadCrumbs = localStorage.getItem("breadcrumb");
 
   //function
-  const groupComboItemsByTypeName = (comboItems) => {
-    const itemsByType = {};
+  const calculatorPrice = (data) => {
+    const result = data.reduce((total1, current1) => {
+      const result2 = current1.dishes.reduce((total2, current2) => {
+        return total2 + getDecimal(current2.price) * current2.quantity;
+      }, 0);
+      return total1 + result2;
+    }, 0);
 
-    comboItems?.map((comboItem) => {
-      const typeName = comboItem.menuItem.typeDish.typeName;
-      if (!itemsByType[typeName]) {
-        itemsByType[typeName] = [];
-      }
-      itemsByType[typeName].push(comboItem);
-    });
-
-    const itemsGroupedByType = Object.keys(itemsByType).map((typeName) => ({
-      typeName,
-      menuItems: itemsByType[typeName],
-    }));
-
-    return itemsGroupedByType;
+    return result;
   };
 
-  const calculatorPrice = (menuData) => {
-    let price = 0;
-    menuData?.forEach((item) => {
-      price += getDecimal(item.totalPrice);
-    });
-    return price;
+  const handleCloseModal = () => {
+    setIsOpenModal(false);
   };
 
-  const handleCheckboxClick = () => {
-    return 1;
-  };
-
-  const handleClickEdit = () => {
-    setIsEdit(true);
+  const handleClickCancel = () => {
+    setIsOpenModal(false);
   };
 
   const fetchMenuItemTypeDish = async () => {
@@ -77,14 +74,29 @@ const DetailMenu = () => {
       dispatch(statusApiReducer.actions.setMessageError(error?.message));
     }
   };
-
-  const handleIncrease = (item) => {
-    item.quantity += 1;
-  };
-
-  const handleDecrease = (item) => {
-    if (item.quantity > 0) {
-      item.quantity -= 1;
+  
+  const handleExport = () => {
+    console.log(1);
+    setIsSubmitted(true);
+    try {
+      const capture: any = document.querySelector(".actual-receipt");
+      console.log(capture);
+      html2canvas(capture).then((canvas) => {
+        const imgData = canvas.toDataURL("img/png");
+        const doc = new jsPDF("p", "mm", "a4");
+        const componentWidth = doc.internal.pageSize.getWidth();
+        const componentHeight = doc.internal.pageSize.getHeight();
+        doc.addImage(imgData, "PNG", 0, 0, componentWidth, componentHeight);
+  
+        // Open the PDF in a new tab or window for review
+        const pdfData = doc.output("blob");
+        const url = URL.createObjectURL(pdfData);
+        window.open(url, "_blank");
+      });
+      setIsSubmitted(false);
+    } catch (error:any) {
+      setIsSubmitted(false);
+      dispatch(statusApiReducer.actions.setMessageError(error?.message));
     }
   };
 
@@ -93,7 +105,18 @@ const DetailMenu = () => {
       const res = await getMenuComboById(
         Number(pathname?.split("-")[pathname?.split("-").length - 1])
       );
-      setMenuData(res.comboItems);
+      setMenuData(
+        res.comboItems?.map((item) => ({
+          ...item?.menuItem,
+          quantity: item?.quantity,
+        }))
+      );
+      setCheckedMenus(
+        res.comboItems?.map((item) => ({
+          ...item?.menuItem,
+          quantity: item?.quantity,
+        }))
+      );
       setDataCombo(res);
       const brCrumbs = breadCrumbs && JSON.parse(breadCrumbs);
 
@@ -125,7 +148,7 @@ const DetailMenu = () => {
   const organizeDishesByType = (menuItems) => {
     const dishesByType = {};
 
-    menuItems?.map((dish) => {
+    menuItems?.forEach((dish) => {
       const typeId = dish.typeDish.id;
 
       if (!dishesByType[typeId]) {
@@ -135,10 +158,89 @@ const DetailMenu = () => {
         };
       }
 
-      dishesByType[typeId].dishes.push(dish);
+      const existingDish = dishesByType[typeId].dishes.find(
+        (item) => item.id === dish.id
+      );
+      if (existingDish) {
+        existingDish.quantity += dishQuantities[dish.id] || 1;
+      } else {
+        dishesByType[typeId].dishes.push({
+          ...dish,
+          quantity: dish?.quantity,
+        });
+      }
     });
 
     return Object.values(dishesByType);
+  };
+
+  const handleClickDish = (menu) => {
+    setCheckedMenus((prevSelectedItems) => [
+      ...prevSelectedItems,
+      { ...menu, quantity: dishQuantities[menu.id] || 1 },
+    ]);
+    localStorage.setItem(
+      "menuComboCustomized",
+      JSON.stringify([
+        ...checkedMenus,
+        { ...menu, quantity: dishQuantities[menu.id] || 1 },
+      ])
+    );
+  };
+
+  // Function to handle increasing the quantity
+  const handleIncrease = (menu) => {
+    setDishQuantities((prevQuantities) => ({
+      ...prevQuantities,
+      [menu.id]: (prevQuantities[menu.id] || 1) + 1,
+    }));
+  };
+
+  // Function to handle decreasing the quantity
+  const handleDecrease = (menu) => {
+    setDishQuantities((prevQuantities) => {
+      const newQuantity = (prevQuantities[menu.id] || menu?.quantity) - 1;
+      if (newQuantity < 1) {
+        return prevQuantities;
+      }
+      return {
+        ...prevQuantities,
+        [menu.id]: newQuantity,
+      };
+    });
+  };
+
+  const handleBookingTable = () => {
+    return;
+  };
+
+  const handleJsonParse = (string: string) => {
+    const data = LocalStorage.get(string);
+    return JSON.parse(data as string);
+  };
+
+  const handleOpenModel = () => {
+    setIsOpenModal(true);
+  };
+
+  const totalPrices = () => {
+    return formatMoney(
+      calculatorPrice(
+        organizeDishesByType(handleJsonParse("menuComboCustomized") || menuData)
+      )
+    );
+  };
+
+  const convertDataMenuBook = () => {
+    return organizeDishesByType(
+      handleJsonParse("menuComboCustomized") || menuData
+    );
+  };
+
+  const onSubmit = () => {};
+
+  const handleChooseTable = () => {
+    setIsOpenModalChooseTable(true);
   };
 
   //useEffect
@@ -178,10 +280,10 @@ const DetailMenu = () => {
           </div>
         </div>
       )}
-      <div className="flex justify-center w-full text-[--clr-gray-500] overflow-auto max-h-[500px]">
-        <div className="max-h-[500px] text-center w-3/8 overflow-auto">
-          {isEdit ? (
-            <div className="overflow-auto sticky">
+      <div className="flex justify-start w-full text-[--clr-gray-500] overflow-auto max-h-[450px]">
+        <div className="max-h-[450px] flex-1  text-center min-w-1/3 overflow-auto">
+          {!isEdit ? (
+            <div className="overflow-auto sticky w-full">
               {organizeDishesByType(menuItems).length > 0 &&
                 organizeDishesByType(menuItems)?.map((dish: any, index) => (
                   <div key={index}>
@@ -195,7 +297,8 @@ const DetailMenu = () => {
                     {dish?.dishes?.map((menu) => (
                       <div
                         key={menu.id}
-                        className="flex items-center gap-3 mb-6"
+                        className="flex items-center gap-3 py-4 px-4 cursor-pointer hover:bg-gray-100"
+                        onClick={() => handleClickDish(menu)}
                       >
                         <Avatar
                           alt="Image food"
@@ -206,49 +309,34 @@ const DetailMenu = () => {
                           sx={{ width: 60, height: 60 }}
                         />
                         <div className="flex items-center">
-                          <div className="flex flex-col gap-1 min-w-[200px]">
-                            <Typography
-                              variant="body2"
-                              className="whitespace-nowrap text-left"
-                            >
-                              {menu.dishName}
-                            </Typography>
+                          <div className="flex gap-1">
+                            <div className="flex flex-col gap-1 max-w-[200px]">
+                              <Typography
+                                variant="body1"
+                                className="whitespace-nowrap text-left"
+                              >
+                                {menu.dishName}
+                              </Typography>
+                              <Typography
+                                variant="body2"
+                                className="whitespace-nowrap text-left truncate w-[190px] italic"
+                              >
+                                <Tooltip title={menu?.description}>
+                                  {menu?.description || (
+                                    <p className="italic">Chưa có mô tả</p>
+                                  )}
+                                </Tooltip>
+                              </Typography>
+                            </div>
                             <Typography
                               variant="body2"
                               color="textSecondary"
                               className="block"
                               width={150}
                             >
-                              Giá: {formatDecimal(menu.price)} VND
+                              Giá: {formatDecimal(menu?.price)} VND
                             </Typography>
                           </div>
-
-                          <div className="flex items-center ml-2 gap-2 mr-4">
-                            <Button
-                              disabled={!isEdit}
-                              variant="outlined"
-                              className="text-black"
-                              onClick={() => handleDecrease(menu)}
-                            >
-                              -
-                            </Button>
-                            <Typography variant="body2" className="mx-4">
-                              {menu.quantity}
-                            </Typography>
-                            <Button
-                              disabled={!isEdit}
-                              variant="outlined"
-                              onClick={() => handleIncrease(menu)}
-                            >
-                              +
-                            </Button>
-                          </div>
-                          <CheckBox
-                            disabled={!isEdit}
-                            name="food"
-                            label={""}
-                            onChange={handleCheckboxClick}
-                          />
                         </div>
                       </div>
                     ))}
@@ -273,86 +361,133 @@ const DetailMenu = () => {
             </>
           )}
         </div>
-        <div className="max-h-[500px] items-center ml-5 p-6 w-5/8 overflow-auto">
+        <div className="max-h-[450px] items-center ml-5 p-6 w-2/3 overflow-auto">
           <div className="sticky">
-            {groupComboItemsByTypeName(menuData)?.map((item, index) => (
-              <div key={index}>
-                <p className="mb-5 text-[16px] font-semibold text-blue-400">
-                  {index + 1}. {item?.typeName}
-                </p>
-                {item?.menuItems?.map((data, index) => (
-                  <div key={index} className="flex items-center gap-5 mb-6">
-                    <Avatar
-                      alt="Image food"
-                      src={
-                        data.menuItem.image ||
-                        "https://lavenderstudio.com.vn/wp-content/uploads/2017/03/chup-san-pham.jpg"
-                      }
-                      sx={{ width: 100, height: 100 }}
-                    />
-                    <div className="flex items-center">
-                      <div className="flex flex-col min-w-[350px] gap-1">
-                        <Typography variant="h6">
-                          {data?.menuItem?.dishName}
-                        </Typography>
-                        <Typography variant="body2" className="max-w-[300px]">
-                          {data?.menuItem?.description || "undefined"}
-                        </Typography>
-                      </div>
-                      <Typography
-                        variant="body2"
-                        color="textSecondary"
-                        className="block"
-                        width={150}
-                      >
-                        Giá: {formatDecimal(data.totalPrice)} VND
-                      </Typography>
-                      <div className="flex items-center ml-2 gap-2 mr-4">
-                        <Button
-                          disabled={!isEdit}
-                          variant="outlined"
-                          className="text-black"
-                          onClick={() => handleDecrease(item)}
-                        >
-                          -
-                        </Button>
-                        <Typography variant="body2" className="mx-4">
-                          {data.quantity}
-                        </Typography>
-                        <Button
-                          disabled={!isEdit}
-                          variant="outlined"
-                          onClick={() => handleIncrease(item)}
-                        >
-                          +
-                        </Button>
-                      </div>
-                      <CheckBox
-                        disabled={!isEdit}
-                        name="food"
-                        label={""}
-                        onChange={handleCheckboxClick}
+            {convertDataMenuBook().length > 0 &&
+              convertDataMenuBook()?.map((item: any, index) => (
+                <div key={index}>
+                  <p className="mb-5 text-[16px] font-semibold text-blue-400">
+                    {index + 1}. {item?.typeName}
+                  </p>
+                  {item?.dishes?.map((data, index) => (
+                    <div key={index} className="flex items-center gap-5 mb-6">
+                      <Avatar
+                        alt="Image food"
+                        src={
+                          data?.image ||
+                          "https://lavenderstudio.com.vn/wp-content/uploads/2017/03/chup-san-pham.jpg"
+                        }
+                        sx={{ width: 100, height: 100 }}
                       />
+                      <div className="flex items-center">
+                        <div className="flex flex-col min-w-[350px] gap-1">
+                          <Typography variant="h6">{data?.dishName}</Typography>
+
+                          <Typography
+                            variant="body2"
+                            className="max-w-[300px] italic"
+                          >
+                            {data?.description || (
+                              <p className="italic">Chưa có mô tả</p>
+                            )}
+                          </Typography>
+                        </div>
+                        <Typography
+                          variant="body2"
+                          color="textSecondary"
+                          className="block"
+                          width={150}
+                        >
+                          Giá:{" "}
+                          {formatMoney(getDecimal(data.price) * data?.quantity)}{" "}
+                          VND
+                        </Typography>
+                        <div className="flex items-center ml-2 gap-2 mr-4">
+                          <Button
+                            variant="outlined"
+                            className="text-black"
+                            onClick={() => handleDecrease(data)}
+                          >
+                            -
+                          </Button>
+                          <Typography variant="body2" className="mx-4">
+                            {dishQuantities[data.id] || data.quantity}
+                          </Typography>
+                          <Button
+                            variant="outlined"
+                            onClick={() => handleIncrease(data)}
+                          >
+                            +
+                          </Button>
+                        </div>
+                        <CheckBox
+                          name="food"
+                          label={""}
+                          //onChange={(e) => handleCheckboxClick(item)}
+                        />
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            ))}
+                  ))}
+                </div>
+              ))}
           </div>
         </div>
       </div>
       <div className="flex justify-between items-center">
         <div className="flex gap-4">
-          <ButtonBtn onClick={handleClickEdit}>
-            {!isEdit ? "Chỉnh sửa" : "Hủy bỏ"}
-          </ButtonBtn>
-          {isEdit && (
-            <ButtonBtn onClick={handleClickEdit}>Lưu kết quả</ButtonBtn>
-          )}
+          <ButtonBtn onClick={handleOpenModel}>Xem trước file PDF</ButtonBtn>
+          <ModalPopup
+            open={isOpenModal}
+            title="Chi tiết"
+            setOpen={setIsOpenModal}
+            closeModal={handleCloseModal}
+          >
+            <div className="min-w-[500px] h-auto p-6 relative">
+              <div className="flex flex-col gap-4 w-full actual-receipt">
+                <BookingPDF
+                  total={totalPrices()}
+                  data={convertDataMenuBook()}
+                  handleExport = {handleExport}
+                />
+              </div>
+              <div className="flex justify-end mt-[-0.25rem] gap-4">
+                <ButtonBtn
+                  bg="var(--clr-orange-400)"
+                  onClick={handleClickCancel}
+                  startIcon={<CheckIcon fill="white" />}
+                >
+                  <span className="font-semibold">Thoát</span>
+                </ButtonBtn>
+                <ButtonBtn
+                  bg="var(--clr-blue-400)"
+                  onClick={handleExport}
+                  startIcon={isSubmitted && <LoadingButton/>}
+                >
+                  <span className="font-semibold">Xuất file</span>
+                </ButtonBtn>
+              </div>
+            </div>
+          </ModalPopup>
         </div>
-        <p>
-          Tổng tiền: <span>{formatMoney(calculatorPrice(menuData))}</span>
-        </p>
+        <div className="flex gap-5 items-center">
+          <ButtonBtn onClick={handleChooseTable}>Đặt bàn</ButtonBtn>
+          <ModalPopup
+            open={isOpenModalChooseTable}
+            title={"Chọn bàn"}
+            setOpen={setIsOpenModalChooseTable}
+            closeModal={handleCloseModal}
+          >
+            <DetailModalBook handleClickCancel={handleClickCancel} />
+          </ModalPopup>
+          {/*<ButtonBtn onClick={handleBookingTable}>Đặt bàn</ButtonBtn>*/}
+          <p>
+            Tổng tiền:{" "}
+            <span>
+              {totalPrices()}
+              VND
+            </span>
+          </p>
+        </div>
       </div>
     </div>
   );

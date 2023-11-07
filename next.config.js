@@ -1,6 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   //pageExtensions: ["ts", "tsx"],
+  middleware: [
+    {
+      handler: "./middleware",
+      matcher: ["/((?!.+\\.[\\w]+$|_next).*)", "/", "/(api|trpc)(.*)"],
+    },
+  ],
   reactStrictMode: true,
   images: {
     domains: [

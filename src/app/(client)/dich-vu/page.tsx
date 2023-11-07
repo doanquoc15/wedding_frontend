@@ -15,6 +15,7 @@ import ModalPopup from "@/components/common/ModalPopup";
 import { formatDecimal } from "@/utils/formatDecimal";
 import { breadCrumbReducer } from "@/stores/reducers/breadCrumb";
 import { SERVICE_BREADCRUMB } from "@/constants/common";
+import { CheckIcon } from "@/components/Icons";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -27,30 +28,6 @@ const Item = styled(Paper)(({ theme }) => ({
   gap: "25px",
   color: theme.palette.text.secondary,
 }));
-
-export const CheckIcon = ({ fill = "#c4c3c2" }) => {
-  return (
-    <svg
-      width="11"
-      height="9"
-      viewBox="0 0 11 9"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M8.71233 0.711629C8.88842 0.54399 9.12274 0.451312 9.36585 0.453152C9.60897 0.454991 9.84186 0.551204 10.0154
-        0.721488C10.1889 0.891773 10.2895 1.12281 10.2959 1.36585C10.3024 1.60888 10.2141 1.84491 10.0498 2.02413L5.06233 
-        8.26163C4.97657 8.354 4.87306 8.42813 4.758 8.47959C4.64293 8.53104 4.51867 8.55877 4.39264 8.5611C4.26662 8.56343 
-        4.14142 8.54033 4.02453 8.49317C3.90763 8.44601 3.80145 8.37576 3.71233 8.28663L0.404831 4.97913C0.312722 4.8933 0.238845 
-        4.7898 0.187605 4.6748C0.136365 4.5598 0.108812 4.43566 0.106591 4.30978C0.10437 4.1839 0.127526 4.05887 0.174678 
-        3.94213C0.221829 3.8254 0.29201 3.71935 0.381033 3.63033C0.470057 3.54131 0.576099 3.47113 0.692834 3.42398C0.809569 
-        3.37682 0.934606 3.35367 1.06048 3.35589C1.18636 3.35811 1.3105 3.38566 1.4255 3.4369C1.5405 3.48814 1.644 3.56202
-        1.72983 3.65413L4.34733 6.27038L8.68858 0.739129C8.6964 0.729505 8.70474 0.720324 8.71358 0.711629H8.71233Z"
-        fill={fill}
-      />
-    </svg>
-  );
-};
 
 const ServicePage = () => {
   //useState

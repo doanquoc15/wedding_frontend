@@ -16,6 +16,14 @@ export const WITHOUT_CONTENT = [
   "not-found",
 ];
 
+export const Zone ={
+  KHU_A:"KHU_A",
+  KHU_B:"KHU_B",
+  KHU_C:"KHU_C",
+  KHU_D:"KHU_D",
+  KHU_VIP:"KHU_VIP",
+};
+
 export const MENU_PAGE_SIZE = 6;
 
 //Breadcrumb

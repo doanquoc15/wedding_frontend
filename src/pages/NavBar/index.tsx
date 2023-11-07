@@ -21,8 +21,6 @@ import style from "@/styles/navbar.module.scss";
 import logo_sky_view from "@/statics/images/logo-c-skyview.png";
 import { dataPages, dataSettings } from "@/data";
 import { LocalStorage } from "@/shared/config/localStorage";
-import { useAppSelector } from "@/stores/hook";
-import { selectUsers } from "@/stores/reducers/user";
 
 function NavBar() {
   //useState
@@ -33,9 +31,8 @@ function NavBar() {
   );
 
   const [isHeaderFixed, setHeaderFixed] = useState<boolean>(false);
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<any>(null);
 
-  
   //function
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
@@ -77,10 +74,10 @@ function NavBar() {
   }, []);
 
   useEffect(() => {
-    const savedUser = LocalStorage.get('user');
+    const savedUser = LocalStorage.get("user");
     if (savedUser) {
       setUser(JSON.parse(savedUser));
-    };
+    }
   }, []);
 
   return (

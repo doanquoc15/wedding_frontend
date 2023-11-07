@@ -1,0 +1,18 @@
+const groupComboItemsByTypeName = (comboItems) => {
+    const itemsByType = {};
+
+    comboItems?.map((comboItem) => {
+      const typeName = comboItem?.typeDish?.typeName;
+      if (!itemsByType[typeName]) {
+        itemsByType[typeName] = [];
+      }
+      itemsByType[typeName].push(comboItem);
+    });
+
+    const itemsGroupedByType = Object.keys(itemsByType).map((typeName) => ({
+      typeName,
+      menuItems: itemsByType[typeName],
+    }));
+
+    return itemsGroupedByType;
+  };

@@ -14,7 +14,7 @@ export class StorageItem {
 }
 
 export const LocalStorage = {
-  add(key: string, item: string) {
+  add(key: string, item: any) {
     localStorage.setItem(key, item);
   },
   get(key: string) {

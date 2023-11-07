@@ -203,7 +203,6 @@ axios.interceptors.request.use(
     if (config.data) {
       newConfig.data = camelizeKeys(config.data);
     }
-    //newConfig.headers.Authorization = `Bearer ${accessToken}`;
     return newConfig;
   },
   (error) => {
