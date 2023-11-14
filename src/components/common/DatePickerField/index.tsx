@@ -3,7 +3,6 @@ import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import moment from "moment";
 
 import { CalendarIcon } from "@/components/Icons";
-import { DatePickerType } from "@/types/common";
 
 export default function DatePickerField(props:any) {
   const { name, control, defaultValue, ...desktopDatePickerProps } = props;

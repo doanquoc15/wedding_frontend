@@ -24,6 +24,29 @@ export const Zone ={
   KHU_VIP:"KHU_VIP",
 };
 
+//format date
+
+export const SHORT_DATE_TO_CALC_PROGRESS = "YYYY-M-D";
+export const SHORT_DATE = "YYYY-MM-DD";
+export const FORM_SHORT_DATE = "MMMM D, YYYY";
+export const FORM_LONG_DATE = "dddd, MMMM D, YYYY";
+export const LONG_DATE = "YYYY-MM-DD HH:mm:ss";
+export const SHORT_TIME = "HH:mm";
+export const LONG_TIME = "HH:mm:ss";
+export const FORMAT_DATE = "Mon DD, YYYY";
+export const FORMAT_DATE_MORE = "M DD, YYYY";
+export const FORMAT_DATE_LESS = "MMM D";
+export const FORM_SHORT_MONTH = "MMM D, YYYY";
+export const FORM_SHORT_TABLE = "DD/MM/YYYY";
+export const FORM_SHORT_TABLE_REVERT = "YYYY/MM/DD";
+export const FORM_SHORT_TABLE_REVERT_EXPAND = "DD/MM/YYYY";
+export const FORM_LONG_DATE_TABLE = "HH:mm, ddd D MMM, YYYY";
+export const REQUEST_LONG_DATE = "MMM DD, YYYY";
+export const DATE_CALENDAR_SHORT = "DD-MM-YYYY";
+export const DATE_CALENDAR_SHORT_FORM = "MM/DD/YYYY";
+
+export const vndToUsdExchangeRate = 0.000041;
+
 export const MENU_PAGE_SIZE = 6;
 
 //Breadcrumb

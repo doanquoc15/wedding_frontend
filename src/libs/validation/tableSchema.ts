@@ -1,22 +1,23 @@
 import * as yup from "yup";
 
-import { Zone } from "@/constants/common";
-//import { ERROR_MESSAGES } from "@/constants/errors";
+import { ERROR_MESSAGES } from "@/constants/errors";
 
 export const tableSchema = yup.object().shape({
-  numberTable: yup.number().typeError("Phải là số").min(1,"Không được nhỏ hơn 1!"),
-  numberOfGuest: yup.number().typeError("Phải là số").min(1,"Không được nhỏ hơn 1!"),
+  numberTable: yup.number().typeError(ERROR_MESSAGES.MUST_NUMBER).min(1,ERROR_MESSAGES.MIN_1),
+  numberOfGuest: yup.number().typeError(ERROR_MESSAGES.MUST_NUMBER).min(1,ERROR_MESSAGES.MIN_1),
   date: yup
     .date()
+    .min(new Date(), ERROR_MESSAGES.NOT_BEFORE_TODAY)
     .transform((_, value) => (value ? new Date(value) : null))
-    .required("Trường này là bắt buộc!"),
-  zone : yup.mixed<string>().oneOf(Object.values(Zone)),
+    .required(ERROR_MESSAGES.REQUIRED_FIELD),
+  zone : yup.string().required(ERROR_MESSAGES.REQUIRED_FIELD),
   email: yup
     .string()
-    .email("Emaiol không hợp lệ!")
-    .required("Trường này là bắt buộc!"),
+    .email(ERROR_MESSAGES.INVALID_EMAIL)
+    .required(ERROR_MESSAGES.REQUIRED_FIELD),
   fullName: yup
     .string()
-    .required("Trường này là bắt buộc!"),
-  phone: yup.string().matches(/^(0[1-9][0-9]{8,9})$/,"Số điện thoại không hợp lệ!")
+    .required(ERROR_MESSAGES.REQUIRED_FIELD),
+  phone: yup.string().matches(/^(0[1-9][0-9]{8,9})$/,ERROR_MESSAGES.INVALID_PHONE),
+  time: yup.string().required("CCC"),
 });

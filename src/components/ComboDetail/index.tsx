@@ -5,7 +5,7 @@ import { useRouter, usePathname } from "next/navigation";
 
 import { formatDecimal } from "@/utils/formatDecimal";
 import { createSlug } from "@/utils/createSlug";
-import { paymentCheckout } from "@/services/payment.service";
+import { paymentCheckout } from "@/services/payment";
 
 import Button from "../common/Button";
 

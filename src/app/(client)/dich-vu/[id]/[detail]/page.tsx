@@ -39,6 +39,9 @@ const DetailMenu = () => {
   const [isOpenModalChooseTable, setIsOpenModalChooseTable] =
     useState<boolean>(false);
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
+  const [serviceId, setServiceId] = useState<number>();
+  const [comboMenuId, setComboMenuId] = useState<number>();
+  const [selectedItems, setSelectedItems] = useState<any>([]);
 
   //const
   const dispatch = useAppDispatch();
@@ -61,9 +64,15 @@ const DetailMenu = () => {
   const handleCloseModal = () => {
     setIsOpenModal(false);
   };
+  const handleCloseModalChooseTable = () => {
+    setIsOpenModalChooseTable(false);
+  };
 
   const handleClickCancel = () => {
     setIsOpenModal(false);
+  };
+  const handleClickCancelChooseTable = () => {
+    setIsOpenModalChooseTable(false);
   };
 
   const fetchMenuItemTypeDish = async () => {
@@ -74,27 +83,30 @@ const DetailMenu = () => {
       dispatch(statusApiReducer.actions.setMessageError(error?.message));
     }
   };
-  
+
   const handleExport = () => {
-    console.log(1);
     setIsSubmitted(true);
     try {
       const capture: any = document.querySelector(".actual-receipt");
-      console.log(capture);
       html2canvas(capture).then((canvas) => {
         const imgData = canvas.toDataURL("img/png");
-        const doc = new jsPDF("p", "mm", "a4");
-        const componentWidth = doc.internal.pageSize.getWidth();
-        const componentHeight = doc.internal.pageSize.getHeight();
-        doc.addImage(imgData, "PNG", 0, 0, componentWidth, componentHeight);
-  
-        // Open the PDF in a new tab or window for review
-        const pdfData = doc.output("blob");
+        const pdf = new jsPDF("p", "px", "a4", true);
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = pdf.internal.pageSize.getHeight();
+        const imgWidth = canvas.width;
+        const imgHeight = canvas.height;
+        const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
+        const imgX = (pdfWidth - imgWidth * ratio) / 2;
+        const imgY = 0;
+        pdf.addImage(imgData, "PNG", imgX, imgY, imgWidth * ratio, imgHeight * ratio);
+
+        const pdfData = pdf.output("blob");
         const url = URL.createObjectURL(pdfData);
         window.open(url, "_blank");
       });
+      setIsOpenModal(false);
       setIsSubmitted(false);
-    } catch (error:any) {
+    } catch (error: any) {
       setIsSubmitted(false);
       dispatch(statusApiReducer.actions.setMessageError(error?.message));
     }
@@ -105,6 +117,8 @@ const DetailMenu = () => {
       const res = await getMenuComboById(
         Number(pathname?.split("-")[pathname?.split("-").length - 1])
       );
+      setServiceId(res?.serviceId);
+      setComboMenuId(res?.id);
       setMenuData(
         res.comboItems?.map((item) => ({
           ...item?.menuItem,
@@ -201,7 +215,12 @@ const DetailMenu = () => {
     setDishQuantities((prevQuantities) => {
       const newQuantity = (prevQuantities[menu.id] || menu?.quantity) - 1;
       if (newQuantity < 1) {
-        return prevQuantities;
+        const dataLocalStorages = JSON.parse(localStorage?.getItem("menuComboCustomized") as string);
+        if (dataLocalStorages){
+          localStorage.setItem("menuComboCustomized", JSON.stringify(dataLocalStorages.filter(item => item?.id !== menu?.id)));
+        } else {
+          setMenuData(pre => pre.filter(item => item.id !== menu.id));
+        }
       }
       return {
         ...prevQuantities,
@@ -224,10 +243,8 @@ const DetailMenu = () => {
   };
 
   const totalPrices = () => {
-    return formatMoney(
-      calculatorPrice(
-        organizeDishesByType(handleJsonParse("menuComboCustomized") || menuData)
-      )
+    return calculatorPrice(
+      organizeDishesByType(handleJsonParse("menuComboCustomized") || menuData)
     );
   };
 
@@ -237,10 +254,38 @@ const DetailMenu = () => {
     );
   };
 
-  const onSubmit = () => {};
+  const onSubmit = () => { };
+
+  //handle click Checkbox
+  const handleCheckboxClick = (item) => {
+    const itemId = item.id;
+    // Check if the item is already selected
+    if (selectedItems.includes(itemId)) {
+      // If selected, remove it from the selected items
+      setSelectedItems((prevSelectedItems) =>
+        prevSelectedItems.filter((selectedId) => selectedId !== itemId)
+      );
+    } else {
+      // If not selected, add it to the selected items
+      setSelectedItems((prevSelectedItems) => [...prevSelectedItems, itemId]);
+    }
+  };
 
   const handleChooseTable = () => {
     setIsOpenModalChooseTable(true);
+  };
+
+  console.log(selectedItems);
+
+  //handle delete dishes
+  const handleDeleteDishes = () => {
+    const dataLocalStorages = JSON.parse(localStorage?.getItem("menuComboCustomized") as string);
+    if (dataLocalStorages?.length > 0){
+      localStorage.setItem("menuComboCustomized", JSON.stringify(dataLocalStorages.filter(item => !selectedItems.includes(item?.id))));
+    } else {
+      setMenuData(pre => pre.filter(item => !selectedItems.includes(item?.id)));
+    }
+    setSelectedItems([]);
   };
 
   //useEffect
@@ -423,7 +468,8 @@ const DetailMenu = () => {
                         <CheckBox
                           name="food"
                           label={""}
-                          //onChange={(e) => handleCheckboxClick(item)}
+                          onChange={() => handleCheckboxClick(data)}
+                          checked={selectedItems.includes(data.id)}
                         />
                       </div>
                     </div>
@@ -447,7 +493,7 @@ const DetailMenu = () => {
                 <BookingPDF
                   total={totalPrices()}
                   data={convertDataMenuBook()}
-                  handleExport = {handleExport}
+                  handleExport={handleExport}
                 />
               </div>
               <div className="flex justify-end mt-[-0.25rem] gap-4">
@@ -461,7 +507,7 @@ const DetailMenu = () => {
                 <ButtonBtn
                   bg="var(--clr-blue-400)"
                   onClick={handleExport}
-                  startIcon={isSubmitted && <LoadingButton/>}
+                  startIcon={isSubmitted && <LoadingButton />}
                 >
                   <span className="font-semibold">Xuất file</span>
                 </ButtonBtn>
@@ -470,20 +516,25 @@ const DetailMenu = () => {
           </ModalPopup>
         </div>
         <div className="flex gap-5 items-center">
-          <ButtonBtn onClick={handleChooseTable}>Đặt bàn</ButtonBtn>
+          {selectedItems.length > 0 && <ButtonBtn onClick={handleDeleteDishes} width={100} bg="var(--clr-red-400)">Xóa</ButtonBtn>}
+          <ButtonBtn width={100} onClick={handleChooseTable}>Đặt bàn</ButtonBtn>
           <ModalPopup
             open={isOpenModalChooseTable}
-            title={"Chọn bàn"}
+            title={"Đặt bàn"}
             setOpen={setIsOpenModalChooseTable}
-            closeModal={handleCloseModal}
+            closeModal={handleCloseModalChooseTable}
           >
-            <DetailModalBook handleClickCancel={handleClickCancel} />
+            <DetailModalBook 
+              handleClickCancel={handleClickCancelChooseTable} 
+              handleCloseModals={handleCloseModalChooseTable}
+              serviceId={serviceId} 
+              comboMenuId = {comboMenuId} 
+              priceTotalDish = {totalPrices()} />
           </ModalPopup>
-          {/*<ButtonBtn onClick={handleBookingTable}>Đặt bàn</ButtonBtn>*/}
           <p>
             Tổng tiền:{" "}
             <span>
-              {totalPrices()}
+              {formatMoney(totalPrices())}
               VND
             </span>
           </p>

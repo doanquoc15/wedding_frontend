@@ -8,4 +8,9 @@ export const ERROR_MESSAGES = {
   NAME_REQUIRED:"Trường tên là bắt buộc",
   NAME_LEAST_6_CHARACTER:"Tên ít nhất 6 ký tự.",
   NAME_MAX_11_CHARACTER:"Tên nhiều nhất 11 ký tự.",
+  MIN_1:"Không được ít hơn 1",
+  MUST_NUMBER:"Phải là số.",
+  INVALID_PHONE:"Số điện thoại không hợp lệ.",  
+  REQUIRED_FIELD:"Trường này là bắt buộc!",
+  NOT_BEFORE_TODAY:"Không được trước ngày hiện tại!",
 };

@@ -147,3 +147,17 @@ export interface DatePickerType extends Omit<DesktopDatePickerProps<any>, "onCha
   sx?: any;
   id?: string | number;
 }
+
+export interface IDetailModalBookProps {
+  handleClickCancel: () => void;
+  handleCloseModals: () => void;
+  serviceId: number | undefined;
+  comboMenuId: number | undefined;
+  priceTotalDish: any;
+}
+
+export interface IZones {
+  id: number;
+  zoneName: string;
+  numberRoom: number;
+}
