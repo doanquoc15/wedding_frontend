@@ -13,6 +13,7 @@ import Typography from "@mui/material/Typography";
 import { Container } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
+import { setCookie } from "cookies-next";
 
 import LoadingButton from "@/components/common/Loading";
 import { SignInType } from "@/types/common";
@@ -36,10 +37,12 @@ const SignInPage = () => {
     try {
       const { data } = await SignInAPI(values);
       setIsSubmit(false);
+      const roleName = data?.data?.user.role.roleName;
+      if (roleName === "CUSTOMER") router.push("/");
+      if (roleName === "ADMIN") router.push("/admin");
       LocalStorage.add("user", JSON.stringify(data?.data?.user));
       CookiesStorage.setCookieData("token", data?.data?.tokens?.accessToken);
-      if (data?.data?.user.role.roleName === "CUSTOMER") router.push("/");
-      if (data?.data?.user.role.roleName === "ADMIN") router.push("/dashboard");
+      setCookie("role", data?.data?.user.role.roleName);
       dispatch(
         statusApiReducer.actions.setMessageSuccess("Đăng nhập thành công!")
       );
@@ -59,7 +62,7 @@ const SignInPage = () => {
         }}
       >
         <Grid container>
-          <CssBaseline />
+          <CssBaseline/>
           <Grid
             item
             xs={false}
@@ -105,7 +108,7 @@ const SignInPage = () => {
                   required
                   fullWidth
                   id="email"
-                  label="Email Address"
+                  label="Email"
                   name="email"
                   autoComplete="email"
                   autoFocus
@@ -116,29 +119,30 @@ const SignInPage = () => {
                   required
                   fullWidth
                   name="password"
-                  label="Password"
+                  label="Mật khẩu"
                   type="password"
                   id="password"
                   autoComplete="current-password"
                 />
                 <FormControlLabel
-                  control={<Checkbox value="remember" color="primary" />}
-                  label="Remember me"
+                  control={<Checkbox value="remember" color="primary"/>}
+                  label="Nhớ mật khẩu"
+                  sx={{ color: "var(--clr-gray-500)", fontSize: "13px" }}
                 />
                 <Button
-                  startIcon={isSubmit && <LoadingButton />}
+                  startIcon={isSubmit && <LoadingButton/>}
                   type="submit"
                   fullWidth
                   variant="contained"
-                  className="bg-blue-500"
+                  className="bg-blue-500 tẽt-[14px] font-[600]"
                   sx={{ mt: 3, mb: 2 }}
                 >
-                  Sign In
+                  Đăng nhập
                 </Button>
                 <Grid container>
                   <Grid item xs>
                     <Link href="/register  " variant="body2">
-                      Forgot password?
+                      Quên mật khẩu?
                     </Link>
                   </Grid>
                   <Grid item>

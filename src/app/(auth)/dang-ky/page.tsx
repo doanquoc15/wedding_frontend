@@ -46,7 +46,7 @@ export default function SignUpPage() {
         }}
       >
         <Grid container>
-          <CssBaseline />
+          <CssBaseline/>
           <Grid
             item
             xs={12}
@@ -58,7 +58,7 @@ export default function SignUpPage() {
           >
             <form className="mx-8 mt-6" onSubmit={handleSubmit(onSubmit)}>
               <Typography component="h1" variant="h5">
-                Đăng ký
+                                Đăng ký
               </Typography>
               <TextField
                 {...register("name")}
@@ -111,14 +111,14 @@ export default function SignUpPage() {
               />
 
               <Button
-                startIcon={isSubmit && <LoadingButton />}
+                startIcon={isSubmit && <LoadingButton/>}
                 type="submit"
                 fullWidth
                 variant="contained"
                 className="bg-blue-500"
                 sx={{ mt: 3, mb: 2 }}
               >
-                Đăng ký
+                                Đăng ký
               </Button>
               <Grid container>
                 <Grid item>

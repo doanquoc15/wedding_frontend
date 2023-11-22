@@ -88,15 +88,7 @@ const DetailModalBook = (props : IDetailModalBookProps) => {
         depositMoney: calculatorAllPrice()*15/100,
       };
 
-      console.log(dataBook);
-
-      delete dataBook.phone;
-      delete dataBook.fullName;
-      delete dataBook.zone;
-      delete dataBook.email;
-      delete dataBook.date;
-
-      //await createBooking(dataBook);
+      await createBooking(dataBook);
       setIsPayment(true);
       dispatch(statusApiReducer.actions.setMessageSuccess("Đặt bàn thành công !"));
     } catch (error: any) {

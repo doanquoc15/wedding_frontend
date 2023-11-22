@@ -161,3 +161,25 @@ export interface IZones {
   zoneName: string;
   numberRoom: number;
 }
+export interface SelectFieldPropsType extends SelectProps<any> {
+  name: string;
+  control: Control<any>;
+  options: {
+    value?: any;
+    label?: any;
+    id?: any;
+    name?: any;
+    shortName?: any;
+    avatar?: any;
+  }[];
+  defaultValue?: unknown;
+  labelDisplay?: string;
+  required?: boolean;
+  hasLegend?: boolean;
+  styleLabel?: object;
+  width?: number;
+  isAvatarOption?: boolean;
+  image?: any;
+  handleChange?: any;
+  quarterCurrent?: any;
+}

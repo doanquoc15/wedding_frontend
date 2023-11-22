@@ -15,12 +15,20 @@ export const addQueryParam = (key: string, value: string) => {
   window.history.pushState({}, "", url.toString());
 };
 
+//add multiple queries
+export const addQueryParams = (params: Object) => {
+  const url = new URL(window.location.href);
+  Object.entries(params).forEach(([key, value]) => {
+    url.searchParams.set(key, String(value));
+  });
+  window.history.pushState({}, "", url.toString());
+};
+
 //function add multiple query
 export function addMultipleQueryParams(searchParams,params: Object) {
 
   // Lấy tất cả các query params hiện tại
   const currentParams = new URLSearchParams(searchParams.toString());
-  console.log(currentParams);
 
   // Cập nhật các query params mới
   Object.entries(params).forEach(([key, value]) => {

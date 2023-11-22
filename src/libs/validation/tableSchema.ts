@@ -18,6 +18,6 @@ export const tableSchema = yup.object().shape({
   fullName: yup
     .string()
     .required(ERROR_MESSAGES.REQUIRED_FIELD),
-  phone: yup.string().matches(/^(0[1-9][0-9]{8,9})$/,ERROR_MESSAGES.INVALID_PHONE),
+  phone: yup.string().matches(/^[0-9]{10}$/,ERROR_MESSAGES.INVALID_PHONE),
   time: yup.string().required("CCC"),
 });

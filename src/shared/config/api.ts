@@ -16,7 +16,7 @@ export const generateToken = () => ({
 });
 
 function getNotAuthApi(path: string, options: any = {}, apiURL?: string) {
-  return axios.get(`${API_URL || apiURL}/${path.replace(/^\//, "")}`, {
+  return axios.get(`${apiURL || API_URL}/${path.replace(/^\//, "")}`, {
     ...defaultOptions,
     ...options,
     headers: {
@@ -26,7 +26,7 @@ function getNotAuthApi(path: string, options: any = {}, apiURL?: string) {
 }
 
 function getApi(path: string, options: any = {}, apiURL?: string) {
-  return axios.get(`${API_URL || apiURL}/${path.replace(/^\//, "")}`, {
+  return axios.get(`${apiURL || API_URL }/${path.replace(/^\//, "")}`, {
     ...defaultOptions,
     ...options,
     headers: {
@@ -110,8 +110,8 @@ function putApiWithParams(
   });
 }
 
-function patchApi(path: string, data: any, options: any = {}) {
-  return axios.patch(`${API_URL}/${path.replace(/^\//, "")}`, data, {
+function patchApi(path: string, params: any, options: any = {}) {
+  return axios.patch(`${API_URL}/${path.replace(/^\//, "")}`, params, {
     ...defaultOptions,
     ...options,
     headers: {

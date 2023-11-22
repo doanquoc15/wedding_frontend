@@ -5,7 +5,7 @@ import { createTheme } from "@mui/material/styles";
 import { ToastContainer } from "react-toastify";
 import { ReactNode } from "react";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
-import { LocalizationProvider } from "@mui/x-date-pickers";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 
 import "../styles/globals.scss";
 import Providers from "@/stores/Providers";
@@ -23,17 +23,14 @@ function RootLayout({ children }: { children: ReactNode }) {
     <html lang="en">
       <body>
         <Providers>
-          <LocalizationProvider dateAdapter={AdapterMoment}>
-            <ThemeProvider theme={THEME}>
+          <ThemeProvider theme={THEME}>
+            <LocalizationProvider dateAdapter={AdapterMoment}>
               <ToastContainer />
               <ProviderStore>
-                <ClientComponent>
-                  {children}
-                </ClientComponent>
-
+                {children}
               </ProviderStore>
-            </ThemeProvider>
-          </LocalizationProvider>
+            </LocalizationProvider>
+          </ThemeProvider>
         </Providers>
       </body>
     </html>

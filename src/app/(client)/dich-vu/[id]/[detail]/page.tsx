@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Typography, Button, Avatar, Tooltip, TextField } from "@mui/material";
+import { Avatar, Button, Tooltip, Typography } from "@mui/material";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { jsPDF } from "jspdf";
@@ -193,13 +193,26 @@ const DetailMenu = () => {
       ...prevSelectedItems,
       { ...menu, quantity: dishQuantities[menu.id] || 1 },
     ]);
-    localStorage.setItem(
-      "menuComboCustomized",
-      JSON.stringify([
-        ...checkedMenus,
-        { ...menu, quantity: dishQuantities[menu.id] || 1 },
-      ])
-    );
+
+    const prev = JSON.parse(LocalStorage.get("menuComboCustomized") as string);
+
+    if (prev) {
+      localStorage.setItem(
+        "menuComboCustomized",
+        JSON.stringify([
+          ...prev,
+          { ...menu, quantity: dishQuantities[menu.id] || 1 },
+        ])
+      );
+    } else {
+      localStorage.setItem(
+        "menuComboCustomized",
+        JSON.stringify([
+          ...checkedMenus,
+          { ...menu, quantity: dishQuantities[menu.id] || 1 },
+        ])
+      );
+    }
   };
 
   // Function to handle increasing the quantity
@@ -216,7 +229,7 @@ const DetailMenu = () => {
       const newQuantity = (prevQuantities[menu.id] || menu?.quantity) - 1;
       if (newQuantity < 1) {
         const dataLocalStorages = JSON.parse(localStorage?.getItem("menuComboCustomized") as string);
-        if (dataLocalStorages){
+        if (dataLocalStorages) {
           localStorage.setItem("menuComboCustomized", JSON.stringify(dataLocalStorages.filter(item => item?.id !== menu?.id)));
         } else {
           setMenuData(pre => pre.filter(item => item.id !== menu.id));
@@ -254,19 +267,17 @@ const DetailMenu = () => {
     );
   };
 
-  const onSubmit = () => { };
+  const onSubmit = () => {
+  };
 
   //handle click Checkbox
   const handleCheckboxClick = (item) => {
     const itemId = item.id;
-    // Check if the item is already selected
     if (selectedItems.includes(itemId)) {
-      // If selected, remove it from the selected items
       setSelectedItems((prevSelectedItems) =>
         prevSelectedItems.filter((selectedId) => selectedId !== itemId)
       );
     } else {
-      // If not selected, add it to the selected items
       setSelectedItems((prevSelectedItems) => [...prevSelectedItems, itemId]);
     }
   };
@@ -275,12 +286,10 @@ const DetailMenu = () => {
     setIsOpenModalChooseTable(true);
   };
 
-  console.log(selectedItems);
-
   //handle delete dishes
   const handleDeleteDishes = () => {
     const dataLocalStorages = JSON.parse(localStorage?.getItem("menuComboCustomized") as string);
-    if (dataLocalStorages?.length > 0){
+    if (dataLocalStorages?.length > 0) {
       localStorage.setItem("menuComboCustomized", JSON.stringify(dataLocalStorages.filter(item => !selectedItems.includes(item?.id))));
     } else {
       setMenuData(pre => pre.filter(item => !selectedItems.includes(item?.id)));
@@ -305,6 +314,12 @@ const DetailMenu = () => {
     fetchMenuItemTypeDish();
     //eslint-disable-next-line
   }, [search]);
+
+  useEffect(() => {
+    return () => {
+      LocalStorage.remove("menuComboCustomized");
+    };
+  }, []);
 
   return (
     <div className="flex flex-col gap-5">
@@ -333,11 +348,11 @@ const DetailMenu = () => {
                 organizeDishesByType(menuItems)?.map((dish: any, index) => (
                   <div key={index}>
                     <div className="flex items-center justify-center max-w-full pr-3">
-                      <hr className="border-[1px] border-blue-400 w-full" />
+                      <hr className="border-[1px] border-blue-400 w-full"/>
                       <p className="font-bold text-[16px] mx-2 whitespace-nowrap">
                         {dish.typeName}
                       </p>
-                      <hr className="border-[1px] border-blue-400 w-full" />
+                      <hr className="border-[1px] border-blue-400 w-full"/>
                     </div>
                     {dish?.dishes?.map((menu) => (
                       <div
@@ -500,14 +515,14 @@ const DetailMenu = () => {
                 <ButtonBtn
                   bg="var(--clr-orange-400)"
                   onClick={handleClickCancel}
-                  startIcon={<CheckIcon fill="white" />}
+                  startIcon={<CheckIcon fill="white"/>}
                 >
                   <span className="font-semibold">Thoát</span>
                 </ButtonBtn>
                 <ButtonBtn
                   bg="var(--clr-blue-400)"
                   onClick={handleExport}
-                  startIcon={isSubmitted && <LoadingButton />}
+                  startIcon={isSubmitted && <LoadingButton/>}
                 >
                   <span className="font-semibold">Xuất file</span>
                 </ButtonBtn>
@@ -516,7 +531,8 @@ const DetailMenu = () => {
           </ModalPopup>
         </div>
         <div className="flex gap-5 items-center">
-          {selectedItems.length > 0 && <ButtonBtn onClick={handleDeleteDishes} width={100} bg="var(--clr-red-400)">Xóa</ButtonBtn>}
+          {selectedItems.length > 0 &&
+              <ButtonBtn onClick={handleDeleteDishes} width={100} bg="var(--clr-red-400)">Xóa</ButtonBtn>}
           <ButtonBtn width={100} onClick={handleChooseTable}>Đặt bàn</ButtonBtn>
           <ModalPopup
             open={isOpenModalChooseTable}
@@ -524,12 +540,12 @@ const DetailMenu = () => {
             setOpen={setIsOpenModalChooseTable}
             closeModal={handleCloseModalChooseTable}
           >
-            <DetailModalBook 
-              handleClickCancel={handleClickCancelChooseTable} 
+            <DetailModalBook
+              handleClickCancel={handleClickCancelChooseTable}
               handleCloseModals={handleCloseModalChooseTable}
-              serviceId={serviceId} 
-              comboMenuId = {comboMenuId} 
-              priceTotalDish = {totalPrices()} />
+              serviceId={serviceId}
+              comboMenuId={comboMenuId}
+              priceTotalDish={totalPrices()}/>
           </ModalPopup>
           <p>
             Tổng tiền:{" "}

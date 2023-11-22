@@ -1,7 +1,7 @@
 "use client";
 
 import { Grid } from "@mui/material";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -16,6 +16,7 @@ import { getQueryParam } from "@/utils/route";
 import Button from "@/components/common/Button";
 import { useAppDispatch } from "@/stores/hook";
 import { breadCrumbReducer } from "@/stores/reducers/breadCrumb";
+import { statusApiReducer } from "@/stores/reducers/statusAPI";
 
 const MenuPage = (querySearch: string) => {
   //state
@@ -50,8 +51,9 @@ const MenuPage = (querySearch: string) => {
         },
         ...type.data,
       ]);
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      dispatch(statusApiReducer.actions.setMessageError(error.message));
+
     }
   };
 
@@ -65,8 +67,9 @@ const MenuPage = (querySearch: string) => {
       });
       setTotal(data.total);
       setFoodByType(data.menus);
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      dispatch(statusApiReducer.actions.setMessageError(error.message));
+
     }
   };
 
@@ -145,7 +148,7 @@ const MenuPage = (querySearch: string) => {
           </div>
         </Grid>
         <Grid item xs={12} sm={9}>
-          <SearchInFilter onSearch={handleSearch} isResetAll={true} />
+          <SearchInFilter onSearch={handleSearch} isResetAll={true}/>
 
           <div className="grid grid-cols-2 gap-8">
             {foodByType?.map((food) => (
@@ -153,7 +156,7 @@ const MenuPage = (querySearch: string) => {
                 key={food.id}
                 className="border-b-[2px] border-[--clr-gray-200] p-4"
               >
-                <FoodDetail food={food} />
+                <FoodDetail food={food}/>
               </div>
             ))}
           </div>

@@ -98,7 +98,6 @@ export const dataPages = [
     link: "/da-to-chuc",
   },
 ];
-export const dataSettings = ["Profile", "Account", "Dashboard", "Logout"];
 
 export const dataFoods = [
   {

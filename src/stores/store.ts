@@ -10,12 +10,18 @@ import usersReducer from "./reducers/user";
 import tabReducer from "./reducers/tab";
 // eslint-disable-next-line import/no-named-as-default
 import breadCrumbReducer from "./reducers/breadCrumb";
+// eslint-disable-next-line import/no-named-as-default
+import defReducer from "./reducers/dependence";
+// eslint-disable-next-line import/no-named-as-default
+import loadingReducer from "./reducers/loading";
 
 const rootReducer = combineReducers({
   statusApi: statusApiReducer,
   users: usersReducer,
   tab: tabReducer,
   breadCrumb: breadCrumbReducer,
+  def: defReducer,
+  loading: loadingReducer
 });
 
 export const store = configureStore({

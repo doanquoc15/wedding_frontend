@@ -19,8 +19,15 @@ import { useRouter } from "next/navigation";
 
 import style from "@/styles/navbar.module.scss";
 import logo_sky_view from "@/statics/images/logo-c-skyview.png";
-import { dataPages, dataSettings } from "@/data";
+import { dataPages } from "@/data";
 import { LocalStorage } from "@/shared/config/localStorage";
+import { CookiesStorage } from "@/shared/config/cookie";
+import { useAppDispatch, useAppSelector } from "@/stores/hook";
+import statusAPI, { statusApiM, statusApiReducer } from "@/stores/reducers/statusAPI";
+import { LogoutAPI } from "@/services/auth";
+import { selectDef } from "@/stores/reducers/dependence";
+
+import { shortName } from "./../../utils/shortName";
 
 function NavBar() {
   //useState
@@ -32,6 +39,11 @@ function NavBar() {
 
   const [isHeaderFixed, setHeaderFixed] = useState<boolean>(false);
   const [user, setUser] = useState<any>(null);
+
+  //constant
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+  const def = useAppSelector(selectDef());
 
   //function
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -73,12 +85,13 @@ function NavBar() {
     };
   }, []);
 
+  const cookieRole = CookiesStorage.getCookieData("role");
   useEffect(() => {
     const savedUser = LocalStorage.get("user");
     if (savedUser) {
       setUser(JSON.parse(savedUser));
     }
-  }, []);
+  }, [def]);
 
   return (
     <AppBar
@@ -115,11 +128,12 @@ function NavBar() {
                 </Link>
               ))}
             </Box>
-            <div className="flex gap-10">
+            <div className="flex gap-10 items-center">
               <Box
                 sx={{
                   display: "flex",
                   gap: 2,
+                  alignItems:"center"
                 }}
               >
                 <Tooltip title="Email">
@@ -138,50 +152,56 @@ function NavBar() {
                 </Tooltip>
               </Box>
               <Box sx={{ flexGrow: 0 }}>
-                <Tooltip title="Open settings">
+                <Tooltip title={cookieRole && "Open settings"}>
                   <Box
                     onClick={handleOpenUserMenu}
-                    sx={{ display: "flex", gap: 1, alignItems: "center" }}
-                  >
-                    <IconButton sx={{ p: 0 }}>
-                      <Avatar
-                        alt="avatar of customer"
-                        src="https://inkythuatso.com/uploads/thumbnails/800/2022/03/4a7f73035bb4743ee57c0e351b3c8bed-29-13-53-17.jpg"
-                      />
-                    </IconButton>
-                    <Typography>{user?.name}</Typography>
+                    sx={{ display: "flex", gap: 1, alignItems: "center", cursor: "pointer" }}
+                  >{cookieRole ? 
+                      <div onClick={() => router.push("/tai-khoan")} className="flex items-center gap-3"><IconButton sx={{ p: 0 }}>
+                        <Avatar
+                          className="border-[1px] border-gray-100"
+                          alt="avatar of customer"
+                          src={user?.image || "https://inkythuatso.com/uploads/thumbnails/800/2022/03/4a7f73035bb4743ee57c0e351b3c8bed-29-13-53-17.jpg"}
+                        />
+                      </IconButton>
+                      <Typography>{shortName(user?.name)}</Typography></div> : <div className="flex items-center">
+                        <Link className="cursor-pointer" href="/dang-nhap">Đăng nhập </Link>
+                       / <Link className="cursor-pointer" href="/dang-ky">Đăng ký</Link>
+                      </div>}
                   </Box>
                 </Tooltip>
-                <Menu
-                  sx={{ mt: "52px", marginLeft: "25px" }}
-                  anchorEl={anchorElUser}
-                  anchorOrigin={{
-                    vertical: "top",
-                    horizontal: "right",
-                  }}
-                  keepMounted
-                  transformOrigin={{
-                    vertical: "top",
-                    horizontal: "right",
-                  }}
-                  open={Boolean(anchorElUser)}
-                  onClose={handleCloseUserMenu}
-                  PaperProps={{
-                    style: {
-                      width: "150px",
-                    },
-                  }}
-                >
-                  {dataSettings.map((setting, index) => (
-                    <MenuItem
-                      className="pl-8 whitespace-nowrap"
-                      key={index}
-                      onClick={handleCloseUserMenu}
-                    >
-                      <Typography textAlign="center">{setting}</Typography>
-                    </MenuItem>
-                  ))}
-                </Menu>
+                {/*{
+                  cookieRole && <Menu
+                    sx={{ mt: "52px", marginLeft: "25px" }}
+                    anchorEl={anchorElUser}
+                    anchorOrigin={{
+                      vertical: "top",
+                      horizontal: "right",
+                    }}
+                    keepMounted
+                    transformOrigin={{
+                      vertical: "top",
+                      horizontal: "right",
+                    }}
+                    open={Boolean(anchorElUser)}
+                    onClose={handleCloseUserMenu}
+                    PaperProps={{
+                      style: {
+                        width: "150px",
+                      },
+                    }}
+                  >*/}
+                {/*{dataSettings.map((setting, index) => (
+                      <MenuItem
+                        className="pl-8 whitespace-nowrap"
+                        key={index}
+                        onClick={handleCloseUserMenu}
+                      >
+                        <Typography textAlign="center" onClick = {() => handleClickSetting(setting)}>{setting}</Typography>
+                      </MenuItem>
+                    ))}
+                  </Menu>*/}
+                {/*}*/}
               </Box>
             </div>
           </div>

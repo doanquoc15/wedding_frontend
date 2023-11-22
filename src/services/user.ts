@@ -1,10 +1,10 @@
 import Api from "@/shared/config/api";
-import { IResponse, SignInType, SignUpType } from "@/types/common";
+import { IResponse, SignUpType } from "@/types/common";
 
 const Apis = {
   USER_ID: "/user",
   SIGN_UP: "/auth/signup",
-  GET_ME: "/me/role",
+  GET_ME: "user/me/my-account",
 };
 
 export const GetUserById = async (id: number) => {
@@ -19,5 +19,16 @@ export const SignUpAPI = async (params: SignUpType) => {
 
 export const getMeRole = async () => {
   const { data }: IResponse = await Api.get(Apis.GET_ME);
+  return data;
+};
+
+export const updateUser = async (id: number, params: object) => {
+  console.log(1);
+  const { data }: IResponse = await Api.patch(`${Apis.USER_ID}/${id}`, params);
+  return data;
+};
+
+export const changePassword = async (id: number, params: object) => {
+  const { data }: IResponse = await Api.patch(`${Apis.USER_ID}/change-password/${id}`, params);
   return data;
 };
