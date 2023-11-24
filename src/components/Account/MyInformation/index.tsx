@@ -1,6 +1,6 @@
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
-import UploadIcon from "@mui/icons-material/Upload";
+import FileUploadIcon from "@mui/icons-material/FileUpload";
 import { useForm } from "react-hook-form";
 import { TextField } from "@mui/material";
 // import/no-unresolved
@@ -205,7 +205,7 @@ const MyInformation = () => {
               style={{ display: "none" }}
               onChange={(e) => handleChangeFile(e)}
             />
-            <UploadIcon style={{ fontSize: "40px", cursor: "pointer", color: "red" }}/>
+            <FileUploadIcon style={{ fontSize: "40px", cursor: "pointer", color: "red" }}/>
           </label>
         </div>
         <div>

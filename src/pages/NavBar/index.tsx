@@ -1,15 +1,13 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
-import Menu from "@mui/material/Menu";
 import Container from "@mui/material/Container";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
-import MenuItem from "@mui/material/MenuItem";
 import Image from "next/image";
 import Badge from "@mui/material/Badge";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
@@ -23,8 +21,6 @@ import { dataPages } from "@/data";
 import { LocalStorage } from "@/shared/config/localStorage";
 import { CookiesStorage } from "@/shared/config/cookie";
 import { useAppDispatch, useAppSelector } from "@/stores/hook";
-import statusAPI, { statusApiM, statusApiReducer } from "@/stores/reducers/statusAPI";
-import { LogoutAPI } from "@/services/auth";
 import { selectDef } from "@/stores/reducers/dependence";
 
 import { shortName } from "./../../utils/shortName";
@@ -69,6 +65,11 @@ function NavBar() {
   const handleFixedHeader = () => {
     if (isHeaderFixed) return "fixed";
     return "sticky";
+  };
+
+  const handleCLickAcc = () => {
+    router.push("/tai-khoan");
+    LocalStorage.remove("selectedItem");
   };
 
   //useEffect
@@ -133,20 +134,20 @@ function NavBar() {
                 sx={{
                   display: "flex",
                   gap: 2,
-                  alignItems:"center"
+                  alignItems: "center"
                 }}
               >
                 <Tooltip title="Email">
                   <IconButton>
                     <Badge badgeContent={10} color="primary">
-                      <EmailOutlinedIcon />
+                      <EmailOutlinedIcon/>
                     </Badge>
                   </IconButton>
                 </Tooltip>
                 <Tooltip title="Notification(s)">
                   <IconButton>
                     <Badge badgeContent={2} color="primary">
-                      <NotificationsNoneIcon />
+                      <NotificationsNoneIcon/>
                     </Badge>
                   </IconButton>
                 </Tooltip>
@@ -156,8 +157,8 @@ function NavBar() {
                   <Box
                     onClick={handleOpenUserMenu}
                     sx={{ display: "flex", gap: 1, alignItems: "center", cursor: "pointer" }}
-                  >{cookieRole ? 
-                      <div onClick={() => router.push("/tai-khoan")} className="flex items-center gap-3"><IconButton sx={{ p: 0 }}>
+                  >{cookieRole ?
+                      <div onClick={handleCLickAcc} className="flex items-center gap-3"><IconButton sx={{ p: 0 }}>
                         <Avatar
                           className="border-[1px] border-gray-100"
                           alt="avatar of customer"
@@ -166,7 +167,7 @@ function NavBar() {
                       </IconButton>
                       <Typography>{shortName(user?.name)}</Typography></div> : <div className="flex items-center">
                         <Link className="cursor-pointer" href="/dang-nhap">Đăng nhập </Link>
-                       / <Link className="cursor-pointer" href="/dang-ky">Đăng ký</Link>
+                      / <Link className="cursor-pointer" href="/dang-ky">Đăng ký</Link>
                       </div>}
                   </Box>
                 </Tooltip>
@@ -210,4 +211,5 @@ function NavBar() {
     </AppBar>
   );
 }
+
 export default NavBar;

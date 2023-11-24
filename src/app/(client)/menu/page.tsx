@@ -13,7 +13,6 @@ import { TypeDish } from "@/types/common";
 import { MENU_BREADCRUMB, MENU_PAGE_SIZE } from "@/constants/common";
 import { getAllFood } from "@/services/menu-item";
 import { getQueryParam } from "@/utils/route";
-import Button from "@/components/common/Button";
 import { useAppDispatch } from "@/stores/hook";
 import { breadCrumbReducer } from "@/stores/reducers/breadCrumb";
 import { statusApiReducer } from "@/stores/reducers/statusAPI";
@@ -60,7 +59,7 @@ const MenuPage = (querySearch: string) => {
   const getFoods = async () => {
     try {
       const data = await getAllFood({
-        pageSize,
+        pageSize: 1000,
         pageIndex: page,
         typeId: selectActive || 0,
         search: search,
@@ -160,15 +159,15 @@ const MenuPage = (querySearch: string) => {
               </div>
             ))}
           </div>
-          <div className="flex justify-end mt-6">
-            {total > pageSize ? (
-              <Button onClick={loadMoreData}>Hiển thị thêm</Button>
-            ) : (
-              total > MENU_PAGE_SIZE && (
-                <Button onClick={handleHidden}>Ẩn bớt</Button>
-              )
-            )}
-          </div>
+          {/*<div className="flex justify-end mt-6">*/}
+          {/*  {total > pageSize ? (*/}
+          {/*    <Button onClick={loadMoreData}>Hiển thị thêm</Button>*/}
+          {/*  ) : (*/}
+          {/*    total > MENU_PAGE_SIZE && (*/}
+          {/*      <Button onClick={handleHidden}>Ẩn bớt</Button>*/}
+          {/*    )*/}
+          {/*  )}*/}
+          {/*</div>*/}
         </Grid>
       </Grid>
     </div>
