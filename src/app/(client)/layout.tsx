@@ -5,11 +5,8 @@ import NavBar from "@/pages/NavBar";
 import Footer from "@/pages/Footer";
 
 export const metadata = {
-  title: {
-    default: "Sky View",
-    template: "%s | Sky View",
-  },
-  description: "...",
+  title: "Sky View",
+  description: "Welcome to Next.js",
 };
 
 const ClientLayout = ({ children }: { children: ReactNode }) => {

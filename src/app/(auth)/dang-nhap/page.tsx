@@ -40,7 +40,7 @@ const SignInPage = () => {
       const roleName = data?.data?.user.role.roleName;
       if (roleName === "CUSTOMER") router.push("/");
       if (roleName === "ADMIN") router.push("/admin");
-      LocalStorage.add("user", JSON.stringify(data?.data?.user));
+      LocalStorage.add("user", JSON.stringify(data?.data?.user) || "{}");
       CookiesStorage.setCookieData("token", data?.data?.tokens?.accessToken);
       setCookie("role", data?.data?.user.role.roleName);
       dispatch(

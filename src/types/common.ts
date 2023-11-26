@@ -1,7 +1,6 @@
 import React, { ReactNode } from "react";
 import { SelectProps, TextFieldProps } from "@mui/material";
 import { Control } from "react-hook-form";
-import { DesktopDatePickerProps } from "@mui/x-date-pickers";
 
 import { GENDER, REGENCY } from "./enums";
 
@@ -9,6 +8,7 @@ export interface SignInType {
   email: string;
   password: string;
 }
+
 export interface IResponse {
   error?: string | null;
   data?: any;
@@ -140,13 +140,13 @@ export type TextFieldPropsType = TextFieldProps & {
   minHeight?: string | number;
 };
 
-export interface DatePickerType extends Omit<DesktopDatePickerProps<any>, "onChange" | "value"> {
-  name: string;
-  control: Control<any>;
-  defaultValue?: unknown;
-  sx?: any;
-  id?: string | number;
-}
+// export interface DatePickerType extends Omit<any, "onChange" | "value"> {
+//   name: string;
+//   control: Control<any>;
+//   defaultValue?: unknown;
+//   sx?: any;
+//   id?: string | number;
+// }
 
 export interface IDetailModalBookProps {
   handleClickCancel: () => void;
@@ -161,6 +161,7 @@ export interface IZones {
   zoneName: string;
   numberRoom: number;
 }
+
 export interface SelectFieldPropsType extends SelectProps<any> {
   name: string;
   control: Control<any>;
@@ -182,4 +183,10 @@ export interface SelectFieldPropsType extends SelectProps<any> {
   image?: any;
   handleChange?: any;
   quarterCurrent?: any;
+}
+
+export interface TabPanelProps {
+  children?: React.ReactNode;
+  index: number;
+  value?: number;
 }

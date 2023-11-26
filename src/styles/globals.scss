@@ -10,11 +10,10 @@
 :root {
 
   --font-primary: $primary-font;
-  
+
   --header-height: 30px;
-  --top-height:100px
+  --top-height: 100px;
   --footer-height: 70px;
-  --carousel-height:calc(100vh-var(--header-heigh)-var(--top-height));
 
   --clr-primary-100: #013a63;
   --clr-primary-linear-100: rgba(19, 144, 171, 0.1);
@@ -50,11 +49,12 @@
   --clr-red-500: #d81414;
   --clr-red-550: #f42858;
   --clr-red-300: #f36969;
-  --clr-red-400: #ea7272;
+  --clr-red-350: #ea7272;
   --clr-red-400: #ff0f00;
   --clr-red-600: #ad1e1e;
 
   --clr-orange-550: #dd644c;
+  --clr-orange-50: #fffbf3;
   --clr-orange-500: #f36969;
   --clr-orange-300: #ea8777;
   --clr-orange-350: #ffc339;

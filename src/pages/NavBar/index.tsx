@@ -39,7 +39,7 @@ function NavBar() {
   //constant
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const def = useAppSelector(selectDef());
+  const def = useAppSelector(selectDef);
 
   //function
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {

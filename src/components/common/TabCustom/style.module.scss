@@ -1,0 +1,12 @@
+.tabs div {
+  padding: 0;
+  display: flex;
+}
+
+.tabs button {
+  text-transform: none;
+  padding-top: 0;
+  padding-bottom: 0;
+  min-height: 0;
+  font-size: 16px;
+}

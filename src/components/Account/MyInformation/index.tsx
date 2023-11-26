@@ -21,6 +21,7 @@ import ButtonBtn from "@/components/common/Button";
 import LoadingButton from "@/components/common/Loading";
 import { getMeRole, updateUser } from "@/services/user";
 import { LocalStorage } from "@/shared/config/localStorage";
+import { MESSAGE_SUCCESS } from "@/constants/errors";
 
 const MyInformation = () => {
   //useForm
@@ -131,13 +132,17 @@ const MyInformation = () => {
 
   //get user by id
   const fetchUserById = async () => {
+    let code;
     try {
       const res = await getMeRole();
       LocalStorage.add("user", JSON.stringify(res));
       const pro = await getAllProvince();
       const address = res?.address?.split(",");
-      const code = pro?.filter(item => item?.name === address[2]?.trim())[0]?.code;
-      handleProvinceChange(code, "p");
+      if (address) {
+        console.log(111);
+        code = pro?.filter(item => item?.name === address[2]?.trim())[0]?.code;
+      }
+      code && handleProvinceChange(code, "p");
 
       reset({
         name: res?.name,
@@ -145,9 +150,9 @@ const MyInformation = () => {
         dateOfBirth: moment(res?.dateOfBirth).format(SHORT_DATE),
         phone: res?.phone,
         gender: res?.gender?.toUpperCase(),
-        province: address[2]?.trim(),
-        district: address[1]?.trim(),
-        award: address[0]?.trim(),
+        province: address && address[2]?.trim(),
+        district: address && address[1]?.trim(),
+        award: address && address[0]?.trim(),
       });
 
       setImageChange(res?.image);
@@ -165,14 +170,18 @@ const MyInformation = () => {
       image: imageChange || myInfo?.image,
       address: `${data?.award}, ${data?.district}, ${data?.province}`,
     };
+    console.log(!moment(dataUpdate.dateOfBirth).isValid());
+    if (!moment(dataUpdate.dateOfBirth).isValid()) {
+      delete dataUpdate.dateOfBirth;
+    }
 
     try {
       const res = await updateUser(myInfo?.id, dataUpdate);
       LocalStorage.add("user", JSON.stringify(res));
       const pro = await getAllProvince();
-      dispatch(statusApiReducer.actions.setMessageUpdate("Cập nhật thông tin thành công"));
+      dispatch(statusApiReducer.actions.setMessageUpdate(MESSAGE_SUCCESS.UPDATED_SUCCESS));
     } catch (error: any) {
-      dispatch(statusApiReducer.actions.setMessageError(error.message));
+      dispatch(statusApiReducer.actions.setMessageError(error?.data?.message));
     }
   };
 

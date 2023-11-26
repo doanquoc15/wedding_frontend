@@ -14,6 +14,7 @@ import { statusApiReducer } from "@/stores/reducers/statusAPI";
 import { defReducer } from "@/stores/reducers/dependence";
 import MyInformation from "@/components/Account/MyInformation";
 import ChangePassword from "@/components/Account/ChangePassword";
+import MyBook from "@/components/Account/MyBook";
 
 const LIST_TABS = [
   {
@@ -31,6 +32,9 @@ const LIST_TABS = [
   {
     id: 4,
     label: "Lịch sử"
+  }, {
+    id: 5,
+    label: "Test"
   },
 ];
 
@@ -66,7 +70,7 @@ const SettingPage = () => {
       0: <MyInformation/>,
       1: "Tab1",
       2: <ChangePassword/>,
-      3: "Tab11",
+      3: <MyBook/>,
       4: "Tab11",
       5: "Tab11",
       6: "Tab11",

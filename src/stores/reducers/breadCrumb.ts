@@ -62,4 +62,4 @@ const clearBreadcrumbFromLocalStorage = () => {
 };
 
 export default breadCrumbReducer.reducer;
-export const selectBreadCrumbs = () => (state: RootState) => state?.breadCrumb;
+export const selectBreadCrumbs = (state: RootState) => state?.breadCrumb;

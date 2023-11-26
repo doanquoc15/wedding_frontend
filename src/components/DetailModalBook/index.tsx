@@ -66,7 +66,7 @@ const DetailModalBook = (props: IDetailModalBookProps) => {
       email: "",
       phone: "",
       zone: "",
-      comeInAt: "4:10",
+      comeInAt: "",
       comeOutAt: "",
     },
     mode: "all",

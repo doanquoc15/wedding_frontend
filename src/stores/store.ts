@@ -14,6 +14,8 @@ import breadCrumbReducer from "./reducers/breadCrumb";
 import defReducer from "./reducers/dependence";
 // eslint-disable-next-line import/no-named-as-default
 import loadingReducer from "./reducers/loading";
+// eslint-disable-next-line import/no-named-as-default
+import tabBookReducer from "./reducers/tabBook";
 
 const rootReducer = combineReducers({
   statusApi: statusApiReducer,
@@ -21,7 +23,8 @@ const rootReducer = combineReducers({
   tab: tabReducer,
   breadCrumb: breadCrumbReducer,
   def: defReducer,
-  loading: loadingReducer
+  loading: loadingReducer,
+  tabBook: tabBookReducer,
 });
 
 export const store = configureStore({

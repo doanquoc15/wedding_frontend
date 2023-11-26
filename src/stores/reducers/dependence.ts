@@ -8,7 +8,7 @@ export type DefType = {
   def: number;
 };
 
-const initialState: DefType = { def : 0 };
+const initialState: DefType = { def: 0 };
 
 export const defReducer = createSlice({
   name: REDUCER_NAME,
@@ -21,4 +21,4 @@ export const defReducer = createSlice({
 });
 
 export default defReducer.reducer;
-export const selectDef = () => (state: RootState) => state?.def?.def;
+export const selectDef = (state: RootState) => state?.def?.def;

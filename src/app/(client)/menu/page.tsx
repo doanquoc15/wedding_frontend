@@ -17,7 +17,7 @@ import { useAppDispatch } from "@/stores/hook";
 import { breadCrumbReducer } from "@/stores/reducers/breadCrumb";
 import { statusApiReducer } from "@/stores/reducers/statusAPI";
 
-const MenuPage = (querySearch: string) => {
+const MenuPage = () => {
   //state
   const [typeDishes, setTypeDishes] = useState<TypeDish[]>();
   const [selectActive, setSelectActive] = useState<string | number>(
@@ -76,7 +76,7 @@ const MenuPage = (querySearch: string) => {
     setSearch(querySearch);
   };
 
-  const handleClick = (indexActive) => {
+  const handleClick = (indexActive: number | string) => {
     setPageSize(MENU_PAGE_SIZE);
     setSelectActive(indexActive);
   };
@@ -150,7 +150,7 @@ const MenuPage = (querySearch: string) => {
           <SearchInFilter onSearch={handleSearch} isResetAll={true}/>
 
           <div className="grid grid-cols-2 gap-8">
-            {foodByType?.map((food) => (
+            {foodByType?.map((food: any) => (
               <div
                 key={food.id}
                 className="border-b-[2px] border-[--clr-gray-200] p-4"
@@ -159,15 +159,6 @@ const MenuPage = (querySearch: string) => {
               </div>
             ))}
           </div>
-          {/*<div className="flex justify-end mt-6">*/}
-          {/*  {total > pageSize ? (*/}
-          {/*    <Button onClick={loadMoreData}>Hiển thị thêm</Button>*/}
-          {/*  ) : (*/}
-          {/*    total > MENU_PAGE_SIZE && (*/}
-          {/*      <Button onClick={handleHidden}>Ẩn bớt</Button>*/}
-          {/*    )*/}
-          {/*  )}*/}
-          {/*</div>*/}
         </Grid>
       </Grid>
     </div>

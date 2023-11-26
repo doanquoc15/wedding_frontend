@@ -15,3 +15,7 @@ export const ERROR_MESSAGES = {
   NOT_BEFORE_TODAY: "Không được trước ngày hiện tại!",
   COME_OUT: "Thời gian ra phải sau thời gian vào!",
 };
+
+export const MESSAGE_SUCCESS = {
+  UPDATED_SUCCESS: "Cập nhật thành công!",
+};
