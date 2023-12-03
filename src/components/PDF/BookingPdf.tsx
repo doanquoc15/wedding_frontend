@@ -1,7 +1,7 @@
 import React from "react";
 import moment from "moment";
 
-import { formatDecimal } from "@/utils/formatDecimal";
+import { formatMoney } from "@/utils/formatMoney";
 import { LocalStorage } from "@/shared/config/localStorage";
 
 function BookingPDF(props) {
@@ -42,7 +42,7 @@ function BookingPDF(props) {
                   <td>{ind + 1}</td>
                   <td>{el?.dishName}</td>
                   <td>{el?.quantity}</td>
-                  <td>{formatDecimal(el?.price)}</td>
+                  <td>{formatMoney(el?.price)}</td>
                 </tr>
               ))
             )}

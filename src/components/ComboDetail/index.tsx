@@ -1,11 +1,13 @@
 "use client";
 import Image from "next/image";
-import React, { useEffect } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import React from "react";
+import { usePathname, useRouter } from "next/navigation";
 
-import { formatDecimal } from "@/utils/formatDecimal";
 import { createSlug } from "@/utils/createSlug";
 import { paymentCheckout } from "@/services/payment";
+import { statusApiReducer } from "@/stores/reducers/statusAPI";
+import { useAppDispatch } from "@/stores/hook";
+import { formatMoney } from "@/utils/formatMoney";
 
 import Button from "../common/Button";
 
@@ -21,6 +23,7 @@ const ComboMenuDetail = ({ menuCombo }) => {
   //const
   const router = useRouter();
   const pathname = usePathname();
+  const dispatch = useAppDispatch();
 
   //functions
   const handleClickDetail = () => {
@@ -37,8 +40,8 @@ const ComboMenuDetail = ({ menuCombo }) => {
           quantity: 1,
         },
       ]);
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      dispatch(statusApiReducer.actions.setMessageError(error?.message));
     }
   };
   //useEffect
@@ -64,7 +67,7 @@ const ComboMenuDetail = ({ menuCombo }) => {
             </p>
             <p className="text-[--clr-red-400]">
               <span className="font-semibold text-[#126213]">Chi phí :</span>{" "}
-              {formatDecimal(menuCombo?.totalPrice)}/bàn
+              {formatMoney(menuCombo?.totalPrice)}/bàn
             </p>
           </div>
         </div>

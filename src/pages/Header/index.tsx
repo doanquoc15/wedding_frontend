@@ -1,26 +1,23 @@
 "use client";
 import React, { useState } from "react";
 
-import Breadcrumb from "@/components/common/BreadCrumb/index";
-import { selectBreadCrumbs } from "@/stores/reducers/breadCrumb";
 import { useAppSelector } from "@/stores/hook";
+import { selectBreadCrumbs } from "@/stores/reducers/breadCrumb";
+import Breadcrumb from "@/components/common/BreadCrumb";
 
 const Header = () => {
-  const [breadCrumbs, setBreadCrumbs] = useState<any>();
-  const { headTitle, tabTitle, params, routes, pageTitle } = useAppSelector(
+  const [breadCrumbs, _] = useState<any>();
+  const { routes } = useAppSelector(
     selectBreadCrumbs
   );
 
+  // ``;
   return (
     <div
       className="min-h-[var(--header-height)] border-[1px] bg-white border-b-gray-400 text-[10px] flex justify-between px-10 items-center">
       <span>
         <Breadcrumb
-          headTitle={headTitle}
-          tabTitle={tabTitle}
-          paramsReplace={params}
           routes={breadCrumbs || routes}
-          pageTitle={pageTitle}
         />{" "}
       </span>
       <div className="flex gap-10">

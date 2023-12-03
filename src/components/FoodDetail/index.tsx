@@ -3,7 +3,7 @@ import Image from "next/image";
 import React from "react";
 import { Tooltip } from "@mui/material";
 
-import { formatDecimal } from "@/utils/formatDecimal";
+import { formatMoney } from "@/utils/formatMoney";
 
 const FoodDetail = ({ food }) => {
   return (
@@ -28,7 +28,7 @@ const FoodDetail = ({ food }) => {
               {food.description}
             </p>
           </Tooltip>
-          <p>{formatDecimal(food?.price)} VND</p>
+          <p>{formatMoney(food?.price)} VND</p>
         </section>
       </div>
     </div>

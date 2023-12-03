@@ -40,10 +40,8 @@ const ChangePassword = () => {
     try {
       const id = JSON.parse(LocalStorage.get("user") || "{}")?.id;
       const data = await changePassword(id, params);
-      console.log(data);
       dispatch(statusApiReducer.actions.setMessageUpdate("Đổi mật khẩu thành công"));
     } catch (error: any) {
-      console.log(error);
       dispatch(statusApiReducer.actions.setMessageError(error?.data?.message));
     }
   };

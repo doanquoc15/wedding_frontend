@@ -18,6 +18,6 @@ export const signInSchema = yup.object().shape({
   name: yup
     .string()
     .min(6, ERROR_MESSAGES.NAME_LEAST_6_CHARACTER)
-    .max(11, ERROR_MESSAGES.NAME_MAX_11_CHARACTER)
+    .max(30, ERROR_MESSAGES.NAME_MAX_30_CHARACTER)
     .required(ERROR_MESSAGES.NAME_REQUIRED),
 });

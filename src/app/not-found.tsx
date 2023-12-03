@@ -6,16 +6,16 @@ import React, { useEffect } from "react";
 import NotFound from "@/statics/svg/ic-404.svg";
 
 const NotFoundPage = () => {
-  //const router = useRouter();
-  //useEffect(() => {
-  //  const timerId = setTimeout(() => {
-  //    router.replace("/");
-  //  }, 3000);
+  const router = useRouter();
+  useEffect(() => {
+    const timerId = setTimeout(() => {
+      router.replace("/");
+    }, 4000);
 
-  //  return () => {
-  //    clearTimeout(timerId);
-  //  };
-  //}, [router]);
+    return () => {
+      clearTimeout(timerId);
+    };
+  }, [router]);
 
   return (
     <div className="w-screen h-screen relative">
@@ -26,7 +26,7 @@ const NotFoundPage = () => {
           Access to this resource on the server is denied!
         </h3>
         <div className="flex justify-center">
-          <Image alt="NotFound" src={NotFound} />
+          <Image alt="NotFound" src={NotFound}/>
         </div>
       </div>
     </div>

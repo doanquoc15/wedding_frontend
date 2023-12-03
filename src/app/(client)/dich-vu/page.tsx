@@ -12,10 +12,10 @@ import { statusApiReducer } from "@/stores/reducers/statusAPI";
 import { getAllService } from "@/services/service";
 import Button from "@/components/common/Button";
 import ModalPopup from "@/components/common/ModalPopup";
-import { formatDecimal } from "@/utils/formatDecimal";
 import { breadCrumbReducer } from "@/stores/reducers/breadCrumb";
 import { SERVICE_BREADCRUMB } from "@/constants/common";
 import { CheckIcon } from "@/components/Icons";
+import { formatMoney } from "@/utils/formatMoney";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -146,7 +146,7 @@ const ServicePage = () => {
             </div>
             <div className="flex gap-10">
               <span className="w-[130px] font-[600]">Phí phục vụ </span>:
-              <span>{formatDecimal(service?.price)} VND</span>
+              <span>{formatMoney(service?.price)} VND</span>
             </div>
             <div className="flex gap-10">
               <span className="w-[130px] font-[600]">Sức chứa tối đa </span>:

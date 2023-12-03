@@ -190,3 +190,13 @@ export interface TabPanelProps {
   index: number;
   value?: number;
 }
+
+export type TextAreaFieldPropsType = TextFieldProps & {
+  name: string;
+  control: Control<any>;
+  defaultValue?: unknown;
+  placeholder?: string;
+  minHeight?: string | number;
+  rows?: number;
+  cols?: number;
+};

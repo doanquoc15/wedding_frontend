@@ -30,7 +30,6 @@ const MyInformation = () => {
     handleSubmit,
     formState: { errors, isSubmitting },
     control,
-    setValue,
     reset,
   } = useForm({
     //resolver: yupResolver(editUserSchema),
@@ -54,7 +53,7 @@ const MyInformation = () => {
   const [districts, setDistricts] = useState<any>([]);
   const [wards, setWards] = useState<any>([]);
   const [isEdit, setIsEdit] = useState<boolean>(false);
-  const [selectedWard, setSelectedWard] = useState<any>("");
+  const [isLoading, setIsLoading] = useState<any>("");
 
   //const
   const dispatch = useAppDispatch();
@@ -139,7 +138,6 @@ const MyInformation = () => {
       const pro = await getAllProvince();
       const address = res?.address?.split(",");
       if (address) {
-        console.log(111);
         code = pro?.filter(item => item?.name === address[2]?.trim())[0]?.code;
       }
       code && handleProvinceChange(code, "p");
@@ -170,7 +168,6 @@ const MyInformation = () => {
       image: imageChange || myInfo?.image,
       address: `${data?.award}, ${data?.district}, ${data?.province}`,
     };
-    console.log(!moment(dataUpdate.dateOfBirth).isValid());
     if (!moment(dataUpdate.dateOfBirth).isValid()) {
       delete dataUpdate.dateOfBirth;
     }
@@ -196,7 +193,7 @@ const MyInformation = () => {
   return (
     <div>
       <form className="flex gap-10" onSubmit={handleSubmit(onSubmit)}>
-        <div className="w-[250px] h-[300px] overflow-hidden object-cover">
+        <div className="min-w-[250px] min-h-[300px] overflow-hidden object-cover">
           <Image
             src={imageChange || myInfo?.image}
             alt="avatar"

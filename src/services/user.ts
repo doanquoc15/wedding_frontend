@@ -23,7 +23,6 @@ export const getMeRole = async () => {
 };
 
 export const updateUser = async (id: number, params: object) => {
-  console.log(1);
   const { data }: IResponse = await Api.patch(`${Apis.USER_ID}/${id}`, params);
   return data;
 };

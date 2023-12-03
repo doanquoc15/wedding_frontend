@@ -7,9 +7,6 @@ import {
 } from "@/app/constant.env";
 
 export const UploadImage = async (pics: any) => {
-  console.log( NEXT_CLOUDINARY_NAME,
-    NEXT_UPLOAD_PRESET,
-    NEXT_URL_CLOUD);
   if (!pics) {
     return;
   } else if (pics.type.startsWith("image/")) {

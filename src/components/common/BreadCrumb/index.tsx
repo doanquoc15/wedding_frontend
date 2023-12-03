@@ -6,16 +6,11 @@ import { useRouter } from "next/navigation";
 export interface IRoute {
   name: string;
   href: string;
-  noTrans?: boolean;
   id?: number;
 }
 
 export interface IProps {
-  headTitle?: string;
-  tabTitle?: string;
-  paramsReplace?: Array<string>;
   routes?: any;
-  pageTitle?: string;
 }
 
 const Breadcrumb = (props: IProps) => {
@@ -61,9 +56,7 @@ const Breadcrumb = (props: IProps) => {
               },
             }}
           >
-            {route.noTrans !== undefined && route.noTrans
-              ? route.name + " " + route.id
-              : route.name}
+            {route?.name}
           </Link>
         ))}
       </Breadcrumbs>

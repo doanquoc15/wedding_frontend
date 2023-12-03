@@ -10,10 +10,13 @@ import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import { Container } from "@mui/material";
+import { Container, InputAdornment } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { setCookie } from "cookies-next";
+import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
+import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
+import IconButton from "@mui/material/IconButton";
 
 import LoadingButton from "@/components/common/Loading";
 import { SignInType } from "@/types/common";
@@ -27,6 +30,8 @@ import { LocalStorage } from "@/shared/config/localStorage";
 const SignInPage = () => {
   const { register, handleSubmit } = useForm();
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
+  const [showPassword, setShowPassword] = useState<boolean>(true);
+
   //variable
   const dispatch = useAppDispatch();
   const router = useRouter();
@@ -52,6 +57,10 @@ const SignInPage = () => {
     } finally {
       setIsSubmit(false);
     }
+  };
+
+  const handleClickShowPassword = () => {
+    setShowPassword(!showPassword);
   };
 
   return (
@@ -120,9 +129,21 @@ const SignInPage = () => {
                   fullWidth
                   name="password"
                   label="Mật khẩu"
-                  type="password"
+                  type={showPassword ? "password" : "text"}
                   id="password"
                   autoComplete="current-password"
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={handleClickShowPassword}
+                        >
+                          {showPassword ? <VisibilityOutlinedIcon/> : <VisibilityOffOutlinedIcon/>}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
                 />
                 <FormControlLabel
                   control={<Checkbox value="remember" color="primary"/>}

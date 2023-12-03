@@ -12,9 +12,7 @@ import { getMenuComboById } from "@/services/combo";
 import { breadCrumbReducer } from "@/stores/reducers/breadCrumb";
 import { removeDuplicatesByField } from "@/utils/removeFieldObjDuplicate";
 import ButtonBtn from "@/components/common/Button";
-import { getDecimal } from "@/utils/getDecimal";
 import { formatMoney } from "@/utils/formatMoney";
-import { formatDecimal } from "@/utils/formatDecimal";
 import CheckBox from "@/components/common/Checkbox";
 import SearchInFilter from "@/components/common/SearchInFilter";
 import { getAllFood } from "@/services/menu-item";
@@ -30,7 +28,7 @@ const DetailMenu = () => {
   //useState
   const [menuData, setMenuData] = useState<any>();
   const [dataCombo, setDataCombo] = useState<any>();
-  const [isEdit, _] = useState<boolean>(false);
+  const [isEdit, setIsEdit] = useState<boolean>(false);
   const [menuItems, setMenuItems] = useState<any>();
   const [search, setSearch] = useState<any>(getQueryParam("search"));
   const [checkedMenus, setCheckedMenus] = useState<any>([]);
@@ -52,8 +50,10 @@ const DetailMenu = () => {
   //function
   const calculatorPrice = (data) => {
     const result = data.reduce((total1, current1) => {
+
       const result2 = current1.dishes.reduce((total2, current2) => {
-        return total2 + getDecimal(current2.price) * current2.quantity;
+
+        return total2 + current2.price * (dishQuantities[current2?.quantity] || current2.quantity);
       }, 0);
       return total1 + result2;
     }, 0);
@@ -117,6 +117,7 @@ const DetailMenu = () => {
       const res = await getMenuComboById(
         Number(pathname?.split("-")[pathname?.split("-").length - 1])
       );
+
       setServiceId(res?.serviceId);
       setComboMenuId(res?.id);
       setMenuData(
@@ -125,6 +126,7 @@ const DetailMenu = () => {
           quantity: item?.quantity,
         }))
       );
+
       setCheckedMenus(
         res.comboItems?.map((item) => ({
           ...item?.menuItem,
@@ -217,20 +219,44 @@ const DetailMenu = () => {
 
   // Function to handle increasing the quantity
   const handleIncrease = (menu) => {
+    setMenuData((prevMenus) => (
+      prevMenus.map((item) => {
+        if (item.id === menu.id) {
+          return {
+            ...item,
+            quantity: (item?.quantity || 1) + 1,
+          };
+        }
+        return item;
+      })
+    ));
+
     setDishQuantities((prevQuantities) => ({
       ...prevQuantities,
-      [menu.id]: (prevQuantities[menu.id] || 1) + 1,
+      [menu.id]: (menu?.quantity || 1) + 1,
     }));
   };
 
   // Function to handle decreasing the quantity
   const handleDecrease = (menu) => {
+    setMenuData((prevMenus) => (
+      prevMenus.map((item) => {
+        if (item.id === menu.id) {
+          return {
+            ...item,
+            quantity: (item?.quantity || 1) - 1,
+          };
+        }
+        return item;
+      })
+    ));
     setDishQuantities((prevQuantities) => {
       const newQuantity = (prevQuantities[menu.id] || menu?.quantity) - 1;
       if (newQuantity < 1) {
         const dataLocalStorages = JSON.parse(localStorage?.getItem("menuComboCustomized") as string);
         if (dataLocalStorages) {
-          localStorage.setItem("menuComboCustomized", JSON.stringify(dataLocalStorages.filter(item => item?.id !== menu?.id)));
+          localStorage.setItem("menuComboCustomized",
+            JSON.stringify(dataLocalStorages.filter(item => item?.id !== menu?.id)));
         } else {
           setMenuData(pre => pre.filter(item => item.id !== menu.id));
         }
@@ -242,10 +268,6 @@ const DetailMenu = () => {
     });
   };
 
-  const handleBookingTable = () => {
-    return;
-  };
-
   const handleJsonParse = (string: string) => {
     const data = LocalStorage.get(string);
     return JSON.parse(data as string);
@@ -255,19 +277,15 @@ const DetailMenu = () => {
     setIsOpenModal(true);
   };
 
-  const totalPrices = () => {
-    return calculatorPrice(
-      organizeDishesByType(handleJsonParse("menuComboCustomized") || menuData)
-    );
-  };
-
   const convertDataMenuBook = () => {
     return organizeDishesByType(
       handleJsonParse("menuComboCustomized") || menuData
     );
   };
 
-  const onSubmit = () => {
+  const totalPrices = () => {
+    return calculatorPrice(
+      convertDataMenuBook());
   };
 
   //handle click Checkbox
@@ -288,13 +306,18 @@ const DetailMenu = () => {
 
   //handle delete dishes
   const handleDeleteDishes = () => {
+
     const dataLocalStorages = JSON.parse(localStorage?.getItem("menuComboCustomized") as string);
     if (dataLocalStorages?.length > 0) {
-      localStorage.setItem("menuComboCustomized", JSON.stringify(dataLocalStorages.filter(item => !selectedItems.includes(item?.id))));
+      localStorage.setItem("menuComboCustomized",
+        JSON.stringify(dataLocalStorages.filter(item => !selectedItems.includes(item?.id))));
     } else {
       setMenuData(pre => pre.filter(item => !selectedItems.includes(item?.id)));
     }
     setSelectedItems([]);
+  };
+  const handleAdd = () => {
+    setIsEdit(true);
   };
 
   //useEffect
@@ -323,86 +346,78 @@ const DetailMenu = () => {
 
   return (
     <div className="flex flex-col gap-5">
-      {isEdit && (
-        <div className="flex w-full gap-20">
-          <SearchInFilter
-            onSearch={handleSearch}
-            isResetAll={true}
-            width="480px"
-          />
-          <div className="flex gap-20 items-center">
-            <p className="text-[19px] text-red-400 font-bold">
-              {dataCombo?.comboName}
-            </p>
-            <p className="italic text-[13px]">
-              "Những Món Ngon Đặc Biệt Cho Những Người Đặc Biệt"
-            </p>
-          </div>
-        </div>
-      )}
       <div className="flex justify-start w-full text-[--clr-gray-500] overflow-auto max-h-[450px]">
         <div className="max-h-[450px] flex-1  text-center min-w-1/3 overflow-auto">
-          {!isEdit ? (
-            <div className="overflow-auto sticky w-full">
-              {organizeDishesByType(menuItems).length > 0 &&
-                organizeDishesByType(menuItems)?.map((dish: any, index) => (
-                  <div key={index}>
-                    <div className="flex items-center justify-center max-w-full pr-3">
-                      <hr className="border-[1px] border-blue-400 w-full"/>
-                      <p className="font-bold text-[16px] mx-2 whitespace-nowrap">
-                        {dish.typeName}
-                      </p>
-                      <hr className="border-[1px] border-blue-400 w-full"/>
-                    </div>
-                    {dish?.dishes?.map((menu) => (
-                      <div
-                        key={menu.id}
-                        className="flex items-center gap-3 py-4 px-4 cursor-pointer hover:bg-gray-100"
-                        onClick={() => handleClickDish(menu)}
-                      >
-                        <Avatar
-                          alt="Image food"
-                          src={
-                            menu.image ||
-                            "https://lavenderstudio.com.vn/wp-content/uploads/2017/03/chup-san-pham.jpg"
-                          }
-                          sx={{ width: 60, height: 60 }}
-                        />
-                        <div className="flex items-center">
-                          <div className="flex gap-1">
-                            <div className="flex flex-col gap-1 max-w-[200px]">
-                              <Typography
-                                variant="body1"
-                                className="whitespace-nowrap text-left"
-                              >
-                                {menu.dishName}
-                              </Typography>
+
+          {isEdit ? (
+            <>
+              <SearchInFilter
+                onSearch={handleSearch}
+                isResetAll={true}
+                width="450px"
+              />
+              <div className="overflow-auto sticky w-full">
+                {organizeDishesByType(menuItems).length > 0 &&
+                  organizeDishesByType(menuItems)?.map((dish: any, index) => (
+                    <div key={index}>
+                      <div className="flex items-center justify-center max-w-full pr-3">
+                        <hr className="border-[1px] border-blue-400 w-full"/>
+                        <p className="font-bold text-[16px] mx-2 whitespace-nowrap">
+                          {dish.typeName}
+                        </p>
+                        <hr className="border-[1px] border-blue-400 w-full"/>
+                      </div>
+                      {dish?.dishes?.map((menu) => (
+                        <div
+                          key={menu.id}
+                          className="flex items-center gap-3 py-4 px-4 cursor-pointer hover:bg-gray-100"
+                          onClick={() => handleClickDish(menu)}
+                        >
+                          <Avatar
+                            alt="Image food"
+                            src={
+                              menu.image ||
+                              "https://lavenderstudio.com.vn/wp-content/uploads/2017/03/chup-san-pham.jpg"
+                            }
+                            sx={{ width: 60, height: 60 }}
+                          />
+                          <div className="flex items-center">
+                            <div className="flex gap-1">
+                              <div className="flex flex-col gap-1 max-w-[200px]">
+                                <Typography
+                                  variant="body1"
+                                  className="whitespace-nowrap text-left"
+                                >
+                                  {menu.dishName}
+                                </Typography>
+                                <Typography
+                                  variant="body2"
+                                  className="whitespace-nowrap text-left truncate w-[190px] italic"
+                                >
+                                  <Tooltip title={menu?.description}>
+                                    {menu?.description || (
+                                      <p className="italic">Chưa có mô tả</p>
+                                    )}
+                                  </Tooltip>
+                                </Typography>
+                              </div>
                               <Typography
                                 variant="body2"
-                                className="whitespace-nowrap text-left truncate w-[190px] italic"
+                                color="textSecondary"
+                                className="block"
+                                width={150}
                               >
-                                <Tooltip title={menu?.description}>
-                                  {menu?.description || (
-                                    <p className="italic">Chưa có mô tả</p>
-                                  )}
-                                </Tooltip>
+                                Giá: {formatMoney(menu?.price)} VND
                               </Typography>
                             </div>
-                            <Typography
-                              variant="body2"
-                              color="textSecondary"
-                              className="block"
-                              width={150}
-                            >
-                              Giá: {formatDecimal(menu?.price)} VND
-                            </Typography>
                           </div>
                         </div>
-                      </div>
-                    ))}
-                  </div>
-                ))}
-            </div>
+                      ))}
+                    </div>
+                  ))}
+              </div>
+            </>
+
           ) : (
             <>
               <p className="text-[22px] font-[800]">Sky View - Restaurant</p>
@@ -459,7 +474,7 @@ const DetailMenu = () => {
                           width={150}
                         >
                           Giá:{" "}
-                          {formatMoney(getDecimal(data.price) * data?.quantity)}{" "}
+                          {formatMoney(data.price * (dishQuantities[data.id] || data?.quantity))}
                           VND
                         </Typography>
                         <div className="flex items-center ml-2 gap-2 mr-4">
@@ -497,6 +512,7 @@ const DetailMenu = () => {
       <div className="flex justify-between items-center">
         <div className="flex gap-4">
           <ButtonBtn onClick={handleOpenModel}>Xem trước file PDF</ButtonBtn>
+          <ButtonBtn onClick={handleAdd}>Thêm món</ButtonBtn>
           <ModalPopup
             open={isOpenModal}
             title="Chi tiết"

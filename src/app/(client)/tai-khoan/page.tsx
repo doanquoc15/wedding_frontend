@@ -22,20 +22,13 @@ const LIST_TABS = [
     label: "Thông tin"
   },
   {
-    id: 2,
-    label: "Cài đặt"
-  },
-  {
     id: 3,
     label: "Đổi mật khẩu"
   },
   {
     id: 4,
     label: "Lịch sử"
-  }, {
-    id: 5,
-    label: "Test"
-  },
+  }
 ];
 
 const SettingPage = () => {

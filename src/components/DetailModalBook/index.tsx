@@ -18,9 +18,7 @@ import { IDetailModalBookProps, IZones } from "@/types/common";
 // eslint-disable-next-line import/order
 import { getAllZones } from "@/services/zone";
 
-//import { createBooking } from "@/services/book";
 import { getServiceById } from "@/services/service";
-import { getDecimal } from "@/utils/getDecimal";
 import { formatMoney } from "@/utils/formatMoney";
 import { paymentCheckout } from "@/services/payment";
 import { NEXT_PUBLIC_PK_STRIPE_KEY } from "@/app/constant.env";
@@ -30,7 +28,7 @@ import Clock from "@/statics/svg/ic-clock.svg";
 import DatePickerField from "@/components/common/DatePickerField";
 import stylesCommon from "@/constants/style";
 import { SHORT_DATE } from "@/constants/common";
-import { createBooking } from "@/services/book";
+import { createBooking, updateBooking } from "@/services/book";
 import { tableSchema } from "@/libs/validation/tableSchema";
 
 import { CheckIcon } from "../Icons";
@@ -44,6 +42,7 @@ const DetailModalBook = (props: IDetailModalBookProps) => {
   const [service, setService] = useState<any>();
   const [isPayment, setIsPayment] = useState<boolean>(false);
   const [isCheckout, setIsCheckout] = useState<boolean>(false);
+  const [booking, setBooking] = useState<any>();
 
   //varible
   const dispatch = useAppDispatch();
@@ -54,7 +53,6 @@ const DetailModalBook = (props: IDetailModalBookProps) => {
     handleSubmit,
     formState: { errors, isValid, isSubmitting },
     control,
-    getValues,
     setValue,
   } = useForm({
     resolver: yupResolver(tableSchema),
@@ -71,8 +69,6 @@ const DetailModalBook = (props: IDetailModalBookProps) => {
     },
     mode: "all",
   });
-
-  console.log(moment("2023-11-25T01:00:00.000Z").format("HH:mm"));
 
   //useState
   const [activeElements, setActiveElements] = useState<any>([]);
@@ -102,8 +98,9 @@ const DetailModalBook = (props: IDetailModalBookProps) => {
         totalMoney: calculatorAllPrice(),
         depositMoney: calculatorAllPrice() * 15 / 100,
       };
-      console.log(dataBook);
-      await createBooking(dataBook);
+      const create = await createBooking(dataBook);
+
+      setBooking(create);
       setIsPayment(true);
       dispatch(statusApiReducer.actions.setMessageSuccess("Đặt bàn thành công !"));
     } catch (error: any) {
@@ -123,7 +120,7 @@ const DetailModalBook = (props: IDetailModalBookProps) => {
   //all price
   const calculatorAllPrice = () => {
     const priceZone = zoneCurrent == "Khu thường" ? 1500000 : (zoneCurrent == "Khu vip" ? 4000000 : 0);
-    const priceService = getDecimal(service?.price);
+    const priceService = service?.price;
     return priceZone + priceService + priceTotalDish;
   };
 
@@ -134,7 +131,7 @@ const DetailModalBook = (props: IDetailModalBookProps) => {
     setIsCheckout(true);
     try {
       if (!NEXT_PUBLIC_PK_STRIPE_KEY) {
-        dispatch(statusApiReducer.actions.setMessageError("Stripe public key is not defined"));
+        dispatch(statusApiReducer.actions.setMessageError("Stripe key không tồn tại"));
         return;
       }
       const stripe: any = await loadStripe(NEXT_PUBLIC_PK_STRIPE_KEY);
@@ -144,6 +141,8 @@ const DetailModalBook = (props: IDetailModalBookProps) => {
       const result = stripe.redirectToCheckout({
         sessionId: response?.id
       });
+
+      await updateBooking(booking?.id, { statusPayment: "PAID" });
 
       if (result.error) {
         dispatch(statusApiReducer.actions.setMessageError(result.error));
@@ -454,11 +453,11 @@ const DetailModalBook = (props: IDetailModalBookProps) => {
                   <span className="font-semibold">Thoát</span>
                 </ButtonBtn>
                 <ButtonBtn
-                  disabled={!isValid && !(activeElements.length === 0)}
+                  disabled={!isValid}
                   width={100}
                   type="submit"
                   startIcon={isSubmitting ? <LoadingButton/> : isValid ? <CheckIcon fill="white"/> : <CheckIcon/>}
-                  bg={`${isValid && activeElements.length !== 0 ? "var(--clr-blue-400)" : "var(--clr-gray-200)"}`}
+                  bg={`${isValid ? "var(--clr-blue-400)" : "var(--clr-gray-200)"}`}
                 >
                   <span className="font-semibold">Đặt</span>
                 </ButtonBtn>
@@ -473,7 +472,7 @@ const DetailModalBook = (props: IDetailModalBookProps) => {
               <div className="flex"><p className="min-w-[200px]">Tổng tiền món ăn</p> {formatMoney(priceTotalDish)} VND
               </div>
               <div className="flex"><p className="min-w-[200px]">Tổng tiền dịch
-                vụ</p> {formatMoney(getDecimal(service?.price))} VND
+                vụ</p> {formatMoney(service?.price)} VND
               </div>
               <div className="flex"><p className="min-w-[200px]">Tổng tiền khu vực</p>
                 {zoneCurrent == "Khu thường" ? formatMoney(1500000) : (zoneCurrent == "Khu vip" ? formatMoney(4000000) : 0)} VND
