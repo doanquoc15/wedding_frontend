@@ -1,6 +1,7 @@
 .navbar {
   margin-left: 80px;
 }
+
 .navbar a {
   display: inline-block;
   position: relative;
@@ -27,7 +28,8 @@
 .navbar {
   display: flex;
   justify-content: space-around;
-  padding: 10px;
+  padding: 20px 10px;
+  gap: 40px;
 }
 
 .navbarItem {

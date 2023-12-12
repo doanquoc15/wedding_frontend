@@ -1,9 +1,20 @@
 export enum GENDER {
-    MALE,
-    FEMALE,
-    OTHER
+  MALE,
+  FEMALE,
+  OTHER
 }
+
 export enum REGENCY {
-    CHEF,
-    STAFF
+  CHEF,
+  STAFF
+}
+
+export enum TYPE_NOTIFICATION {
+  INFO,
+  WARNING
+}
+
+export enum STATUS {
+  ACTIVE,
+  INACTIVE
 }

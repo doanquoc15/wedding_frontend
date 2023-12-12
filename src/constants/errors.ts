@@ -20,4 +20,6 @@ export const ERROR_MESSAGES = {
 
 export const MESSAGE_SUCCESS = {
   UPDATED_SUCCESS: "Cập nhật thành công!",
+  CREATED_USER_SUCCESS: "Tạo tài khoản thành công",
+  DELETE_USER_SUCCESS: "Xóa tài khoản thành công",
 };

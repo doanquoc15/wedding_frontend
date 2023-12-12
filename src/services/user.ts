@@ -31,3 +31,18 @@ export const changePassword = async (id: number, params: object) => {
   const { data }: IResponse = await Api.patch(`${Apis.USER_ID}/change-password/${id}`, params);
   return data;
 };
+
+export const getAllUsers = async (params) => {
+  const { data }: IResponse = await Api.getWithParams(`${Apis.USER_ID}`, params);
+  return data;
+};
+
+export const createUser = async (params) => {
+  const { data }: IResponse = await Api.post(`${Apis.USER_ID}`, params);
+  return data;
+};
+
+export const deleteUser = async (id: number) => {
+  const { data }: IResponse = await Api.delete(`${Apis.USER_ID}/${id}`);
+  return data;
+};

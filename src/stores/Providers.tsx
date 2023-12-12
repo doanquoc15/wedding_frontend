@@ -2,7 +2,7 @@
 import { Provider } from "react-redux";
 import { ReactNode } from "react";
 
-import { store } from "./store";
+import { store } from "@/stores/store";
 
 function Providers({ children }: { children: ReactNode }) {
   return <Provider store={store}>{children}</Provider>;

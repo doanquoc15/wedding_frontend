@@ -22,13 +22,13 @@ const FoodDetail = ({ food }) => {
           />
         </div>
         <section className="flex flex-col">
-          <p className="text-[15px] font-semibold">{food?.dishName}</p>
+          <div className="text-[15px] font-semibold">{food?.dishName}</div>
           <Tooltip title={food.description}>
-            <p className="text-[13px] flex-1 truncate w-[200px]">
+            <div className="text-[13px] flex-1 truncate w-[200px]">
               {food.description}
-            </p>
+            </div>
           </Tooltip>
-          <p>{formatMoney(food?.price)} VND</p>
+          <div>{formatMoney(food?.price)} VND</div>
         </section>
       </div>
     </div>

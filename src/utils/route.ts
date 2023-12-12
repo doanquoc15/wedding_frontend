@@ -1,13 +1,9 @@
-
 //get query by key
 export const getQueryParam = (key: string) => {
-  if (typeof window !== "undefined") {
-    const url = new URL(window?.location?.href);
-    return url.searchParams.get(key) || "";
-  }
-  return null;
+  const url = new URL(window?.location?.href);
+  return url.searchParams.get(key) || "";
 };
-  
+
 //add query with key - value
 export const addQueryParam = (key: string, value: string) => {
   const url = new URL(window.location.href);
@@ -25,7 +21,7 @@ export const addQueryParams = (params: Object) => {
 };
 
 //function add multiple query
-export function addMultipleQueryParams(searchParams,params: Object) {
+export function addMultipleQueryParams(searchParams, params: Object) {
 
   // Lấy tất cả các query params hiện tại
   const currentParams = new URLSearchParams(searchParams.toString());

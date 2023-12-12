@@ -14,7 +14,7 @@ const CancelPayment = () => {
           </svg>
         </div>
         <div className="flex justify-center items-center text-center flex-col">
-          <p className="text-[19px] font-semibold">Thanh toán thất bại</p>
+          <div className="text-[19px] font-semibold">Thanh toán thất bại</div>
           <h1 className="text-[15px] mt-3">Vui lòng thử lại !</h1>
           <ButtonBtn className="mt-6" width={200}>Thử lại</ButtonBtn>
         </div>

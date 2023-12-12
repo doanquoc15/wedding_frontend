@@ -106,24 +106,24 @@ const ServicePage = () => {
                     objectFit="cover"
                   />
                 </div>
-                <p className="text-[20px] font-bold">{service?.serviceName}</p>
+                <div className="text-[20px] font-bold">{service?.serviceName}</div>
                 <div className="w-full flex justify-evenly">
-                  <span>
+                  <div>
                     <Button
                       onClick={() => handleClickDetail(service)}
                       width={100}
                     >
                       Chi tiết
                     </Button>
-                  </span>
-                  <span>
+                  </div>
+                  <div>
                     <Button
                       onClick={() => handleClickBooking(service)}
                       width={100}
                     >
                       Đặt lịch
                     </Button>
-                  </span>
+                  </div>
                 </div>
               </Item>
             </Grid>

@@ -16,12 +16,12 @@ export const WITHOUT_CONTENT = [
   "not-found",
 ];
 
-export const Zone ={
-  KHU_A:"KHU_A",
-  KHU_B:"KHU_B",
-  KHU_C:"KHU_C",
-  KHU_D:"KHU_D",
-  KHU_VIP:"KHU_VIP",
+export const Zone = {
+  KHU_A: "KHU_A",
+  KHU_B: "KHU_B",
+  KHU_C: "KHU_C",
+  KHU_D: "KHU_D",
+  KHU_VIP: "KHU_VIP",
 };
 
 //format date
@@ -91,4 +91,14 @@ export const GENDER = {
   MALE: "MALE",
   FEMALE: "FEMALE",
   OTHER: "OTHER"
+};
+
+export const GenderObjectLiteral = {
+  MALE: "Nam",
+  FEMALE: "Nữ",
+  OTHER: "Khác"
+};
+
+export const PATH = {
+  MANAGEMENT_USER: "/admin/users"
 };

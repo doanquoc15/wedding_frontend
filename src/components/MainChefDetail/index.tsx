@@ -19,42 +19,42 @@ const MainChefDetail = ({ chef }) => {
       </div>
       {/* Information of chef */}
       <div className="text-white flex flex-col justify-center gap-2 flex-1">
-        <p className="flex items-start gap-2">
+        <div className="flex items-start gap-2">
           <span>
             <IconDot />
           </span>
           <span className="w-[80px]">Họ và tên</span>
           <span>{chef?.employeeName}</span>
-        </p>
-        <p className="flex items-center gap-2">
+        </div>
+        <div className="flex items-center gap-2">
           <span>
             <IconDot />
           </span>
           <span className="w-[80px]">Tuổi</span>
           <span>{chef?.age}</span>
-        </p>
-        <p className="flex items-center gap-2">
+        </div>
+        <div className="flex items-center gap-2">
           <span>
             <IconDot />
           </span>
           <span className="w-[80px]">Địa chỉ</span>
           <span> {chef?.address}</span>
-        </p>
+        </div>
 
-        <p className="flex items-center gap-2">
+        <div className="flex items-center gap-2">
           <span>
             <IconDot />
           </span>
           <span className="w-[80px]">Kinh nghiệm</span>
           <span>{chef?.experience} năm kinh nghiệm</span>
-        </p>
-        <p className="flex items-center gap-2">
+        </div>
+        <div className="flex items-center gap-2">
           <span>
             <IconDot />
           </span>
           <span className="w-[80px]">Chức vụ</span>
           <span>{chef?.regency}</span>
-        </p>
+        </div>
       </div>
     </div>
   );

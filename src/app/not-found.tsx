@@ -1,15 +1,21 @@
 "use client";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 
 import NotFound from "@/statics/svg/ic-404.svg";
 
 const NotFoundPage = () => {
   const router = useRouter();
+  const pathName = usePathname();
+  console.log(pathName);
   useEffect(() => {
     const timerId = setTimeout(() => {
-      router.replace("/");
+      if (pathName?.startsWith("/admin")) {
+        router.push("/admin");
+      } else {
+        router.push("/");
+      }
     }, 4000);
 
     return () => {

@@ -1,57 +1,211 @@
 "use client";
-import React, { useEffect, useState } from "react";
+// import BadgeCustom from "@/components/Badge";
+// //
+// import { shortName } from "../../utils/shortName";
+//
+// function NavBar() {
+//   //useState
+//   const [_, setAnchorElUser] = useState<null | HTMLElement>(null);
+//
+//   const [isHeaderFixed, setHeaderFixed] = useState<boolean>(false);
+//   const [user, setUser] = useState<any>(null);
+//   const socketIo = useContext(SocketContext);
+//   const id = getUserLocal()?.id;
+//
+//   //constant
+//   const router = useRouter();
+//   const def = useAppSelector(selectStatus());
+//   const dispatch = useAppDispatch();
+//
+//   const pathname = usePathname();
+//
+//   //function
+//   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
+//     setAnchorElUser(event.currentTarget);
+//   };
+//
+//   const handleScroll = () => {
+//     if (window.scrollY > 0) {
+//       setHeaderFixed(true);
+//     } else {
+//       setHeaderFixed(false);
+//     }
+//   };
+//
+//   const handleFixedHeader = () => {
+//     if (isHeaderFixed) return "fixed";
+//     return "sticky";
+//   };
+//
+//   const handleCLickAcc = () => {
+//     router.push("/tai-khoan");
+//   };
+//
+//   //useEffect
+//   useEffect(() => {
+//     window.addEventListener("scroll", handleScroll);
+//
+//     return () => {
+//       window.removeEventListener("scroll", handleScroll);
+//     };
+//   }, []);
+//
+//   const cookieRole = CookiesStorage.getCookieData("role");
+//   useEffect(() => {
+//     const savedUser = LocalStorage.get("user");
+//     if (savedUser) {
+//       setUser(JSON.parse(savedUser));
+//     }
+//   }, [def]);
+//
+//   useEffect(() => {
+//     socketIo.emit("join", id);
+//
+//   }, [socketIo, id]);
+//
+//   useEffect(() => {
+//     socketIo.emit("getNotificationsById", id);
+//     socketIo.on("getNotificationsById", (notification) => {
+//       dispatch(usersReducer.actions.setNotificationsUser(notification));
+//     });
+//
+//     if (socketIo) return () => {
+//       socketIo.off("join");
+//       socketIo.off("getNotificationsById");
+//       socketIo.off(String(id));
+//     };
+//   }, []);
+//
+//   const notifications = useAppSelector(selectNotification());
+//
+//   return (
+//     <AppBar
+//       style={{ background: "white", color: "var(--clr-gray-500)", zIndex: 1 }}
+//       position={handleFixedHeader()}
+//       className="text-gray-700"
+//     >
+//       <Container maxWidth="xl">
+//
+//         <Image
+//           src={logo_sky_view}
+//           width={50}
+//           height={50}
+//           priority={true}
+//           alt="Logo sky view restaurant"
+//         />
+//         <div className="flex flex-1 justify-between">
+//           <Box
+//             className={`${style.navbar}`}
+//             sx={{ flexGrow: 0, display: "flex", gap: 4 }}
+//           >
+//             {dataPages.map((page: any) => (
+//               <Link
+//                 replace
+//                 style={{ color: "var(--clr-gray-500)" }}
+//                 className={`whitespace-nowrap ${
+//                   page.link === pathname && style.navbarItem
+//                 } ${page.link === pathname && style.selected}`}
+//                 key={page.id}
+//                 href={page.link}
+//               >
+//                 {page.title}
+//               </Link>
+//             ))}
+//           </Box>
+//           <Box className="flex gap-10 items-center">
+//             <div
+//               style={{
+//                 display: "flex",
+//                 gap: 2,
+//                 alignItems: "center"
+//               }}
+//             >
+//               <BadgeCustom notifications={notifications}/>
+//             </div>
+//             <div style={{ flexGrow: 0 }}>
+//               <Tooltip title={cookieRole && "Open settings"}>
+//                 <div
+//                   onClick={handleOpenUserMenu}
+//                   style={{ display: "flex", gap: 1, alignItems: "center", cursor: "pointer" }}
+//                 >{cookieRole ?
+//                     <div onClick={handleCLickAcc} className="flex items-center gap-3">
+//                       <Avatar
+//                         className="border-[1px] border-gray-100"
+//                         alt="avatar of customer"
+//                         src={user?.image || "https://inkythuatso.com/uploads/thumbnails/800/2022/03/4a7f73035bb4743ee57c0e351b3c8bed-29-13-53-17.jpg"}
+//                       />
+//                       <span>{shortName(user?.name)}</span>
+//                     </div> : <div className="flex items-center">
+//                       <Link className="cursor-pointer" href="/dang-nhap">Đăng nhập </Link>
+//                     / <Link className="cursor-pointer" href="/dang-ky">Đăng ký</Link>
+//                     </div>}
+//                 </div>
+//               </Tooltip>
+//             </div>
+//           </Box>
+//         </div>
+//       </Container>
+//     </AppBar>
+//   );
+//
+// }
+//
+// export default NavBar;
+import React, { useContext, useEffect, useState } from "react";
 import AppBar from "@mui/material/AppBar";
+import Container from "@mui/material/Container";
+import { usePathname, useRouter } from "next/navigation";
+import Image from "next/image";
 import Box from "@mui/material/Box";
+import Avatar from "@mui/material/Avatar";
+import Tooltip from "@mui/material/Tooltip";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
-import Avatar from "@mui/material/Avatar";
-import Tooltip from "@mui/material/Tooltip";
-import Image from "next/image";
-import Badge from "@mui/material/Badge";
-import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
-import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
+import Menu from "@mui/material/Menu";
+import MenuIcon from "@mui/icons-material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import AdbIcon from "@mui/icons-material/Adb";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 import style from "@/styles/navbar.module.scss";
-import logo_sky_view from "@/statics/images/logo-c-skyview.png";
-import { dataPages } from "@/data";
-import { LocalStorage } from "@/shared/config/localStorage";
-import { CookiesStorage } from "@/shared/config/cookie";
+import { selectNotification, selectStatus, usersReducer } from "@/stores/reducers/user";
+import { SocketContext } from "@/context/sockets";
+import { getUserLocal } from "@/services/getUserLocal";
 import { useAppDispatch, useAppSelector } from "@/stores/hook";
-import { selectDef } from "@/stores/reducers/dependence";
+import { CookiesStorage } from "@/shared/config/cookie";
+import { LocalStorage } from "@/shared/config/localStorage";
+import logo_sky_view from "@/statics/images/logo-c-skyview.png";
+import BadgeCustom from "@/components/Badge";
+import { dataPages } from "@/data";
 
-import { shortName } from "./../../utils/shortName";
+function ResponsiveAppBar() {
+  const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
+  const [_, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 
-function NavBar() {
-  //useState
-  const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
-
-  const [selectedItem, setSelectedItem] = useState<any>(
-    JSON.parse(LocalStorage.get("selectedItem") as string)
-  );
+  const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorElNav(event.currentTarget);
+  };
+  const handleCloseNavMenu = () => {
+    setAnchorElNav(null);
+  };
 
   const [isHeaderFixed, setHeaderFixed] = useState<boolean>(false);
   const [user, setUser] = useState<any>(null);
+  const socketIo = useContext(SocketContext);
+  const id = getUserLocal()?.id;
 
   //constant
-  const dispatch = useAppDispatch();
   const router = useRouter();
-  const def = useAppSelector(selectDef);
+  const def = useAppSelector(selectStatus());
+  const dispatch = useAppDispatch();
+
+  const pathname = usePathname();
 
   //function
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
+    router.push("/tai-khoan");
     setAnchorElUser(event.currentTarget);
-  };
-
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
-  };
-
-  const handleItemClick = (index: any) => {
-    setSelectedItem(JSON.stringify(index));
   };
 
   const handleScroll = () => {
@@ -67,17 +221,7 @@ function NavBar() {
     return "sticky";
   };
 
-  const handleCLickAcc = () => {
-    router.push("/tai-khoan");
-    LocalStorage.remove("selectedItem");
-  };
-
   //useEffect
-
-  useEffect(() => {
-    LocalStorage.add("selectedItem", JSON.stringify(selectedItem));
-  }, [selectedItem]);
-
   useEffect(() => {
     window.addEventListener("scroll", handleScroll);
 
@@ -86,7 +230,7 @@ function NavBar() {
     };
   }, []);
 
-  const cookieRole = CookiesStorage.getCookieData("role");
+  CookiesStorage.getCookieData("role");
   useEffect(() => {
     const savedUser = LocalStorage.get("user");
     if (savedUser) {
@@ -94,122 +238,150 @@ function NavBar() {
     }
   }, [def]);
 
+  useEffect(() => {
+    socketIo.emit("join", id);
+
+  }, [socketIo, id]);
+
+  useEffect(() => {
+    socketIo.emit("getNotificationsById", id);
+    socketIo.on("getNotificationsById", (notification) => {
+      dispatch(usersReducer.actions.setNotificationsUser(notification));
+    });
+
+    if (socketIo) return () => {
+      socketIo.off("join");
+      socketIo.off("getNotificationsById");
+      socketIo.off(String(id));
+    };
+  }, []);
+
+  const notifications = useAppSelector(selectNotification());
   return (
-    <AppBar
-      style={{ background: "white", color: "var(--clr-gray-500)", zIndex: 1 }}
+    <AppBar style={{ background: "white", color: "var(--clr-gray-500)", zIndex: 1 }}
       position={handleFixedHeader()}
-      className="text-gray-700"
-    >
+      className="text-gray-700">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <Image
-            src={logo_sky_view}
-            width={50}
-            height={50}
-            priority={true}
-            alt="Logo sky view restaurant"
-          />
-          <div className="flex flex-1 justify-between">
-            <Box
-              className={`${style.navbar}`}
-              sx={{ flexGrow: 0, display: "flex", gap: 4 }}
-            >
-              {dataPages.map((page, index) => (
-                <Link
-                  replace
-                  style={{ color: "var(--clr-gray-500)" }}
-                  className={`whitespace-nowrap ${
-                    index === +selectedItem && style.navbarItem
-                  } ${index === +selectedItem && style.selected}`}
-                  onClick={() => handleItemClick(index)}
-                  key={index}
-                  href={page.link}
-                >
-                  {page.title}
-                </Link>
-              ))}
-            </Box>
-            <div className="flex gap-10 items-center">
-              <Box
-                sx={{
-                  display: "flex",
-                  gap: 2,
-                  alignItems: "center"
-                }}
-              >
-                <Tooltip title="Email">
-                  <IconButton>
-                    <Badge badgeContent={10} color="primary">
-                      <EmailOutlinedIcon/>
-                    </Badge>
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="Notification(s)">
-                  <IconButton>
-                    <Badge badgeContent={2} color="primary">
-                      <NotificationsNoneIcon/>
-                    </Badge>
-                  </IconButton>
-                </Tooltip>
-              </Box>
-              <Box sx={{ flexGrow: 0 }}>
-                <Tooltip title={cookieRole && "Open settings"}>
-                  <Box
-                    onClick={handleOpenUserMenu}
-                    sx={{ display: "flex", gap: 1, alignItems: "center", cursor: "pointer" }}
-                  >{cookieRole ?
-                      <div onClick={handleCLickAcc} className="flex items-center gap-3"><IconButton sx={{ p: 0 }}>
-                        <Avatar
-                          className="border-[1px] border-gray-100"
-                          alt="avatar of customer"
-                          src={user?.image || "https://inkythuatso.com/uploads/thumbnails/800/2022/03/4a7f73035bb4743ee57c0e351b3c8bed-29-13-53-17.jpg"}
-                        />
-                      </IconButton>
-                      <Typography>{shortName(user?.name)}</Typography></div> : <div className="flex items-center">
-                        <Link className="cursor-pointer" href="/dang-nhap">Đăng nhập </Link>
-                      / <Link className="cursor-pointer" href="/dang-ky">Đăng ký</Link>
-                      </div>}
-                  </Box>
-                </Tooltip>
-                {/*{
-                  cookieRole && <Menu
-                    sx={{ mt: "52px", marginLeft: "25px" }}
-                    anchorEl={anchorElUser}
-                    anchorOrigin={{
-                      vertical: "top",
-                      horizontal: "right",
-                    }}
-                    keepMounted
-                    transformOrigin={{
-                      vertical: "top",
-                      horizontal: "right",
-                    }}
-                    open={Boolean(anchorElUser)}
-                    onClose={handleCloseUserMenu}
-                    PaperProps={{
-                      style: {
-                        width: "150px",
-                      },
-                    }}
-                  >*/}
-                {/*{dataSettings.map((setting, index) => (
-                      <MenuItem
-                        className="pl-8 whitespace-nowrap"
-                        key={index}
-                        onClick={handleCloseUserMenu}
-                      >
-                        <Typography textAlign="center" onClick = {() => handleClickSetting(setting)}>{setting}</Typography>
-                      </MenuItem>
-                    ))}
-                  </Menu>*/}
-                {/*}*/}
-              </Box>
-            </div>
+          <div className="w-[50px] h-[50px] overflow-hidden rounded-[50%]">
+            <Image
+              src={logo_sky_view}
+              width={50}
+              height={50}
+              priority={true}
+              alt="Logo sky view restaurant"
+              objectFit="cover"
+            />
           </div>
+          <Typography
+            variant="h6"
+            noWrap
+            component="a"
+            href="#app-bar-with-responsive-menu"
+            sx={{
+              mr: 2,
+              display: { xs: "none", md: "flex" },
+              fontFamily: "monospace",
+              fontWeight: 700,
+              letterSpacing: ".3rem",
+              color: "inherit",
+              textDecoration: "none",
+            }}
+          >
+            Sky View
+          </Typography>
+
+          <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
+            <IconButton
+              size="large"
+              aria-label="account of current user"
+              aria-controls="menu-appbar"
+              aria-haspopup="true"
+              onClick={handleOpenNavMenu}
+              color="inherit"
+            >
+              <MenuIcon/>
+            </IconButton>
+            <Menu
+              id="menu-appbar"
+              anchorEl={anchorElNav}
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "left",
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "left",
+              }}
+              open={Boolean(anchorElNav)}
+              onClose={handleCloseNavMenu}
+              sx={{
+                display: { xs: "block", md: "none" },
+              }}
+            >
+              {dataPages.map((page) => (
+                <MenuItem key={page.id} onClick={handleCloseNavMenu}>
+                  <Typography className={`whitespace-nowrap ${
+                    page.link === pathname && style.navbarItem
+                  } ${page.link === pathname && style.selected}`} textAlign="center">{page?.title}</Typography>
+                </MenuItem>
+              ))}
+            </Menu>
+          </Box>
+          <AdbIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }}/>
+          <Typography
+            variant="h5"
+            noWrap
+            component="a"
+            href="#app-bar-with-responsive-menu"
+            sx={{
+              mr: 2,
+              display: { xs: "flex", md: "none" },
+              flexGrow: 1,
+              fontFamily: "monospace",
+              fontWeight: 700,
+              letterSpacing: ".3rem",
+              color: "inherit",
+              textDecoration: "none",
+            }}
+          >
+            SkyView
+          </Typography>
+          <Box sx={{ flexGrow: 0, display: { xs: "none", md: "flex" } }} className={`${style.navbar}`}>
+            {dataPages.map((page) => (
+              <Link
+                key={page.id}
+                href={page.link}
+                onClick={handleCloseNavMenu}
+                className={`whitespace-nowrap ${
+                  page.link === pathname && style.navbarItem
+                } ${page.link === pathname && style.selected}`}
+              >
+                {page.title}
+              </Link>
+            ))}
+          </Box>
+
+          {CookiesStorage.getCookieData("role") ?
+            <Box sx={{ flexGrow: 1, display: "flex", gap: "20px", justifyContent: "end" }}>
+              <BadgeCustom notifications={notifications}/>
+              <Tooltip title="Tài khoản">
+                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                  <Avatar alt="Avatar user" defaultValue={user?.name}
+                    src={user?.image || "https://inkythuatso.com/uploads/thumbnails/800/2022/03/4a7f73035bb4743ee57c0e351b3c8bed-29-13-53-17.jpg"}/>
+                  <span className="ml-2 text-[15px]">{user?.name}</span>
+                </IconButton>
+              </Tooltip>
+            </Box> :
+            <Box sx={{ flexGrow: 1, display: "flex", justifyContent: "end", gap: "10px" }}>
+              <Link href="/dang-nhap">Đăng nhập</Link>
+              <Link href="/dang-ky">Đăng ký</Link>
+            </Box>}
         </Toolbar>
       </Container>
     </AppBar>
   );
 }
 
-export default NavBar;
+export default ResponsiveAppBar;

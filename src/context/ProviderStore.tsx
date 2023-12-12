@@ -15,7 +15,7 @@ const ProviderStore = ({ children }: { children: ReactNode }) => {
       (toast as any)[`${Object.keys(statusApiMessage)[0]}`](
         `${Object.values(statusApiMessage)[0]}`
       );
-  
+
       dispatch(statusApiReducer.actions.resetMessage());
     }
   }, [dispatch, statusApiMessage]);

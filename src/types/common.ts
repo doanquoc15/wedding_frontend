@@ -2,7 +2,7 @@ import React, { ReactNode } from "react";
 import { SelectProps, TextFieldProps } from "@mui/material";
 import { Control } from "react-hook-form";
 
-import { GENDER, REGENCY } from "./enums";
+import { GENDER, REGENCY, TYPE_NOTIFICATION } from "./enums";
 
 export interface SignInType {
   email: string;
@@ -140,14 +140,6 @@ export type TextFieldPropsType = TextFieldProps & {
   minHeight?: string | number;
 };
 
-// export interface DatePickerType extends Omit<any, "onChange" | "value"> {
-//   name: string;
-//   control: Control<any>;
-//   defaultValue?: unknown;
-//   sx?: any;
-//   id?: string | number;
-// }
-
 export interface IDetailModalBookProps {
   handleClickCancel: () => void;
   handleCloseModals: () => void;
@@ -200,3 +192,26 @@ export type TextAreaFieldPropsType = TextFieldProps & {
   rows?: number;
   cols?: number;
 };
+
+export interface INotification {
+  id: number;
+  title: string;
+  description?: string;
+  isRead: boolean;
+  userId: number;
+  image?: string;
+  type: TYPE_NOTIFICATION;
+  link?: string;
+}
+
+export interface IUser {
+  id: number;
+  name: string;
+  email: string;
+  phone?: string;
+  address?: string;
+  password?: string;
+  status?: string;
+  gender?: GENDER;
+  dateOfBirth?: string;
+}

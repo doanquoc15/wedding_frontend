@@ -46,21 +46,21 @@ const Production = () => {
   return (
     <div>
       <header className="bg-[#F5F5F5] min-h-[188px] flex flex-col justify-center items-center">
-        <p className="text-[36px] leading-[48px]">Giới thiệu</p>
-        <p className="text-[24px] leading-9">Sky View - Restaurant</p>
+        <div className="text-[36px] leading-[48px]">Giới thiệu</div>
+        <div className="text-[24px] leading-9">Sky View - Restaurant</div>
       </header>
       <main className="pt-[85px] pl-[180px] pr-[150px] flex flex-col gap-8 pb-[56px]">
         <hr className="border-[1px] border-[#979797]" />
         <div className="text-[14px]">
-          <p className="text-[20px] font-bold leading-4 mb-4 text-center">
+          <div className="text-[20px] font-bold leading-4 mb-4 text-center">
             Tổng quan về Sky View Restaurant Đà Nẵng
-          </p>
-          <p className="text-justify mb-4">
+          </div>
+          <div className="text-justify mb-4">
             Sky View Restaurant nằm trên tầng 20 khách sạn Belle Maison sở hữu
             tầm nhìntuyệt đẹp từ trên cao. Thực khách khi đến với nhà hàng có
             thể được thưởng ngoạn view biển và thành phố, trong khi nhâm nhi
             thưởng thức bữa ăn ngon cùng bạn đồng hành.
-          </p>
+          </div>
           <div>
             {dataRestaurant?.map((data, index) => (
               <div key={index} className="flex items-center">
@@ -77,7 +77,7 @@ const Production = () => {
                 src={ProductionImage}
               />
             </div>
-            <p className="mb-4">
+            <div className="mb-4">
               Nhắc đến Sky View Restaurant các thực khách vẫn thường dùng những
               tính từ như sang trọng, nhẹ nhàng và tinh tế để mô tả. Từ khoảnh
               khắc bước chân vào nhà hàng bạn đã cảm thấy vô cùng choáng ngợp
@@ -85,32 +85,32 @@ const Production = () => {
               châu Âu và châu Á. Nhà hàng sở hữu không gian thoáng đãng, có ánh
               đèn vàng mang đến cảm giác ấm áp hoặc ánh nến mơ màng cho các cặp
               đôi.
-            </p>
-            <p>
+            </div>
+            <div>
               Đặc biệt tại tầng 20 của Sky View Restaurant còn có cả một hồ bơi.
               Đây cũng là lý do nhà hàng này rất thích hợp cho những buổi gặp gỡ
               thân mật, hẹn hò hoặc trò chuyện với bạn bè, người thân.
-            </p>
+            </div>
           </div>
         </div>
         <hr className="border-[1px] border-[#979797]" />
         <div className="text-[14px]">
-          <p className="text-[20px] font-bold leading-4 mb-4 text-center">
+          <div className="text-[20px] font-bold leading-4 mb-4 text-center">
             Điểm đặc biệt của Sky View Restaurant
-          </p>
-          <p className="text-justify">
+          </div>
+          <div className="text-justify">
             <ol style={{ listStyleType: "decimal" }}>
               <li>
-                <p className="font-bold text-[15px] mb-2">
+                <div className="font-bold text-[15px] mb-2">
                   Kiến trúc hiện đại và sang trọng{" "}
-                </p>
-                <p>
+                </div>
+                <div>
                   Nằm ở vị trí tầng 20 thuộc khách sạn Belle Maison Parosand Đà
                   Nẵng, nhà hàng Sky View Restaurant sở hữu một không gian mở
                   nhờ những tấm kính trong suốt được lắp đặt xung quanh. Dù ở
                   góc độ nào bạn cũng có thể quan sát thiên nhiên bên ngoài
                   trong lúc thưởng thức bữa ăn.
-                </p>
+                </div>
                 <div className="flex justify-center mt-4">
                   <Image
                     width={650}
@@ -120,7 +120,7 @@ const Production = () => {
                     src={ArchitectureImage}
                   />
                 </div>
-                <p>
+                <div>
                   Nội thất nhà hàng cũng vô cùng sang trọng khi sử dụng những
                   tông màu ấm. Để đảm bảo trải nghiệm cũng như giúp các thực
                   khách có được không gian riêng tư tuyệt hảo, Sky View
@@ -129,7 +129,7 @@ const Production = () => {
                   đèn tròn tạo cảm giác ấm cúng, đây cũng là một điểm cộng rất
                   lớn bởi thực khách của nhà hàng đa phần là các cặp đôi, gia
                   đình.
-                </p>
+                </div>
                 <div className="flex justify-center mt-4">
                   <Image
                     width={650}
@@ -141,10 +141,10 @@ const Production = () => {
                 </div>
               </li>
               <li>
-                <p className="font-bold text-[15px] mb-2">
+                <div className="font-bold text-[15px] mb-2">
                   Tầm nhìn tuyệt đẹp của Sky View Restaurant
-                </p>
-                <p>
+                </div>
+                <div>
                   Sky View Restaurant có tầm nhìn thẳng ra toàn bộ bãi biển đẹp
                   nhất Đà Nẵng –
                   <span className="text-[--clr-red-400]"> Biển Mỹ Khê</span>{" "}
@@ -153,7 +153,7 @@ const Production = () => {
                   nhiều người săn đón và đặt trước nhất. Hãy tưởng tượng mà xem,
                   khung cảnh biển trước mắt cùng hồ bơi dưới ráng chiều khi
                   hoàng hôn buông xuống sẽ xinh đẹp đến nhường nào.
-                </p>
+                </div>
                 <div className="flex justify-center mt-4">
                   <Image
                     width={650}
@@ -163,7 +163,7 @@ const Production = () => {
                     src={ViewBeachImage}
                   />
                 </div>
-                <p>
+                <div>
                   Bạn có thể chụp lại khoảnh khắc tuyệt diệu này cùng những
                   người thân yêu nhất trong cuộc đời. Đó sẽ là một phần ký ức
                   đẹp của một bữa ăn ngon, khung cảnh hoàn mỹ và cả những câu
@@ -171,7 +171,7 @@ const Production = () => {
                   View Restaurant, các buổi tiệc gia đình luôn tràn đầy những
                   niềm vui tiếng cười, đó là những bữa cơm sum vầy ngập tràn
                   hạnh phúc.
-                </p>
+                </div>
                 <div className="flex justify-center mt-4">
                   <Image
                     width={650}
@@ -183,10 +183,10 @@ const Production = () => {
                 </div>
               </li>
               <li>
-                <p className="font-bold text-[15px] mb-2">
+                <div className="font-bold text-[15px] mb-2">
                   Địa điểm được các cặp đôi yêu thích hàng đầu
-                </p>
-                <p>
+                </div>
+                <div>
                   Sky View Restaurant không chỉ là một nhà hàng nơi mọi người
                   đến thưởng thức{" "}
                   <span className="text-[--clr-red-400]">
@@ -198,7 +198,7 @@ const Production = () => {
                   nhiên, mọi nhân viên trong nhà hàng luôn cố gắng đáp ứng các
                   nhu cầu của họ và đặt hạnh phúc, sự hài lòng khách hàng lên
                   đầu.
-                </p>
+                </div>
                 <div className="flex justify-center mt-4">
                   <Image
                     width={650}
@@ -208,7 +208,7 @@ const Production = () => {
                     src={Love1Image}
                   />
                 </div>
-                <p>
+                <div>
                   Sky View Restaurant cũng đã chứng kiến nhiều giọt nước mắt cảm
                   động chân tình, những lời ngỏ ý đong đầy tình cảm, những nụ
                   hôn nồng nàn kết tinh từ tình yêu của những cặp đôi. Rất nhiều
@@ -217,7 +217,7 @@ const Production = () => {
                   niềm vui của khách hàng đã tạo động lực cho Sky View
                   Restaurant luôn cố gắng để hoàn thiện và phấn đấu tốt hơn
                   trong công tác phục vụ.
-                </p>
+                </div>
                 <div className="flex justify-center mt-4">
                   <Image
                     width={650}
@@ -228,11 +228,11 @@ const Production = () => {
                     src={Love2Image}
                   />
                 </div>
-                <p>
+                <div>
                   Ngoài ra Sky View Restaurant cũng là địa chỉ hấp dẫn cho các
                   gia đình vào các dịp cuối tuần hay các kỳ nghĩ lễ để quây quần
                   bên nhau, gắn kết xây đăp tình cảm gia đình.
-                </p>
+                </div>
                 <div className="flex justify-center mt-4">
                   <Image
                     width={650}
@@ -244,10 +244,10 @@ const Production = () => {
                 </div>
               </li>
               <li>
-                <p className="font-bold text-[15px] mb-2">
+                <div className="font-bold text-[15px] mb-2">
                   Nơi mang đến phong cách ẩm thực châu Âu đắt giá
-                </p>
-                <p>
+                </div>
+                <div>
                   Ẩm thực tại Sky View Restaurant khá đa dạng khi có cả menu
                   A-la-carte và buffet theo phong cách Âu. Các món ngon ở đây
                   đều được chính tay các đầu bếp có thâm niên lâu năm trong nghề
@@ -255,7 +255,7 @@ const Production = () => {
                   hương vị thì cách bài trí món ăn đẹp mắt cũng là một điểm nhấn
                   không thể bỏ qua. Bằng chứng là từng món đều được sắp xếp hết
                   sức nghệ thuật trên đĩa với màu sắc gây tượng mạnh.
-                </p>
+                </div>
                 <div className="flex justify-center mt-4">
                   <Image
                     width={650}
@@ -265,14 +265,14 @@ const Production = () => {
                     src={Food8Image}
                   />
                 </div>
-                <p>
+                <div>
                   Bên cạnh những món ẩm thực châu Âu thì các món hải sản cũng là
                   điểm mạnh của Sky View Restaurant. Bởi nguồn hải sản từ biển
                   Đà Nẵng vốn rất dồi dào và phong phú, luôn đảm bảo độ tươi
                   ngon đúng chuẩn. Có thể nói nhà hàng luôn đem lại cho thực
                   khách một menu trọn vẹn và phong phú, nếu lần đầu ghé bạn có
                   thể phải nhờ nhân viên tư vấn để chọn được món phù hợp.
-                </p>
+                </div>
                 <div className="flex justify-center mt-4">
                   <Image
                     width={650}
@@ -282,7 +282,7 @@ const Production = () => {
                     src={Food2Image}
                   />
                 </div>
-                <p>Menu phục vụ hằng ngày</p>
+                <div>Menu phục vụ hằng ngày</div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="p-4">
                     <Image
@@ -340,12 +340,12 @@ const Production = () => {
                     />
                   </div>
                 </div>
-                <p>
+                <div>
                   Ngoài ra còn có cả những món chính nóng hổi như quầy steak
                   thăn bò ngoại, mì Ý Penna, khoai tây đút lò… Đương nhiên thực
                   đơn cũng có đa dạng các món salad tốt cho sức khỏe, quầy tráng
                   miệng được các đầu bếp chăm chút từ sắc cho đến vị.
-                </p>
+                </div>
                 <div className="flex justify-center mt-4">
                   <Image
                     width={650}
@@ -357,15 +357,15 @@ const Production = () => {
                 </div>
               </li>
             </ol>
-          </p>
+          </div>
         </div>
         <hr className="border-[1px] border-[#979797]" />
         <div className="text-[14px]">
-          <p className="text-[20px] font-bold leading-4 mb-4  text-center">
+          <div className="text-[20px] font-bold leading-4 mb-4  text-center">
             Trải nghiệm dịch vụ đẳng cấp tại Sky View
-          </p>
+          </div>
           <div>
-            <p className="">
+            <div className="">
               Ngoài không gian sang trọng, món ăn ngon thì dịch vụ tại Sky View
               Restaurant cũng là một điểm cộng lớn đủ làm hài lòng mọi thực
               khách. Khách hàng đến dùng bữa sẽ được nhân viên niềm nở tiếp đón
@@ -373,7 +373,7 @@ const Production = () => {
               sẽ thêm phần thoải mái hơn. Nếu cần nhà hàng cũng có hỗ trợ set up
               bàn tiệc nhóm hay hẹn hò cho người có nhu cầu, bạn có thể liên hệ
               nhân viên trước để biết thêm chi tiết.
-            </p>
+            </div>
             <div className="flex justify-center mt-4">
               <Image
                 width={650}
@@ -383,13 +383,13 @@ const Production = () => {
                 src={Service}
               />
             </div>
-            <p>
+            <div>
               Cuối cùng, trong năm 2020 Sky View Restaurant Đà Nẵng đã hân hạnh
               tiếp tục trở thành nhà hàng TOP 1 trên Tripadvisor và nhận được
               giải thưởng "TRAVELERS' CHOICE 2020". Đây là giải thưởng dựa trên
               gần 400 đánh giá và xếp hạng của khách hàng trong và ngoài nước,
               chứng minh được sức hút cũng như giá trị mà nhà hàng mang lại.
-            </p>
+            </div>
             <div className="flex justify-center mt-4">
               <Image
                 width={650}
@@ -399,7 +399,7 @@ const Production = () => {
                 src={ChefImage}
               />
             </div>
-            <p>
+            <div>
               Nếu bạn muốn trải nghiệm một bữa tối tuyệt vời dưới ánh nến, cùng
               thưởng thức món ăn được bày trí đẹp mắt với ly rượu vang nồng nàn
               trong không gian riêng tư thì có lẽ Sky View Restaurant sẽ là sự
@@ -407,12 +407,12 @@ const Production = () => {
               vã bên ngoài khi đi khám phá Đà Nẵng, đến dùng bữa tại nhà hàng
               chúng ta sẽ như được gác lại bao khó khăn và mệt mỏi, chỉ còn
               những giây phút thả lỏng và sum vầy cùng người thân xung quanh.{" "}
-            </p>
+            </div>
           </div>
         </div>
         <hr className="border-[1px] border-[#979797]" />
         <div>
-          <p className="text-[20px] font-bold leading-4 mb-4">
+          <div className="text-[20px] font-bold leading-4 mb-4">
             <iframe
               width="100%"
               height="400px"
@@ -422,7 +422,7 @@ const Production = () => {
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               //allowfullscreen
             ></iframe>
-          </p>
+          </div>
         </div>
       </main>
     </div>

@@ -1,11 +1,10 @@
 import React from "react";
 
-const Page = () => {
+const HomeDashBoard = () => {
   return (
     <div>
-      Dashboard
+      DashBoard admin
     </div>
   );
 };
-
-export default Page;
+export default HomeDashBoard;

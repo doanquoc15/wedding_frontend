@@ -128,8 +128,8 @@ const PendingPage = (props: PendingPageProps) => {
         <div className="min-w-[500px] h-auto p-6 relative">
           {checkDateRejected(beforeOneDay(booking?.comeInAt)) ? <>
             <div className="flex flex-col gap-4 w-full actual-receipt">
-              <p className="py-3 text-[14px] text-[--clr-gray-500]">Bạn có chắc muốn hủy dịch vụ
-                {" "}<span className="italic font-semibold">{booking?.comboMenu?.comboName}</span> không ?</p>
+              <div className="py-3 text-[14px] text-[--clr-gray-500]">Bạn có chắc muốn hủy dịch vụ
+                {" "}<span className="italic font-semibold">{booking?.comboMenu?.comboName}</span> không ?</div>
             </div>
             <div className="flex justify-end mt-[0.25rem] gap-4">
               <ButtonBtn
@@ -151,8 +151,8 @@ const PendingPage = (props: PendingPageProps) => {
             </div>
           </> : <>
             <div className="flex flex-col gap-4 w-full actual-receipt">
-              <p className="py-3 text-[14px] text-[--clr-gray-500]">Chỉ có thể hủy trước
-                ngày {moment(beforeOneDay(booking?.comeInAt)).format(DATE_CALENDAR_SHORT)}</p>
+              <div className="py-3 text-[14px] text-[--clr-gray-500]">Chỉ có thể hủy trước
+                ngày {moment(beforeOneDay(booking?.comeInAt)).format(DATE_CALENDAR_SHORT)}</div>
             </div>
             <div className="flex justify-end mt-[0.25rem] gap-4">
               <ButtonBtn

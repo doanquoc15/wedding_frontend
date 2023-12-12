@@ -58,17 +58,17 @@ const ComboMenuDetail = ({ menuCombo }) => {
         />
         <div className="absolute top-20 w-full">
           <div className="flex flex-1 flex-col items-center gap-2">
-            <p className="text-[--clr-red-400] text-[18px] font-bold">
+            <div className="text-[--clr-red-400] text-[18px] font-bold">
               {menuCombo?.comboName}
-            </p>
-            <p className="text-[--clr-red-400]">
+            </div>
+            <div className="text-[--clr-red-400]">
               <span className="font-semibold text-[#126213]">Số món :</span>{" "}
               {menuCombo?.comboItems?.length} món/bàn
-            </p>
-            <p className="text-[--clr-red-400]">
+            </div>
+            <div className="text-[--clr-red-400]">
               <span className="font-semibold text-[#126213]">Chi phí :</span>{" "}
               {formatMoney(menuCombo?.totalPrice)}/bàn
-            </p>
+            </div>
           </div>
         </div>
         <div className="absolute bottom-6 left-[50%] translate-x-[-50%]">

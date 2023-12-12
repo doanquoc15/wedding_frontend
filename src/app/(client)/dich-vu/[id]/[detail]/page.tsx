@@ -362,9 +362,9 @@ const DetailMenu = () => {
                     <div key={index}>
                       <div className="flex items-center justify-center max-w-full pr-3">
                         <hr className="border-[1px] border-blue-400 w-full"/>
-                        <p className="font-bold text-[16px] mx-2 whitespace-nowrap">
+                        <div className="font-bold text-[16px] mx-2 whitespace-nowrap">
                           {dish.typeName}
-                        </p>
+                        </div>
                         <hr className="border-[1px] border-blue-400 w-full"/>
                       </div>
                       {dish?.dishes?.map((menu) => (
@@ -396,7 +396,7 @@ const DetailMenu = () => {
                                 >
                                   <Tooltip title={menu?.description}>
                                     {menu?.description || (
-                                      <p className="italic">Chưa có mô tả</p>
+                                      <div className="italic">Chưa có mô tả</div>
                                     )}
                                   </Tooltip>
                                 </Typography>
@@ -420,13 +420,13 @@ const DetailMenu = () => {
 
           ) : (
             <>
-              <p className="text-[22px] font-[800]">Sky View - Restaurant</p>
-              <p className="italic">
+              <div className="text-[22px] font-[800]">Sky View - Restaurant</div>
+              <div className="italic">
                 "Những Món Ngon Đặc Biệt Cho Những Người Đặc Biệt"
-              </p>
-              <p className="text-[19px] text-red-400 font-bold py-[30px]">
+              </div>
+              <div className="text-[19px] text-red-400 font-bold py-[30px]">
                 {dataCombo?.comboName}
-              </p>
+              </div>
               <Image
                 src="https://sdl.thuathienhue.gov.vn/UploadFiles/TinTuc/banh_mi.jpg"
                 alt="image food"
@@ -441,9 +441,9 @@ const DetailMenu = () => {
             {convertDataMenuBook().length > 0 &&
               convertDataMenuBook()?.map((item: any, index) => (
                 <div key={index}>
-                  <p className="mb-5 text-[16px] font-semibold text-blue-400">
+                  <div className="mb-5 text-[16px] font-semibold text-blue-400">
                     {index + 1}. {item?.typeName}
-                  </p>
+                  </div>
                   {item?.dishes?.map((data, index) => (
                     <div key={index} className="flex items-center gap-5 mb-6">
                       <Avatar
@@ -463,7 +463,7 @@ const DetailMenu = () => {
                             className="max-w-[300px] italic"
                           >
                             {data?.description || (
-                              <p className="italic">Chưa có mô tả</p>
+                              <div className="italic">Chưa có mô tả</div>
                             )}
                           </Typography>
                         </div>
@@ -563,13 +563,13 @@ const DetailMenu = () => {
               comboMenuId={comboMenuId}
               priceTotalDish={totalPrices()}/>
           </ModalPopup>
-          <p>
+          <div>
             Tổng tiền:{" "}
             <span>
               {formatMoney(totalPrices())}
               VND
             </span>
-          </p>
+          </div>
         </div>
       </div>
     </div>

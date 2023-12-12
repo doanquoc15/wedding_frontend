@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { RootState } from "../store";
+import { RootState } from "@/stores/store";
 
 const REDUCER_NAME = "loading";
 

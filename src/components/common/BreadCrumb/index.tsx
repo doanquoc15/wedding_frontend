@@ -36,7 +36,7 @@ const Breadcrumb = (props: IProps) => {
           },
         }}
       >
-        {routes.map((route: IRoute, index: number) => (
+        {/*{routes.map((route: IRoute, index: number) => (
           <Link
             key={index}
             underline={index === routes.length - 1 ? "none" : "hover"}
@@ -58,7 +58,7 @@ const Breadcrumb = (props: IProps) => {
           >
             {route?.name}
           </Link>
-        ))}
+        ))}*/}
       </Breadcrumbs>
     </div>
   );

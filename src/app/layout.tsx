@@ -1,39 +1,25 @@
-"use client";
-import "react-toastify/dist/ReactToastify.css";
-import { ThemeProvider } from "@emotion/react";
-import { createTheme } from "@mui/material/styles";
-import { ToastContainer } from "react-toastify";
-import { ReactNode } from "react";
-import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import type { Metadata } from "next";
+import React from "react";
 
-import "../styles/globals.scss";
-import Providers from "@/stores/Providers";
-import ProviderStore from "@/context/ProviderStore";
-import ClientComponent from "@/context/ClientComponent";
+export const metadata: Metadata = {
+  title: {
+    default: "Sky View",
+    template: "%s | Sky View",
+  },
+  description: "Management services for your restaurant",
+};
 
-function RootLayout({ children }: { children: ReactNode }) {
-  const THEME = createTheme({
-    typography: {
-      fontFamily: "var(--font-primary)",
-    },
-  });
-
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning={true}>
       <body>
-        <Providers>
-          <ThemeProvider theme={THEME}>
-            <LocalizationProvider dateAdapter={AdapterMoment}>
-              <ToastContainer />
-              <ProviderStore>
-                {children}
-              </ProviderStore>
-            </LocalizationProvider>
-          </ThemeProvider>
-        </Providers>
+        <div>{children}
+        </div>
       </body>
     </html>
   );
 }
-export default RootLayout;

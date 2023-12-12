@@ -26,9 +26,9 @@ const SuccessPayment = () => {
           </svg>
         </div>
         <div className="flex justify-center items-center text-center flex-col">
-          <p className="text-[19px] font-semibold">Thanh toán thành công</p>
+          <div className="text-[19px] font-semibold">Thanh toán thành công</div>
           <h1 className="text-[15px] mt-3">Cảm ơn quý khách !</h1>
-          <p>Chúng tôi sẽ gửi đến email của bạn. Vui lòng kiểm tra email. </p>
+          <div>Chúng tôi sẽ gửi đến email của bạn. Vui lòng kiểm tra email. </div>
           <ButtonBtn className="mt-6" width={200} onClick={handleClick}>Trang chủ</ButtonBtn>
         </div>
       </div>

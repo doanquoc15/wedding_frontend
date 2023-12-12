@@ -5,9 +5,9 @@ import LoadingIcon from "@/statics/svg/ic-loading.svg";
 
 const Loading = () => {
   return (
-    <div className="w-ful bg-[rgba(0,0,0,0.15)]">
-      <div className="flex justify-center items-center">
-        <Image alt="LoadingIcon" src={LoadingIcon} />
+    <div className="w-full min-h-full flex items-center justify-center">
+      <div className="flex justify-center items-center w-full min-h-full m-auto">
+        <Image alt="LoadingIcon" src={LoadingIcon}/>
       </div>
     </div>
   );

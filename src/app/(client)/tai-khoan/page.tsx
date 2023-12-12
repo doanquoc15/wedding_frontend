@@ -11,10 +11,10 @@ import { LocalStorage } from "@/shared/config/localStorage";
 import { LogoutAPI } from "@/services/auth";
 import { useAppDispatch } from "@/stores/hook";
 import { statusApiReducer } from "@/stores/reducers/statusAPI";
-import { defReducer } from "@/stores/reducers/dependence";
 import MyInformation from "@/components/Account/MyInformation";
 import ChangePassword from "@/components/Account/ChangePassword";
 import MyBook from "@/components/Account/MyBook";
+import { usersReducer } from "@/stores/reducers/user";
 
 const LIST_TABS = [
   {
@@ -22,11 +22,11 @@ const LIST_TABS = [
     label: "Thông tin"
   },
   {
-    id: 3,
+    id: 2,
     label: "Đổi mật khẩu"
   },
   {
-    id: 4,
+    id: 3,
     label: "Lịch sử"
   }
 ];
@@ -51,7 +51,7 @@ const SettingPage = () => {
       CookiesStorage.clearCookieData("role");
       LocalStorage.remove("user");
       await LogoutAPI({});
-      dispatch(defReducer.actions.setDependence({}));
+      dispatch(usersReducer.actions.setStatus());
       router.push("/");
     } catch (error: any) {
       dispatch(statusApiReducer.actions.setMessageError(error.message));
@@ -61,14 +61,8 @@ const SettingPage = () => {
   const renderTab = () => {
     const TABS = {
       0: <MyInformation/>,
-      1: "Tab1",
-      2: <ChangePassword/>,
-      3: <MyBook/>,
-      4: "Tab11",
-      5: "Tab11",
-      6: "Tab11",
-      7: "Tab11",
-      8: "Tab11",
+      1: <ChangePassword/>,
+      2: <MyBook/>,
     };
     return TABS[`${indexTab}`];
   };

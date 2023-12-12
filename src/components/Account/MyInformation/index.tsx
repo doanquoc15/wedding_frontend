@@ -22,6 +22,7 @@ import LoadingButton from "@/components/common/Loading";
 import { getMeRole, updateUser } from "@/services/user";
 import { LocalStorage } from "@/shared/config/localStorage";
 import { MESSAGE_SUCCESS } from "@/constants/errors";
+import { usersReducer } from "@/stores/reducers/user";
 
 const MyInformation = () => {
   //useForm
@@ -175,7 +176,8 @@ const MyInformation = () => {
     try {
       const res = await updateUser(myInfo?.id, dataUpdate);
       LocalStorage.add("user", JSON.stringify(res));
-      const pro = await getAllProvince();
+      await getAllProvince();
+      dispatch(usersReducer.actions.setStatus());
       dispatch(statusApiReducer.actions.setMessageUpdate(MESSAGE_SUCCESS.UPDATED_SUCCESS));
     } catch (error: any) {
       dispatch(statusApiReducer.actions.setMessageError(error?.data?.message));
@@ -322,11 +324,11 @@ const MyInformation = () => {
                       />
                     )}
                   />
-                  <p>
+                  <div>
                     {errors?.dateOfBirth && (
                       <Error message={errors?.dateOfBirth?.message as string}/>
                     )}
-                  </p>
+                  </div>
                 </div>
 
               </div>

@@ -1,13 +1,16 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   //pageExtensions: ["ts", "tsx"],
-  middleware: [
-    {
-      handler: "./middleware",
-      matcher: ["/((?!.+\\.[\\w]+$|_next).*)", "/", "/(api|trpc)(.*)"],
-    },
-  ],
+  // middleware: [
+  //   {
+  //     handler: "./middleware",
+  //     matcher: ["/((?!.+\\.[\\w]+$|_next).*)", "/", "/(api|trpc)(.*)"],
+  //   },
+  // ],
   reactStrictMode: true,
+  compiler: {
+    styledComponents: true,
+  },
   images: {
     domains: [
       "res.cloudinary.com",

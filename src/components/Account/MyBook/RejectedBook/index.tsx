@@ -275,25 +275,25 @@ const RejectedPage = (props) => {
         closeModal={handleCloseModal}>
         <div className="min-w-[500px] h-auto p-6 relative">
           <div>
-            <p className="text-center text-[16px] font-[600] mt-5">Tổng hóa đơn thanh toán</p>
+            <div className="text-center text-[16px] font-[600] mt-5">Tổng hóa đơn thanh toán</div>
             <div
               className="min-w-[500px] h-auto p-6 relative flex justify-center flex-col text-[--clr-gray-500] text-[14px]">
-              <div className="flex"><p className="min-w-[200px]">Tổng tiền món
-                ăn</p> {formatMoney(booking?.comboMenu?.totalPrice)} VND
+              <div className="flex"><div className="min-w-[200px]">Tổng tiền món
+                ăn</div> {formatMoney(booking?.comboMenu?.totalPrice)} VND
               </div>
-              <div className="flex"><p className="min-w-[200px]">Tổng tiền dịch
-                vụ</p> {formatMoney(booking?.comboMenu?.service?.price)} VND
+              <div className="flex"><div className="min-w-[200px]">Tổng tiền dịch
+                vụ</div> {formatMoney(booking?.comboMenu?.service?.price)} VND
               </div>
-              <div className="flex"><p className="min-w-[200px]">Tổng tiền khu vực</p>
+              <div className="flex"><div className="min-w-[200px]">Tổng tiền khu vực</div>
                 {booking?.zone?.zoneName == "Khu thường" ? formatMoney(1500000) : (booking?.zone?.zoneName == "Khu vip" ? formatMoney(4000000) : 0)} VND
               </div>
-              <div className="flex"><p className="min-w-[200px]">Tổng
-                tiền:</p> {formatMoney(calculatorPrice(booking))} VND
+              <div className="flex"><div className="min-w-[200px]">Tổng
+                tiền:</div> {formatMoney(calculatorPrice(booking))} VND
               </div>
-              <div className="flex mt-5"><p className="min-w-[200px]">Tiền
-                cọc:</p> {formatMoney(calculatorPrice(booking) * 15 / 100)} VND
+              <div className="flex mt-5"><div className="min-w-[200px]">Tiền
+                cọc:</div> {formatMoney(calculatorPrice(booking) * 15 / 100)} VND
               </div>
-              <p className="text-[--clr-red-400] text-[12px]"><span>*</span> Tiền cọc bằng 15% tổng tiền</p>
+              <div className="text-[--clr-red-400] text-[12px]"><span>*</span> Tiền cọc bằng 15% tổng tiền</div>
               <ButtonBtn startIcon={isCheckout && <LoadingButton/>} onClick={makePayment} sx={{ marginTop: "20px" }}>Thanh
                 toán</ButtonBtn>
             </div>

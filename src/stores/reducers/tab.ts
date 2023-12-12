@@ -8,7 +8,7 @@ export type IndexTabType = {
   tabIndex: number;
 };
 
-const initialState: IndexTabType = { tabIndex : 0 };
+const initialState: IndexTabType = { tabIndex: 0 };
 
 export const tabReducer = createSlice({
   name: REDUCER_NAME,
