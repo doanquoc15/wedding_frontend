@@ -45,14 +45,15 @@ export const usersReducer = createSlice({
 
     setReadNotification: (state, action) => {
       let notiNew;
-      console.log(state.fetchedNotification, action.payload);
-      const index: any = state.fetchedNotification?.findIndex((item) => item.id === action.payload);
+      const index: any = state.fetchedNotification?.findIndex(
+        (item) => item.id === action.payload
+      );
       if (index !== -1 && state.fetchedNotification) {
         notiNew = [...state.fetchedNotification];
         notiNew[index].isRead = true;
       }
       state.fetchedNotification = notiNew;
-    }
+    },
   },
 });
 
@@ -60,4 +61,5 @@ export default usersReducer.reducer;
 
 export const selectUsers = () => (state: RootState) => state.users;
 export const selectStatus = () => (state: RootState) => state.users.dep;
-export const selectNotification = () => (state: RootState) => state?.users?.fetchedNotification;
+export const selectNotification = () => (state: RootState) =>
+  state?.users?.fetchedNotification;

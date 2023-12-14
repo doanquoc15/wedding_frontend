@@ -55,7 +55,6 @@ const BadgeCustom = ({ notifications }) => {
   const needLoadMore = pageSize < 10;
   useEffect(() => {
     socketIo.emit("join", getUserLocal()?.id);
-
   }, [socketIo, getUserLocal()?.id]);
 
   const handleClickNotification = (updatedRead) => {
@@ -63,7 +62,7 @@ const BadgeCustom = ({ notifications }) => {
       dispatch(usersReducer.actions.setReadNotification(updatedRead?.id));
       socketIo.emit("updatedRead", updatedRead?.id);
       socketIo.on("updatedRead", (data) => {
-        console.log("oke", data);
+        return;
       });
     }
 
@@ -86,8 +85,13 @@ const BadgeCustom = ({ notifications }) => {
             }}
             aria-label="cart"
           >
-            <StyledBadge badgeContent={notifications?.filter(item => !item?.isRead).length} color="secondary">
-              <Image src={Bell} alt="Bell icon"/>
+            <StyledBadge
+              badgeContent={
+                notifications?.filter((item) => !item?.isRead).length
+              }
+              color="secondary"
+            >
+              <Image src={Bell} alt="Bell icon" />
             </StyledBadge>
           </IconButton>
         </Tooltip>
@@ -113,24 +117,40 @@ const BadgeCustom = ({ notifications }) => {
         anchorOrigin={{ horizontal: "left", vertical: "bottom" }}
       >
         <div className=" px-4 py-2 flex justify-between w-full items-center">
-          <span className="text-[13px] text-clr-gray-500 font-bold ">Thông báo</span>
+          <span className="text-[13px] text-clr-gray-500 font-bold ">
+            Thông báo
+          </span>
           <div className="flex items-center">
-            <span
-              className="mr-4 text-[10px] font-normal text-clr-gray-500 cursor-pointer hover:text-clr-blue-400">
-                Đã đọc tất cả
+            <span className="mr-4 text-[10px] font-normal text-clr-gray-500 cursor-pointer hover:text-clr-blue-400">
+              Đã đọc tất cả
             </span>
             <div onClick={handleClose}>
-              <Image className="cursor-pointer" src={closeIcon} alt="Close icon"/>
+              <Image
+                className="cursor-pointer"
+                src={closeIcon}
+                alt="Close icon"
+              />
             </div>
           </div>
         </div>
-        <Divider/>
-        <InfiniteScroll dataLength={pageSize} next={loadMoreData} hasMore={needLoadMore} loader={null} height={200}>
+        <Divider />
+        <InfiniteScroll
+          dataLength={pageSize}
+          next={loadMoreData}
+          hasMore={needLoadMore}
+          loader={null}
+          height={200}
+        >
           {notifications.length > 0 &&
             notifications.map((item, index) => {
-              return <Notification isUnRead={item?.isRead} handleClickNotification={handleClickNotification}
-                item={item}
-                key={index}/>;
+              return (
+                <Notification
+                  isUnRead={item?.isRead}
+                  handleClickNotification={handleClickNotification}
+                  item={item}
+                  key={index}
+                />
+              );
             })}
         </InfiniteScroll>
       </Menu>

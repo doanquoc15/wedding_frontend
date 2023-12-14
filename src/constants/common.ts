@@ -90,16 +90,18 @@ export const GENDER_OPTIONS = [
 export const GENDER = {
   MALE: "MALE",
   FEMALE: "FEMALE",
-  OTHER: "OTHER"
+  OTHER: "OTHER",
 };
 
 export const GenderObjectLiteral = {
   MALE: "Nam",
   FEMALE: "Nữ",
-  OTHER: "Khác"
+  OTHER: "Khác",
 };
 
 export const PATH = {
   MANAGEMENT_USER: "/admin/users",
-  MANAGEMENT_DISH: "/admin/dishes"
+  MANAGEMENT_DISH: "/admin/dishes",
+  MANAGEMENT_SERVICE: "/admin/services",
+  MANAGEMENT_MENU_COMBO: "/admin/combo",
 };

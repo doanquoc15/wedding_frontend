@@ -11,7 +11,7 @@ import {
   ListItem,
   ListItemText,
   Popover,
-  Typography
+  Typography,
 } from "@mui/material";
 import InboxTwoToneIcon from "@mui/icons-material/InboxTwoTone";
 import { styled } from "@mui/material/styles";
@@ -51,7 +51,6 @@ const UserBoxDescription = styled(Typography)(
 );
 
 function HeaderUserBox() {
-
   const ref = useRef<any>(null);
   const [isOpen, setOpen] = useState<boolean>(false);
   const [user, _] = useState<any>(getUserLocal());
@@ -66,62 +65,70 @@ function HeaderUserBox() {
 
   return (
     <>
-      <div className="flex gap-2 items-center cursor-pointer" color="secondary" ref={ref} onClick={handleOpen}>
-        <Avatar alt={user.name} src={user?.image} className="border-gray-200 border-[1px]"/>
+      <div
+        className="flex gap-2 items-center cursor-pointer"
+        color="secondary"
+        ref={ref}
+        onClick={handleOpen}
+      >
+        <Avatar
+          alt={user?.name}
+          src={user?.image}
+          className="border-gray-200 border-[1px]"
+        />
         <Hidden mdDown>
           <UserBoxText>
             <UserBoxLabel variant="body1">{user?.name}</UserBoxLabel>
           </UserBoxText>
         </Hidden>
         <Hidden smDown>
-          <ExpandMoreTwoToneIcon sx={{ ml: 1 }}/>
+          <ExpandMoreTwoToneIcon sx={{ ml: 1 }} />
         </Hidden>
       </div>
       <Popover
-        anchorEl={ref.current}
+        anchorEl={ref?.current}
         onClose={handleClose}
         open={isOpen}
         anchorOrigin={{
           vertical: "top",
-          horizontal: "right"
+          horizontal: "right",
         }}
         transformOrigin={{
           vertical: "top",
-          horizontal: "right"
+          horizontal: "right",
         }}
       >
         <MenuUserBox sx={{ minWidth: 210 }} display="flex">
-          <Avatar alt={user.name} src={user.avatar}/>
+          <Avatar alt={user?.name} src={user?.avatar} />
           <UserBoxText>
-            <UserBoxLabel variant="body1">{user.name}</UserBoxLabel>
-
+            <UserBoxLabel variant="body1">{user?.name}</UserBoxLabel>
           </UserBoxText>
         </MenuUserBox>
-        <Divider sx={{ mb: 0 }}/>
+        <Divider sx={{ mb: 0 }} />
         <List sx={{ p: 1 }} component="nav">
           <NextLink href="/management/profile" passHref>
             <ListItem button>
-              <AccountBoxTwoToneIcon fontSize="small"/>
-              <ListItemText primary="My Profile"/>
+              <AccountBoxTwoToneIcon fontSize="small" />
+              <ListItemText primary="My Profile" />
             </ListItem>
           </NextLink>
           <NextLink href="/applications/messenger" passHref>
             <ListItem button>
-              <InboxTwoToneIcon fontSize="small"/>
-              <ListItemText primary="Messenger"/>
+              <InboxTwoToneIcon fontSize="small" />
+              <ListItemText primary="Messenger" />
             </ListItem>
           </NextLink>
           <NextLink href="/management/profile/settings" passHref>
             <ListItem button>
-              <AccountTreeTwoToneIcon fontSize="small"/>
-              <ListItemText primary="Account Settings"/>
+              <AccountTreeTwoToneIcon fontSize="small" />
+              <ListItemText primary="Account Settings" />
             </ListItem>
           </NextLink>
         </List>
-        <Divider/>
+        <Divider />
         <Box sx={{ m: 1 }}>
           <Button color="primary" fullWidth>
-            <LockOpenTwoToneIcon sx={{ mr: 1 }}/>
+            <LockOpenTwoToneIcon sx={{ mr: 1 }} />
             Sign out
           </Button>
         </Box>

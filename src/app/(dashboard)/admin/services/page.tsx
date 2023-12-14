@@ -21,7 +21,8 @@ import Button from "@mui/material/Button";
 import { useRouter } from "next/navigation";
 
 import PageHeader from "@/components/AdminComponents/PageHeader";
-import { IDish } from "@/types/common";
+import { deleteService, getAllService } from "@/services/service";
+import { IService } from "@/types/common";
 import { statusApiReducer } from "@/stores/reducers/statusAPI";
 import { useAppDispatch } from "@/stores/hook";
 import { PATH } from "@/constants/common";
@@ -34,45 +35,42 @@ import LoadingButton from "@/components/common/Loading";
 import { MESSAGE_SUCCESS } from "@/constants/errors";
 import SearchInFilter from "@/components/common/SearchInFilter";
 import { getQueryParam } from "@/utils/route";
-import { deleteDish, getAllDish } from "@/services/menu-item";
-import { getAllTypeDish } from "@/services/type-dish";
-import SelectFilter from "@/components/common/SelectFilter";
+import { formatMoney } from "@/utils/formatMoney";
 
-const DishListPage = ({ searchParams }) => {
+const ServicePage = () => {
   //useState
   const theme = useTheme();
   const [pageSize, setPageSize] = useState(5);
   const [pageIndex, setPageIndex] = useState(0);
-  const [allDish, setAllDish] = useState<IDish[]>([]);
+  const [allService, setAllService] = useState<IService[]>([]);
   const [isLoading, setLoading] = useState<boolean>(true);
-  const [dish, setDish] = useState<IDish>();
+  const [service, setService] = useState<IService>();
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
-  const [totalUsersCount, setTotalUsersCount] = useState<number>(0);
+  const [totalServiceCount, setTotalServiceCount] = useState<number>(0);
   const [search, setSearch] = useState<string>(getQueryParam("search"));
-  const [typeDishes, setTypeDishes] = useState<any[]>([]);
 
   //const
   const dispatch = useAppDispatch();
   const router = useRouter();
 
   //function
-  const fetchAllDish = async () => {
+  const fetchAllService = async () => {
     setLoading(true);
     try {
-      const { menus, total } = await getAllDish({
+      const { data, total } = await getAllService({
         pageSize,
         pageIndex: pageIndex + 1,
-        ...searchParams,
-        typeId: getQueryParam("typeId") || undefined,
+        search,
       });
-      setAllDish(menus);
-      setTotalUsersCount(total);
+      setAllService(data);
+      setTotalServiceCount(total);
     } catch (error: any) {
-      dispatch(statusApiReducer.actions.setMessageError(error.message));
+      dispatch(statusApiReducer.actions.setMessageError(error?.data?.message));
     } finally {
       setLoading(false);
     }
   };
+
   const handleSearch = (querySearch: string) => {
     setSearch(querySearch);
     setPageIndex(0);
@@ -88,6 +86,10 @@ const DishListPage = ({ searchParams }) => {
   const handleCloseModal = () => {
     setIsOpenModal(false);
   };
+  const handleCloseModalStatus = () => {
+    setIsOpenModal(false);
+  };
+
   const handleClickCancel = () => {
     setIsOpenModal(false);
   };
@@ -96,106 +98,66 @@ const DishListPage = ({ searchParams }) => {
     setIsOpenModal(false);
     setLoading(true);
     try {
-      await deleteDish(Number(dish?.id));
+      await deleteService(Number(service?.id));
       dispatch(
         statusApiReducer.actions.setMessageSuccess(
-          MESSAGE_SUCCESS.DELETE_DISH_SUCCESS
+          MESSAGE_SUCCESS.DELETE_SERVICE_SUCCESS
         )
       );
-      fetchAllDish();
+      fetchAllService();
     } catch (error: any) {
-      dispatch(statusApiReducer.actions.setMessageError(error.message));
+      dispatch(statusApiReducer.actions.setMessageError(error?.data?.message));
     } finally {
       setLoading(false);
     }
   };
 
-  const fetchTypeDishes = async () => {
-    try {
-      const { data } = await getAllTypeDish({ pageSize: 1000 });
-      setTypeDishes(
-        data?.map((item) => ({
-          id: item?.id,
-          value: item?.id,
-          label: item?.typeName,
-        }))
-      );
-    } catch (error: any) {
-      dispatch(statusApiReducer.actions.setMessageError(error.message));
-    }
-  };
-
-  const resetPageIndex = () => {
-    setPageIndex(0);
-  };
-
-  useEffect(() => {
-    fetchTypeDishes();
-  }, []);
-
   //useEffect
   useEffect(() => {
-    fetchAllDish();
-  }, [pageIndex, pageSize, searchParams]);
+    fetchAllService();
+  }, [pageIndex, pageSize, search]);
 
   // @ts-ignore
   return (
     <div className="text-[--clr-gray-500]">
-      <PageHeader title="Quản lý món ăn" />
+      <PageHeader title="Quản lý dịch vụ" />
       <div className="flex justify-between items-center mb-4">
         <div className="flex gap-2 items-center">
           <span className="text-[14px] text-[--clr-gray-500] italic">
-            Tên món ăn
+            Tên dich vụ
           </span>
           <SearchInFilter onSearch={handleSearch} isResetAll={true} />
-          <span className="text-[14px] text-[--clr-gray-500] italic ml-10">
-            Loại món ăn
-          </span>
-          <SelectFilter
-            resetPageIndex={resetPageIndex}
-            query={...searchParams}
-            options={[{ id: 0, label: "Tất cả" }, ...typeDishes]}
-            value={searchParams?.typeId || 0}
-            typeQuery="typeId"
-            sx={{
-              fontSize: "13px",
-              fontWeight: " 400",
-              height: "34px",
-              minWidth: 168,
-              boxShadow: "0px 4px 4px rgba(0, 0, 0, 0.08)",
-            }}
-          />
         </div>
-
         <Button
           sx={{ mt: { xs: 2, md: 0, marginBottom: "10px" } }}
           variant="contained"
-          onClick={() => router.push(`${PATH.MANAGEMENT_DISH}/new`)}
+          onClick={() => router.push(`${PATH.MANAGEMENT_SERVICE}/new`)}
           startIcon={<AddTwoToneIcon fontSize="small" />}
         >
-          Thêm món ăn
+          Thêm dich vụ
         </Button>
       </div>
 
       {isLoading && <Loading />}
-      <CheckNotFound data={allDish} isLoading={isLoading}>
+      <CheckNotFound data={allService} isLoading={isLoading}>
         <TableContainer>
           <Table>
             <TableHead>
               <TableRow>
                 <TableCell>STT</TableCell>
-                <TableCell>Tên món ăn</TableCell>
-                <TableCell>Mô tả</TableCell>
-                <TableCell>Giá</TableCell>
-                <TableCell>Loại món ăn</TableCell>
-                <TableCell>Thao tác</TableCell>
+                <TableCell>Tên dịch vụ</TableCell>
+                <TableCell>Phí dịch vụ</TableCell>
+                <TableCell>Sức chứa tối đa</TableCell>
+                <TableCell>Menu có sẵn</TableCell>
+                <TableCell align="center">Thao tác</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {allDish?.map((dish: any, index) => (
-                <TableRow hover key={dish?.id}>
+              {allService?.map((service: any, index) => (
+                <TableRow hover key={service?.id}>
                   <TableCell>
                     <Typography
+                      sx={{ fontSize: "13px" }}
                       variant="body1"
                       color="text.primary"
                       gutterBottom
@@ -211,7 +173,7 @@ const DishListPage = ({ searchParams }) => {
                       gutterBottom
                       noWrap
                     >
-                      {dish?.dishName}
+                      {service?.serviceName}
                     </Typography>
                   </TableCell>
                   <TableCell>
@@ -221,7 +183,7 @@ const DishListPage = ({ searchParams }) => {
                       gutterBottom
                       noWrap
                     >
-                      {dish?.description}
+                      {formatMoney(service.price)} vnd
                     </Typography>
                   </TableCell>
                   <TableCell>
@@ -231,7 +193,7 @@ const DishListPage = ({ searchParams }) => {
                       gutterBottom
                       noWrap
                     >
-                      {dish?.price}
+                      {service?.capacity} người
                     </Typography>
                   </TableCell>
                   <TableCell>
@@ -241,11 +203,7 @@ const DishListPage = ({ searchParams }) => {
                       gutterBottom
                       noWrap
                     >
-                      {
-                        typeDishes.filter(
-                          (item) => +item?.id === +dish?.typeId
-                        )[0]?.label
-                      }
+                      {service?.comboMenus?.length} menu
                     </Typography>
                   </TableCell>
 
@@ -253,7 +211,9 @@ const DishListPage = ({ searchParams }) => {
                     <Tooltip title="Chỉnh sửa" arrow>
                       <IconButton
                         onClick={() =>
-                          router.push(`${PATH.MANAGEMENT_DISH}/${dish?.id}`)
+                          router.push(
+                            `${PATH.MANAGEMENT_SERVICE}/${service.id}`
+                          )
                         }
                         sx={{
                           "&:hover": {
@@ -270,7 +230,7 @@ const DishListPage = ({ searchParams }) => {
                     <Tooltip title="Xóa" arrow>
                       <IconButton
                         onClick={() => {
-                          setDish(dish);
+                          setService(service);
                           setIsOpenModal(true);
                         }}
                         sx={{
@@ -292,7 +252,7 @@ const DishListPage = ({ searchParams }) => {
         <Box p={2}>
           <TablePagination
             component="div"
-            count={totalUsersCount}
+            count={totalServiceCount}
             onPageChange={handlePageChange}
             onRowsPerPageChange={handleLimitChange}
             page={pageIndex}
@@ -303,15 +263,15 @@ const DishListPage = ({ searchParams }) => {
       </CheckNotFound>
       <ModalPopup
         open={isOpenModal}
-        title="Xóa món ăn"
+        title="Xóa dich vụ"
         setOpen={setIsOpenModal}
         closeModal={handleCloseModal}
       >
         <div className="min-w-[500px] h-auto p-6 relative">
           <div className="flex flex-col gap-4 w-full actual-receipt">
             <div className="py-3 text-[14px] text-[--clr-gray-500]">
-              Bạn có muốn <b>xoá</b> món ăn <b>{dish?.dishName}</b> vĩnh viễn
-              không ?
+              Bạn có muốn <b>xoá</b> dịch vụ <b>{service?.serviceName}</b> vĩnh
+              viễn không ?
             </div>
           </div>
           <div className="flex justify-end mt-[0.25rem] gap-4">
@@ -338,4 +298,4 @@ const DishListPage = ({ searchParams }) => {
   );
 };
 
-export default DishListPage;
+export default ServicePage;

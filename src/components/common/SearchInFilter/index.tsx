@@ -1,6 +1,6 @@
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { omit } from "lodash";
 
 import { SearchProps } from "@/types/common";
@@ -17,6 +17,7 @@ const SearchInFilter = ({
   const [input, setInput] = useState<any>(getQueryParam(`${typeQuery}`));
   const searchParams = useSearchParams();
   const router = useRouter();
+  const path = usePathname();
 
   const handleChangeInput = (value: string) => {
     const valueSearch: any = value.trim();
@@ -30,15 +31,15 @@ const SearchInFilter = ({
 
     if (isResetAll && !valueSearch) {
       const queryString = new URLSearchParams(
-        omit(params, "search")
+        omit(params, typeQuery)
       ).toString();
-      router.push(`/admin/dishes?${queryString}`);
+      router.push(`${path}?${queryString}`);
     } else if (typeQuery) {
       const queryString = new URLSearchParams({
         ...params,
         [typeQuery]: valueSearch,
       }).toString();
-      router.push(`/admin/dishes?${queryString}`);
+      router.push(`${path}?${queryString}`);
     }
   };
 

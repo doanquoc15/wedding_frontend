@@ -11,7 +11,7 @@ import SearchInFilter from "@/components/common/SearchInFilter";
 import { getAllTypeDish } from "@/services/type-dish";
 import { TypeDish } from "@/types/common";
 import { MENU_BREADCRUMB, MENU_PAGE_SIZE } from "@/constants/common";
-import { getAllFood } from "@/services/menu-item";
+import { getAllDish } from "@/services/menu-item";
 import { getQueryParam } from "@/utils/route";
 import { useAppDispatch } from "@/stores/hook";
 import { breadCrumbReducer } from "@/stores/reducers/breadCrumb";
@@ -38,7 +38,7 @@ const MenuPage = () => {
   const getTypeDish = async () => {
     try {
       const type = await getAllTypeDish({ pageSize: 1000 });
-      const getAllFood = type?.data.reduce(
+      const getAllDish = type?.data.reduce(
         (total, item) => total?.concat(item.menuItems),
         []
       );
@@ -46,7 +46,7 @@ const MenuPage = () => {
         {
           id: 0,
           typeName: "Tất cả món ăn",
-          menuItems: getAllFood,
+          menuItems: getAllDish,
         },
         ...type.data,
       ]);
@@ -57,7 +57,7 @@ const MenuPage = () => {
 
   const getFoods = async () => {
     try {
-      const data = await getAllFood({
+      const data = await getAllDish({
         pageSize: 1000,
         pageIndex: page,
         typeId: selectActive || 0,
@@ -67,7 +67,6 @@ const MenuPage = () => {
       setFoodByType(data.menus);
     } catch (error: any) {
       dispatch(statusApiReducer.actions.setMessageError(error.message));
-
     }
   };
 
@@ -146,7 +145,7 @@ const MenuPage = () => {
           </div>
         </Grid>
         <Grid item xs={12} sm={9}>
-          <SearchInFilter onSearch={handleSearch} isResetAll={true}/>
+          <SearchInFilter onSearch={handleSearch} isResetAll={true} />
 
           <div className="grid grid-cols-2 gap-8">
             {foodByType?.map((food: any) => (
@@ -154,7 +153,7 @@ const MenuPage = () => {
                 key={food.id}
                 className="border-b-[2px] border-[--clr-gray-200] p-4"
               >
-                <FoodDetail food={food}/>
+                <FoodDetail food={food} />
               </div>
             ))}
           </div>

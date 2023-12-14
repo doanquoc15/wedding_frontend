@@ -2,11 +2,10 @@ import { MenuItem, Select } from "@mui/material";
 import { useState } from "react";
 import { omit } from "lodash";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 import { SelectIcon } from "@/components/Icons";
 import DeleteIcon from "@/statics/svg/ic-delete-option.svg";
-import { PATH } from "@/constants/common";
 
 interface valueProps {
   value: string | number;
@@ -46,13 +45,17 @@ export default function SelectFilter(props: SelectFilterType) {
 
   const [value, setValue] = useState<any>(defaultValue);
   const router = useRouter();
+  const path = usePathname();
 
   const getParams = () => {
-    const url = new URL(window.location.href);
-    const queryParams: any = new URLSearchParams(url.search);
     const params = {};
-    for (const [key, value] of queryParams.entries()) {
-      params[key] = value;
+
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      const queryParams: any = new URLSearchParams(url.search);
+      for (const [key, value] of queryParams.entries()) {
+        params[key] = value;
+      }
     }
     return params;
   };
@@ -64,13 +67,13 @@ export default function SelectFilter(props: SelectFilterType) {
       const queryString = new URLSearchParams(
         omit(params, typeQuery as string)
       ).toString();
-      router.push(`${PATH.MANAGEMENT_DISH}?${queryString}`);
+      router.push(`${path}?${queryString}`);
     } else if (typeQuery) {
       const queryString = new URLSearchParams({
         ...params,
         [typeQuery]: targetValue,
       }).toString();
-      router.push(`${PATH.MANAGEMENT_DISH}?${queryString}`);
+      router.push(`${path}?${queryString}`);
     }
     resetPageIndex && resetPageIndex();
     setValue(0);
@@ -83,7 +86,7 @@ export default function SelectFilter(props: SelectFilterType) {
     const queryString = new URLSearchParams(
       omit(getParams(), typeQuery as string)
     ).toString();
-    router.push(`${PATH.MANAGEMENT_DISH}?${queryString}`);
+    router.push(`${path}?${queryString}`);
   };
 
   return (

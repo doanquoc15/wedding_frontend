@@ -14,14 +14,12 @@ import Providers from "@/stores/Providers";
 import ProviderStore from "@/context/ProviderStore";
 import ThemeProviderWrapper from "@/theme/ThemeProvider";
 
-function TemplateLayout({ children }: {
-  children: ReactNode
-}) {
+function TemplateLayout({ children }: { children: ReactNode }) {
   // @ts-ignore
   const THEME = createTheme({
     typography: {
       fontFamily: "var(--font-primary)",
-      fontSize: 13
+      fontSize: 14,
     },
   });
 
@@ -31,10 +29,8 @@ function TemplateLayout({ children }: {
         <ThemeProviderWrapper>
           <ThemeProvider theme={THEME}>
             <LocalizationProvider dateAdapter={AdapterMoment}>
-              <ToastContainer/>
-              <ProviderStore>
-                {children}
-              </ProviderStore>
+              <ToastContainer />
+              <ProviderStore>{children}</ProviderStore>
             </LocalizationProvider>
           </ThemeProvider>
         </ThemeProviderWrapper>

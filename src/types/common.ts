@@ -223,5 +223,14 @@ export interface IDish {
   description?: string;
   image?: string;
   typeId?: number;
-  comboItems: any
+  comboItems: any;
+}
+
+export interface IService {
+  id: number;
+  serviceName: string;
+  price: number;
+  capacity: number;
+  image?: string;
+  comboMenus?: any;
 }

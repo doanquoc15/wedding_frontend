@@ -9,7 +9,7 @@ const FoodDetail = ({ food }) => {
   return (
     <div className="w-full">
       <div className="flex gap-4">
-        <div>
+        <div className="max-w-[400px] max-h-[150px] overflow-hidden object-cover">
           <Image
             src={
               food?.image ||
@@ -18,6 +18,7 @@ const FoodDetail = ({ food }) => {
             alt="Image Food"
             width={400}
             height={150}
+            objectFit="cover"
             className="rounded-[10px]"
           />
         </div>

@@ -8,7 +8,6 @@ import NotFound from "@/statics/svg/ic-404.svg";
 const NotFoundPage = () => {
   const router = useRouter();
   const pathName = usePathname();
-  console.log(pathName);
   useEffect(() => {
     const timerId = setTimeout(() => {
       if (pathName?.startsWith("/admin")) {
@@ -32,7 +31,7 @@ const NotFoundPage = () => {
           Access to this resource on the server is denied!
         </h3>
         <div className="flex justify-center">
-          <Image alt="NotFound" src={NotFound}/>
+          <Image alt="NotFound" src={NotFound} />
         </div>
       </div>
     </div>

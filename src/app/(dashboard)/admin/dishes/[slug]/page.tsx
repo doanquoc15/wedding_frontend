@@ -49,9 +49,7 @@ const Detail_New_Dish = ({ params }) => {
 
   //const
   const dispatch = useAppDispatch();
-  const router = useRouter()
-  ;
-
+  const router = useRouter();
   //function
 
   //onSubmit
@@ -61,19 +59,26 @@ const Detail_New_Dish = ({ params }) => {
       description: data.description,
       price: data.price,
       typeId: +data.typeId,
-      image: imageChange
+      image: imageChange,
     };
     try {
       if (params?.slug === "new") {
         await createDish(creatData);
-        dispatch(statusApiReducer.actions.setMessageUpdate(MESSAGE_SUCCESS.CREATE_DISH_SUCCESS));
+        dispatch(
+          statusApiReducer.actions.setMessageUpdate(
+            MESSAGE_SUCCESS.CREATE_DISH_SUCCESS
+          )
+        );
       } else {
         await updateDish(params?.slug, creatData);
-        dispatch(statusApiReducer.actions.setMessageUpdate(MESSAGE_SUCCESS.UPDATED_SUCCESS));
+        dispatch(
+          statusApiReducer.actions.setMessageUpdate(
+            MESSAGE_SUCCESS.UPDATED_SUCCESS
+          )
+        );
       }
       router.push("/admin/dishes");
-    } catch
-    (error: any) {
+    } catch (error: any) {
       dispatch(statusApiReducer.actions.setMessageError(error?.data?.message));
     } finally {
       setIsLoading(false);
@@ -84,11 +89,13 @@ const Detail_New_Dish = ({ params }) => {
   const fetchTypeDishes = async () => {
     try {
       const { data, total } = await getAllTypeDish({ pageSize: 1000 });
-      setTypeDishes(data?.map(item => ({
-        id: item?.id,
-        value: item?.id,
-        label: item?.typeName,
-      })));
+      setTypeDishes(
+        data?.map((item) => ({
+          id: item?.id,
+          value: item?.id,
+          label: item?.typeName,
+        }))
+      );
     } catch (error: any) {
       dispatch(statusApiReducer.actions.setMessageError(error.message));
     }
@@ -107,14 +114,12 @@ const Detail_New_Dish = ({ params }) => {
     setIsLoading(true);
     try {
       const res = await getDishById(+params?.slug);
-      reset(
-        {
-          dishName: res?.dishName,
-          description: res?.description,
-          price: res?.price,
-          typeId: res?.typeId,
-        }
-      );
+      reset({
+        dishName: res?.dishName,
+        description: res?.description,
+        price: res?.price,
+        typeId: res?.typeId,
+      });
       setImageChange(res?.image);
     } catch (error: any) {
       dispatch(statusApiReducer.actions.setMessageError(error.message));
@@ -129,7 +134,6 @@ const Detail_New_Dish = ({ params }) => {
   }, []);
 
   useEffect(() => {
-    console.log(+params?.slug);
     if (params?.slug !== "new" && typeof +params?.slug === "number") {
       fetchDishById();
     }
@@ -140,16 +144,21 @@ const Detail_New_Dish = ({ params }) => {
     <div>
       <form className="flex gap-10" onSubmit={handleSubmit(onSubmit)}>
         <div className="min-w-[250px] min-h-[300px] overflow-hidden object-cover">
-          {imageChange && <Image
-            src={imageChange}
-            alt="avatar"
-            width={250}
-            height={300}
-            objectFit="cover"
-            className="border-[1px] rounded-[5px] border-[--clr-blue-300]"
-            priority={true}
-          />}
-          <label htmlFor="file" className="flex justify-center gap-5 items-center">
+          {imageChange && (
+            <Image
+              src={imageChange}
+              alt="avatar"
+              width={250}
+              height={300}
+              objectFit="cover"
+              className="border-[1px] rounded-[5px] border-[--clr-blue-300]"
+              priority={true}
+            />
+          )}
+          <label
+            htmlFor="file"
+            className="flex justify-center gap-5 items-center"
+          >
             <input
               type="file"
               id="file"
@@ -157,7 +166,10 @@ const Detail_New_Dish = ({ params }) => {
               style={{ display: "none" }}
               onChange={(e) => handleChangeFile(e)}
             />
-            <FileUploadIcon style={{ fontSize: "40px", cursor: "pointer", color: "red" }}/> <span>Chọn ảnh</span>
+            <FileUploadIcon
+              style={{ fontSize: "40px", cursor: "pointer", color: "red" }}
+            />{" "}
+            <span>Chọn ảnh</span>
           </label>
         </div>
         <div className="flex flex-col gap-10">
@@ -178,7 +190,7 @@ const Detail_New_Dish = ({ params }) => {
                     className="w-full max-h-[40px] input-custom"
                     helperText={
                       errors?.dishName && (
-                        <Error message={errors?.dishName?.message as string}/>
+                        <Error message={errors?.dishName?.message as string} />
                       )
                     }
                   />
@@ -199,7 +211,7 @@ const Detail_New_Dish = ({ params }) => {
                     className="w-full max-h-[40px] input-custom"
                     helperText={
                       errors?.price && (
-                        <Error message={errors?.price?.message as string}/>
+                        <Error message={errors?.price?.message as string} />
                       )
                     }
                   />
@@ -219,7 +231,8 @@ const Detail_New_Dish = ({ params }) => {
                   options={typeDishes}
                   className="h-[52px] w-[400px]"
                   inputProps={{
-                    className: "border-0 h-[52px] px-4 py-0 !h-full !flex !items-center",
+                    className:
+                      "border-0 h-[52px] px-4 py-0 !h-full !flex !items-center",
                     maxLength: 400,
                   }}
                 />
@@ -242,8 +255,13 @@ const Detail_New_Dish = ({ params }) => {
             </div>
           </div>
           <div className="mt-10">
-            <ButtonBtn startIcon={isLoading && <LoadingButton/>} type="submit"
-              width={150}>{params?.slug === "new" ? "Tạo mới" : "Cập nhật"}</ButtonBtn>
+            <ButtonBtn
+              startIcon={isLoading && <LoadingButton />}
+              type="submit"
+              width={150}
+            >
+              {params?.slug === "new" ? "Tạo mới" : "Cập nhật"}
+            </ButtonBtn>
           </div>
         </div>
       </form>

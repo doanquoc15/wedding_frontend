@@ -23,6 +23,12 @@ export const ERROR_MESSAGES = {
   PRICE_MIN_0: "Giá tiền không được nhỏ hơn 0",
   PRICE_MAX_1_BILLION: "Giá tiền không được lớn hơn 1 tỷ",
   TYPEID_REQUIRED: "Loại món ăn không được để trống",
+
+  //service
+  SERVICE_REQUIRED: "Giá tiền không được để trống",
+  CAPACITY_REQUIRED: "Sức chứa không được để trống",
+  CAPACITY_MUST_NUMBER: "Sức chứa phải là một số",
+  CAPACITY_MIN_1: "Sức chứa không được nhỏ hơn 1",
 };
 
 export const MESSAGE_SUCCESS = {
@@ -31,4 +37,6 @@ export const MESSAGE_SUCCESS = {
   DELETE_USER_SUCCESS: "Xóa tài khoản thành công",
   CREATE_DISH_SUCCESS: "Tạo món ăn thành công",
   DELETE_DISH_SUCCESS: "Xóa món ăn thành công",
+  CREATE_SERVICE_SUCCESS: "Tạo dịch vụ thành công",
+  DELETE_SERVICE_SUCCESS: "Xóa dịch vụ thành công",
 };
