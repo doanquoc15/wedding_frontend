@@ -80,7 +80,7 @@ function Sidebar() {
             size="small"
             fullWidth
           >
-            Upgrade to PRO
+            SKY VIEW RESTAURANT
           </Button>
         </Box>
       </SidebarWrapper>

@@ -30,9 +30,6 @@ function Header() {
     setSidebarToggle(!sidebarToggle);
   };
 
-  const closeSidebar = () => {
-    setSidebarToggle(false);
-  };
   const theme = useTheme();
 
   return (

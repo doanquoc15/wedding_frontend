@@ -9,7 +9,7 @@ interface NotFoundProps {
 }
 
 const CheckNotFound: React.FC<NotFoundProps> = ({ children, data, isLoading }) => {
-  let isEmptyArray = data.length === 0;
+  let isEmptyArray = data?.length === 0;
 
   return !isEmptyArray ? <>{children}</> : <>{!isLoading && <NotFound/>}</>;
 };

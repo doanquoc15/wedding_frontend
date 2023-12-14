@@ -134,17 +134,3 @@ export const dataFoods = [
   },
 ];
 
-export const times = [
-  {
-    id: 1,
-    time: "7h-11h"
-  },
-  {
-    id: 2,
-    time: "13h-17h"
-  },
-  {
-    id: 3,
-    time: "19h-23h"
-  },
-];

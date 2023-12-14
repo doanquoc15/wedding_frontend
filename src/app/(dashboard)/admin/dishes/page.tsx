@@ -11,11 +11,9 @@ import {
   TableRow,
   Tooltip,
   Typography,
-  useTheme
+  useTheme,
 } from "@mui/material";
-import moment from "moment";
 import EditTwoToneIcon from "@mui/icons-material/EditTwoTone";
-import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutline";
 import DeleteTwoToneIcon from "@mui/icons-material/DeleteTwoTone";
 import IconButton from "@mui/material/IconButton";
 import AddTwoToneIcon from "@mui/icons-material/AddTwoTone";
@@ -23,12 +21,10 @@ import Button from "@mui/material/Button";
 import { useRouter } from "next/navigation";
 
 import PageHeader from "@/components/AdminComponents/PageHeader";
-import { deleteUser, getAllUsers, updateUser } from "@/services/user";
-import { IUser } from "@/types/common";
+import { IDish } from "@/types/common";
 import { statusApiReducer } from "@/stores/reducers/statusAPI";
 import { useAppDispatch } from "@/stores/hook";
-import { checkEmpty } from "@/utils/checkEmpty";
-import { GenderObjectLiteral, PATH } from "@/constants/common";
+import { PATH } from "@/constants/common";
 import CheckNotFound from "@/components/common/CheckNotFound";
 import Loading from "@/components/Loading";
 import ModalPopup from "@/components/common/ModalPopup";
@@ -36,35 +32,41 @@ import ButtonBtn from "@/components/common/Button";
 import { CheckIcon } from "@/components/Icons";
 import LoadingButton from "@/components/common/Loading";
 import { MESSAGE_SUCCESS } from "@/constants/errors";
-import { capitalizeFirstLetter } from "@/utils/capitalizeFirstLetter";
 import SearchInFilter from "@/components/common/SearchInFilter";
 import { getQueryParam } from "@/utils/route";
+import { deleteDish, getAllDish } from "@/services/menu-item";
+import { getAllTypeDish } from "@/services/type-dish";
+import SelectFilter from "@/components/common/SelectFilter";
 
-const UsersPage = () => {
+const DishListPage = ({ searchParams }) => {
   //useState
   const theme = useTheme();
   const [pageSize, setPageSize] = useState(5);
   const [pageIndex, setPageIndex] = useState(0);
-  const [allUsers, setAllUsers] = useState<IUser[]>([]);
+  const [allDish, setAllDish] = useState<IDish[]>([]);
   const [isLoading, setLoading] = useState<boolean>(true);
-  const [user, setUser] = useState<IUser>();
+  const [dish, setDish] = useState<IDish>();
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
-  const [isOpenModalStatus, setIsOpenModalStatus] = useState<boolean>(false);
   const [totalUsersCount, setTotalUsersCount] = useState<number>(0);
   const [search, setSearch] = useState<string>(getQueryParam("search"));
+  const [typeDishes, setTypeDishes] = useState<any[]>([]);
 
   //const
   const dispatch = useAppDispatch();
   const router = useRouter();
 
   //function
-  const fetchAllUsers = async () => {
+  const fetchAllDish = async () => {
     setLoading(true);
     try {
-      const { users, total } = await getAllUsers({ pageSize, pageIndex: pageIndex + 1, search });
-      setAllUsers(users);
+      const { menus, total } = await getAllDish({
+        pageSize,
+        pageIndex: pageIndex + 1,
+        ...searchParams,
+        typeId: getQueryParam("typeId") || undefined,
+      });
+      setAllDish(menus);
       setTotalUsersCount(total);
-
     } catch (error: any) {
       dispatch(statusApiReducer.actions.setMessageError(error.message));
     } finally {
@@ -86,10 +88,6 @@ const UsersPage = () => {
   const handleCloseModal = () => {
     setIsOpenModal(false);
   };
-  const handleCloseModalStatus = () => {
-    setIsOpenModal(false);
-  };
-
   const handleClickCancel = () => {
     setIsOpenModal(false);
   };
@@ -98,22 +96,13 @@ const UsersPage = () => {
     setIsOpenModal(false);
     setLoading(true);
     try {
-      await deleteUser(Number(user?.id));
-      dispatch(statusApiReducer.actions.setMessageSuccess(MESSAGE_SUCCESS.DELETE_USER_SUCCESS));
-      fetchAllUsers();
-    } catch (error: any) {
-      dispatch(statusApiReducer.actions.setMessageError(error.message));
-    } finally {
-      setLoading(false);
-    }
-  };
-  const handleClickChangeStatus = async () => {
-    setLoading(true);
-    try {
-      await updateUser(Number(user?.id), { status: user?.status === "ACTIVE" ? "INACTIVE" : "ACTIVE" });
-      dispatch(statusApiReducer.actions.setMessageSuccess(MESSAGE_SUCCESS.UPDATED_SUCCESS));
-      setIsOpenModalStatus(false);
-      fetchAllUsers();
+      await deleteDish(Number(dish?.id));
+      dispatch(
+        statusApiReducer.actions.setMessageSuccess(
+          MESSAGE_SUCCESS.DELETE_DISH_SUCCESS
+        )
+      );
+      fetchAllDish();
     } catch (error: any) {
       dispatch(statusApiReducer.actions.setMessageError(error.message));
     } finally {
@@ -121,51 +110,90 @@ const UsersPage = () => {
     }
   };
 
+  const fetchTypeDishes = async () => {
+    try {
+      const { data } = await getAllTypeDish({ pageSize: 1000 });
+      setTypeDishes(
+        data?.map((item) => ({
+          id: item?.id,
+          value: item?.id,
+          label: item?.typeName,
+        }))
+      );
+    } catch (error: any) {
+      dispatch(statusApiReducer.actions.setMessageError(error.message));
+    }
+  };
+
+  const resetPageIndex = () => {
+    setPageIndex(0);
+  };
+
+  useEffect(() => {
+    fetchTypeDishes();
+  }, []);
+
   //useEffect
   useEffect(() => {
-    fetchAllUsers();
-  }, [pageIndex, pageSize, search]);
+    fetchAllDish();
+  }, [pageIndex, pageSize, searchParams]);
 
   // @ts-ignore
   return (
     <div className="text-[--clr-gray-500]">
-      <PageHeader title="Quản lý người dùng"/>
+      <PageHeader title="Quản lý người dùng" />
       <div className="flex justify-between items-center mb-4">
         <div className="flex gap-2 items-center">
-          <span className="text-[14px] text-[--clr-gray-500] italic">Tên tài koản</span>
-          <SearchInFilter onSearch={handleSearch} isResetAll={true}/>
+          <span className="text-[14px] text-[--clr-gray-500] italic">
+            Tên món ăn
+          </span>
+          <SearchInFilter onSearch={handleSearch} isResetAll={true} />
+          <span className="text-[14px] text-[--clr-gray-500] italic ml-10">
+            Loại món ăn
+          </span>
+          <SelectFilter
+            resetPageIndex={resetPageIndex}
+            query={...searchParams}
+            options={[{ id: 0, label: "Tất cả" }, ...typeDishes]}
+            value={searchParams?.typeId || 0}
+            typeQuery="typeId"
+            sx={{
+              fontSize: "13px",
+              fontWeight: " 400",
+              height: "34px",
+              minWidth: 168,
+              boxShadow: "0px 4px 4px rgba(0, 0, 0, 0.08)",
+            }}
+          />
         </div>
+
         <Button
           sx={{ mt: { xs: 2, md: 0, marginBottom: "10px" } }}
           variant="contained"
-          onClick={() => router.push(`${PATH.MANAGEMENT_USER}/new`)}
-          startIcon={<AddTwoToneIcon fontSize="small"/>}
+          onClick={() => router.push(`${PATH.MANAGEMENT_DISH}/new`)}
+          startIcon={<AddTwoToneIcon fontSize="small" />}
         >
-          Thêm tài khoản
+          Thêm món ăn
         </Button>
       </div>
 
-      {isLoading && <Loading/>}
-      <CheckNotFound data={allUsers} isLoading={isLoading}>
+      {isLoading && <Loading />}
+      <CheckNotFound data={allDish} isLoading={isLoading}>
         <TableContainer>
           <Table>
             <TableHead>
               <TableRow>
                 <TableCell>STT</TableCell>
-                <TableCell>Họ tên</TableCell>
-                <TableCell>Email</TableCell>
-                <TableCell>Ngày sinh</TableCell>
-                <TableCell>Giới tính</TableCell>
-                <TableCell>Trạng thái</TableCell>
+                <TableCell>Tên món ăn</TableCell>
+                <TableCell>Mô tả</TableCell>
+                <TableCell>Giá</TableCell>
+                <TableCell>Loại món ăn</TableCell>
                 <TableCell>Thao tác</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {allUsers?.map((user: any, index) => (
-                <TableRow
-                  hover
-                  key={user?.id}
-                >
+              {allDish?.map((dish: any, index) => (
+                <TableRow hover key={dish?.id}>
                   <TableCell>
                     <Typography
                       variant="body1"
@@ -183,7 +211,7 @@ const UsersPage = () => {
                       gutterBottom
                       noWrap
                     >
-                      {user?.name}
+                      {dish?.dishName}
                     </Typography>
                   </TableCell>
                   <TableCell>
@@ -193,7 +221,7 @@ const UsersPage = () => {
                       gutterBottom
                       noWrap
                     >
-                      {user.email}
+                      {dish?.description}
                     </Typography>
                   </TableCell>
                   <TableCell>
@@ -203,8 +231,7 @@ const UsersPage = () => {
                       gutterBottom
                       noWrap
                     >
-                      {user?.dateOfBirth && moment(user?.dateOfBirth).format("DD/MM/YYYY")}
-
+                      {dish?.price}
                     </Typography>
                   </TableCell>
                   <TableCell>
@@ -214,67 +241,46 @@ const UsersPage = () => {
                       gutterBottom
                       noWrap
                     >
-                      {user.gender && checkEmpty(GenderObjectLiteral[user.gender])}
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography
-                      className="flex gap-3 items-center"
-                      variant="body1"
-                      color="text.primary"
-                      gutterBottom
-                      noWrap
-                    >
-                      <span
-                        className={`px-4 px-2 text-white rounded-[5px] ${user?.status === "ACTIVE" ?
-                          "bg-[--clr-green-400]" : "bg-[--clr-red-400]"}`}>{capitalizeFirstLetter(user?.status)}</span>
-                      <IconButton
-                        onClick={() => {
-                          setUser(user);
-                          setIsOpenModalStatus(true);
-                        }}
-                        sx={{
-                          "&:hover": { background: theme.colors.error.lighter },
-                          color: "var(--clr-orange-400)"
-                        }}
-                        color="inherit"
-                        size="small"
-                      >
-                        <DriveFileRenameOutlineIcon className="cursor-pointer" fontSize="small"/>
-                      </IconButton>
+                      {
+                        typeDishes.filter(
+                          (item) => +item?.id === +dish?.typeId
+                        )[0]?.label
+                      }
                     </Typography>
                   </TableCell>
 
                   <TableCell align="center" className="flex gap-3">
                     <Tooltip title="Chỉnh sửa" arrow>
                       <IconButton
-                        onClick={() => router.push(`${PATH.MANAGEMENT_USER}/${user.id}`)}
+                        onClick={() =>
+                          router.push(`${PATH.MANAGEMENT_DISH}/${dish?.id}`)
+                        }
                         sx={{
                           "&:hover": {
-                            background: theme.colors.primary.lighter
+                            background: theme.colors.primary.lighter,
                           },
-                          color: theme.palette.primary.main
+                          color: theme.palette.primary.main,
                         }}
                         color="inherit"
                         size="small"
                       >
-                        <EditTwoToneIcon fontSize="small"/>
+                        <EditTwoToneIcon fontSize="small" />
                       </IconButton>
                     </Tooltip>
                     <Tooltip title="Xóa" arrow>
                       <IconButton
                         onClick={() => {
-                          setUser(user);
+                          setDish(dish);
                           setIsOpenModal(true);
                         }}
                         sx={{
                           "&:hover": { background: theme.colors.error.lighter },
-                          color: theme.palette.error.main
+                          color: theme.palette.error.main,
                         }}
                         color="inherit"
                         size="small"
                       >
-                        <DeleteTwoToneIcon fontSize="small"/>
+                        <DeleteTwoToneIcon fontSize="small" />
                       </IconButton>
                     </Tooltip>
                   </TableCell>
@@ -297,14 +303,14 @@ const UsersPage = () => {
       </CheckNotFound>
       <ModalPopup
         open={isOpenModal}
-        title="Xóa tài khoản"
+        title="Xóa món ăn"
         setOpen={setIsOpenModal}
         closeModal={handleCloseModal}
       >
         <div className="min-w-[500px] h-auto p-6 relative">
           <div className="flex flex-col gap-4 w-full actual-receipt">
-            <div className="py-3 text-[14px] text-[--clr-gray-500]">Bạn có muốn <b>xoá</b> người
-              dùng <b>{user?.name}</b> vĩnh viễn
+            <div className="py-3 text-[14px] text-[--clr-gray-500]">
+              Bạn có muốn <b>xoá</b> món ăn <b>{dish?.dishName}</b> vĩnh viễn
               không ?
             </div>
           </div>
@@ -313,7 +319,7 @@ const UsersPage = () => {
               width={100}
               bg="var(--clr-orange-400)"
               onClick={handleClickCancel}
-              startIcon={<CheckIcon fill="white"/>}
+              startIcon={<CheckIcon fill="white" />}
             >
               <span className="font-semibold">Thoát</span>
             </ButtonBtn>
@@ -321,47 +327,9 @@ const UsersPage = () => {
               width={100}
               bg="var(--clr-blue-400)"
               onClick={handleClickDelete}
-              startIcon={isLoading && <LoadingButton/>}
+              startIcon={isLoading && <LoadingButton />}
             >
               <span className="font-semibold">Xóa</span>
-            </ButtonBtn>
-          </div>
-        </div>
-      </ModalPopup>
-      <ModalPopup
-        open={isOpenModalStatus}
-        title="Trạng thái"
-        setOpen={setIsOpenModalStatus}
-        closeModal={handleCloseModalStatus}
-      >
-        <div className="min-w-[500px] h-auto p-6 relative">
-          <div className="flex flex-col gap-4 w-full actual-receipt">
-            {
-              user?.status === "ACTIVE" ? <div>Bạn có muốn thay đổi trạng thái của tài khoản người
-                dùng <b>{user?.name}</b> thành <b>INACTIVE</b> (khóa) ?</div> : (
-                <div>
-                  Bạn có muốn thay đổi trạng thái của tài khoản người
-                  dùng <b>{user?.name}</b> thành <b> ACTIVE</b> ?
-                </div>
-              )
-            }
-          </div>
-          <div className="flex justify-end mt-[0.25rem] gap-4">
-            <ButtonBtn
-              width={100}
-              bg="var(--clr-orange-400)"
-              onClick={handleClickCancel}
-              startIcon={<CheckIcon fill="white"/>}
-            >
-              <span className="font-semibold">Thoát</span>
-            </ButtonBtn>
-            <ButtonBtn
-              width={150}
-              bg="var(--clr-blue-400)"
-              onClick={handleClickChangeStatus}
-              startIcon={isLoading && <LoadingButton/>}
-            >
-              <span className="font-semibold whitespace-nowrap">Cập nhật</span>
             </ButtonBtn>
           </div>
         </div>
@@ -370,4 +338,4 @@ const UsersPage = () => {
   );
 };
 
-export default UsersPage;
+export default DishListPage;

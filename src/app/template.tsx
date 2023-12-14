@@ -8,6 +8,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 
 import "../styles/globals.scss";
 import { createTheme } from "@mui/material";
+import { ThemeProvider } from "@emotion/react";
 
 import Providers from "@/stores/Providers";
 import ProviderStore from "@/context/ProviderStore";
@@ -17,20 +18,25 @@ function TemplateLayout({ children }: {
   children: ReactNode
 }) {
   // @ts-ignore
-  const THEME = createTheme({});
+  const THEME = createTheme({
+    typography: {
+      fontFamily: "var(--font-primary)",
+      fontSize: 13
+    },
+  });
 
   return (
     <>
       <Providers>
         <ThemeProviderWrapper>
-          {/*<ThemeProvider theme={THEME}>*/}
-          <LocalizationProvider dateAdapter={AdapterMoment}>
-            <ToastContainer/>
-            <ProviderStore>
-              {children}
-            </ProviderStore>
-          </LocalizationProvider>
-          {/*</ThemeProvider>*/}
+          <ThemeProvider theme={THEME}>
+            <LocalizationProvider dateAdapter={AdapterMoment}>
+              <ToastContainer/>
+              <ProviderStore>
+                {children}
+              </ProviderStore>
+            </LocalizationProvider>
+          </ThemeProvider>
         </ThemeProviderWrapper>
       </Providers>
     </>

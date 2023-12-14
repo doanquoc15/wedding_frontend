@@ -52,7 +52,6 @@ const MenuPage = () => {
       ]);
     } catch (error: any) {
       dispatch(statusApiReducer.actions.setMessageError(error.message));
-
     }
   };
 

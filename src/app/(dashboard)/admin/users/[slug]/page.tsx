@@ -421,7 +421,7 @@ const Detail_New_User = ({ params }) => {
           </div>
           <div className="mt-10">
             <ButtonBtn startIcon={isLoading && <LoadingButton/>} type="submit"
-              width={100}>{params?.slug === "new" ? "Tạo mới" : "Cập nhật"}</ButtonBtn>
+              width={150}>{params?.slug === "new" ? "Tạo mới" : "Cập nhật"}</ButtonBtn>
           </div>
         </div>
       </form>

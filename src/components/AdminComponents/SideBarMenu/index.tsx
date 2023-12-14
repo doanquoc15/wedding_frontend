@@ -1,11 +1,43 @@
 import { alpha, Box, List, ListSubheader, styled } from "@mui/material";
 import BrightnessLowTwoToneIcon from "@mui/icons-material/BrightnessLowTwoTone";
-import MmsTwoToneIcon from "@mui/icons-material/MmsTwoTone";
-import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import Person3Icon from "@mui/icons-material/Person3";
+import BallotIcon from "@mui/icons-material/Ballot";
+import FastfoodIcon from "@mui/icons-material/Fastfood";
 
 import ButtonBtn from "@/components/common/Button";
 
+export const MENU_SIDEBAR_LIST = [
+  {
+    id: 1,
+    title: "Quản lý tài khoản",
+    link: "/admin/users",
+    icon: <Person3Icon/>
+  }, {
+    id: 2,
+    title: "Đơn hàng",
+    link: "/admin/booking",
+    icon: <BallotIcon/>
+
+  }, {
+    id: 3,
+    title: "Dịch vụ",
+    link: "/admin/services",
+    icon: <BrightnessLowTwoToneIcon/>
+
+  }, {
+    id: 4,
+    title: "Menu combo",
+    icon: <BallotIcon/>,
+    link: "/admin/menu-combo",
+  }, {
+    id: 4,
+    title: "Món ăn",
+    link: "/admin/dishes",
+    icon: <FastfoodIcon/>
+  },
+
+];
 const MenuWrapper = styled(Box)(
   ({ theme }) => `
   .MuiList-root {
@@ -150,12 +182,11 @@ const SubMenuWrapper = styled(Box)(
 );
 
 function SidebarMenu() {
-  const router = useRouter();
   const currentRoute = usePathname();
-  const [sidebarToggle, setSidebarToggle] = useState(false);
+  const router = useRouter();
 
-  const closeSidebar = () => {
-    setSidebarToggle(false);
+  const closeSidebar = (link: string) => {
+    router.push(link);
   };
 
   return (
@@ -171,33 +202,31 @@ function SidebarMenu() {
         >
           <SubMenuWrapper>
             <List component="div">
-              <div className="mb-2">
-                <ButtonBtn
-                  className={
-                    currentRoute === "/admin/users" ? "active" : ""
-                  }
-                  width="100%"
-                  style={{ color: "var(--clr-gray-100)" }}
-                  disableRipple
-                  component="a"
-                  onClick={closeSidebar}
-                  startIcon={<BrightnessLowTwoToneIcon/>}
-                >
-                  Quản lý tài khoản
-                </ButtonBtn>
-              </div>
-              <div>
-                <ButtonBtn
-                  style={{ color: "var(--clr-gray-100)" }}
-                  width="100%"
-                  className={currentRoute === "/admin/booking" ? "active" : ""}
-                  disableRipple
-                  onClick={closeSidebar}
-                  startIcon={<MmsTwoToneIcon/>}
-                >
-                  Quản lý đơn hàng
-                </ButtonBtn>
-              </div>
+              {
+                MENU_SIDEBAR_LIST.map((item, index) => (
+                  <div className="mb-2" key={index}>
+                    <ButtonBtn
+                      className={
+                        currentRoute === item?.link ? "active" : ""
+                      }
+                      bg={currentRoute === item?.link ? "var(--clr-blue-400)" : "transparent"}
+                      width="100%"
+                      style={{
+                        color: "var(--clr-gray-100)",
+                        display: "flex",
+                        justifyContent: "flex-start",
+                        paddingLeft: "25px"
+                      }}
+                      disableRipple
+                      component="a"
+                      onClick={() => closeSidebar(item?.link)}
+                      startIcon={item?.icon}
+                    >
+                      {item?.title}
+                    </ButtonBtn>
+                  </div>
+                ))
+              }
             </List>
           </SubMenuWrapper>
         </List>

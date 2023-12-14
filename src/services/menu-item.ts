@@ -1,17 +1,31 @@
 import Api from "@/shared/config/api";
+import { IResponse } from "@/types/common";
 
 const Apis = {
-  GET_ALL: "/menu-item",
-//  SIGN_UP: "/auth/signup",
+  URL_DISH: "/menu-item",
 };
 
-interface PramsMenuItem{
-    pageIndex ?: number;
-    pageSize?:number;
-    typeId?: number;
-}
+export const getAllDish = async (options?: any) => {
+  const { data }: any = await Api.getWithParams(Apis.URL_DISH, options);
+  return data;
+};
 
-export const getAllFood = async (params) => {
-  const data: any = await Api.getWithParams(Apis.GET_ALL,params);
-  return data.data;
+export const createDish = async (params: any) => {
+  const { data }: any = await Api.post(`${Apis.URL_DISH}`, params);
+  return data;
+};
+
+export const getDishById = async (id: number) => {
+  const { data }: any = await Api.get(`${Apis.URL_DISH}/${id}`);
+  return data;
+};
+
+export const updateDish = async (id: number, params: object) => {
+  const { data }: IResponse = await Api.patch(`${Apis.URL_DISH}/${id}`, params);
+  return data;
+};
+
+export const deleteDish = async (id: number) => {
+  const { data }: IResponse = await Api.delete(`${Apis.URL_DISH}/${id}`);
+  return data;
 };

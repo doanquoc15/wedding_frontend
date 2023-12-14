@@ -40,7 +40,7 @@ import { capitalizeFirstLetter } from "@/utils/capitalizeFirstLetter";
 import SearchInFilter from "@/components/common/SearchInFilter";
 import { getQueryParam } from "@/utils/route";
 
-const UsersPage = () => {
+const BookingPage = () => {
   //useState
   const theme = useTheme();
   const [pageSize, setPageSize] = useState(5);
@@ -370,4 +370,4 @@ const UsersPage = () => {
   );
 };
 
-export default UsersPage;
+export default BookingPage;

@@ -1,10 +1,11 @@
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { omit } from "lodash";
 
 import { SearchProps } from "@/types/common";
 import SearchIcon from "@/statics/svg/ic-search.svg";
-import { addMultipleQueryParams, getQueryParam } from "@/utils/route";
+import { getQueryParam } from "@/utils/route";
 
 const SearchInFilter = ({
   onSearch,
@@ -15,13 +16,30 @@ const SearchInFilter = ({
 }: SearchProps) => {
   const [input, setInput] = useState<any>(getQueryParam(`${typeQuery}`));
   const searchParams = useSearchParams();
+  const router = useRouter();
 
   const handleChangeInput = (value: string) => {
     const valueSearch: any = value.trim();
     onSearch && onSearch(valueSearch);
-    addMultipleQueryParams(`${searchParams}`, {
-      [typeQuery]: valueSearch,
-    });
+    const url = new URL(window.location.href);
+    const queryParams = new URLSearchParams(url.search);
+    const params = {};
+    for (const [key, value] of queryParams?.entries() as any) {
+      params[key] = value;
+    }
+
+    if (isResetAll && !valueSearch) {
+      const queryString = new URLSearchParams(
+        omit(params, "search")
+      ).toString();
+      router.push(`/admin/dishes?${queryString}`);
+    } else if (typeQuery) {
+      const queryString = new URLSearchParams({
+        ...params,
+        [typeQuery]: valueSearch,
+      }).toString();
+      router.push(`/admin/dishes?${queryString}`);
+    }
   };
 
   const onKeyDown = (event: React.KeyboardEvent<HTMLDivElement>): void => {
@@ -49,7 +67,7 @@ const SearchInFilter = ({
   return (
     <div
       style={{
-        minWidth: `${width}`,
+        minWidth: `${width} || 400px`,
       }}
       className={`${
         width ? `max-w-[${width}]` : "w-full"

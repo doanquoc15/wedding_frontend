@@ -100,5 +100,6 @@ export const GenderObjectLiteral = {
 };
 
 export const PATH = {
-  MANAGEMENT_USER: "/admin/users"
+  MANAGEMENT_USER: "/admin/users",
+  MANAGEMENT_DISH: "/admin/dishes"
 };

@@ -16,10 +16,19 @@ export const ERROR_MESSAGES = {
   COME_OUT: "Thời gian ra phải sau thời gian vào!",
   REJECTED_SUCCESS: "Hủy dịch vụ thành công",
   FEEDBACK_SUCCESS: "Gửi đánh giá thành công",
+  //dish
+  DISH_NAME_REQUIRED: "Tên món ăn không được để trống",
+  PRICE_REQUIRED: "Giá tiền không được để trống",
+  PRICE_MUST_NUMBER: "Giá tiền phải là một số",
+  PRICE_MIN_0: "Giá tiền không được nhỏ hơn 0",
+  PRICE_MAX_1_BILLION: "Giá tiền không được lớn hơn 1 tỷ",
+  TYPEID_REQUIRED: "Loại món ăn không được để trống",
 };
 
 export const MESSAGE_SUCCESS = {
   UPDATED_SUCCESS: "Cập nhật thành công!",
   CREATED_USER_SUCCESS: "Tạo tài khoản thành công",
   DELETE_USER_SUCCESS: "Xóa tài khoản thành công",
+  CREATE_DISH_SUCCESS: "Tạo món ăn thành công",
+  DELETE_DISH_SUCCESS: "Xóa món ăn thành công",
 };

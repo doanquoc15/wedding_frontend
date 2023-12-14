@@ -20,6 +20,8 @@ import AccountBoxTwoToneIcon from "@mui/icons-material/AccountBoxTwoTone";
 import LockOpenTwoToneIcon from "@mui/icons-material/LockOpenTwoTone";
 import AccountTreeTwoToneIcon from "@mui/icons-material/AccountTreeTwoTone";
 
+import { getUserLocal } from "@/services/getUserLocal";
+
 const MenuUserBox = styled(Box)(
   ({ theme }) => `
         background: ${theme.colors.alpha.black[5]};
@@ -49,13 +51,10 @@ const UserBoxDescription = styled(Typography)(
 );
 
 function HeaderUserBox() {
-  const user = {
-    name: "Doan Quoc",
-    avatar: "/static/images/avatars/1.jpg",
-  };
 
   const ref = useRef<any>(null);
   const [isOpen, setOpen] = useState<boolean>(false);
+  const [user, _] = useState<any>(getUserLocal());
 
   const handleOpen = (): void => {
     setOpen(true);
@@ -68,10 +67,10 @@ function HeaderUserBox() {
   return (
     <>
       <div className="flex gap-2 items-center cursor-pointer" color="secondary" ref={ref} onClick={handleOpen}>
-        <Avatar alt={user.name} src={user.avatar}/>
+        <Avatar alt={user.name} src={user?.image} className="border-gray-200 border-[1px]"/>
         <Hidden mdDown>
           <UserBoxText>
-            <UserBoxLabel variant="body1">{user.name}</UserBoxLabel>
+            <UserBoxLabel variant="body1">{user?.name}</UserBoxLabel>
           </UserBoxText>
         </Hidden>
         <Hidden smDown>
@@ -95,7 +94,7 @@ function HeaderUserBox() {
           <Avatar alt={user.name} src={user.avatar}/>
           <UserBoxText>
             <UserBoxLabel variant="body1">{user.name}</UserBoxLabel>
-        
+
           </UserBoxText>
         </MenuUserBox>
         <Divider sx={{ mb: 0 }}/>

@@ -155,7 +155,7 @@ export default function SelectField(props: SelectFieldPropsType) {
             ) : (
               <div
                 className="text-clr-gray-500 text-[13px] px-4 pb-1">{isLoading ? <>Loading...</> : <>Không
-                                có dữ liệu</>}</div>
+                có dữ liệu</>}</div>
             )}
           </Select>
         </FormControl>
@@ -163,3 +163,4 @@ export default function SelectField(props: SelectFieldPropsType) {
     />
   );
 }
+

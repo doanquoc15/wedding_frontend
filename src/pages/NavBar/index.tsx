@@ -364,7 +364,8 @@ function ResponsiveAppBar() {
           </Box>
 
           {CookiesStorage.getCookieData("role") ?
-            <Box sx={{ flexGrow: 1, display: "flex", gap: "20px", justifyContent: "end" }}>
+            <Box sx={{ flexGrow: 1, display: "flex", gap: "20px", justifyContent: "end" }}
+              onClick={() => router.push("tai-khoan")}>
               <BadgeCustom notifications={notifications}/>
               <Tooltip title="Tài khoản">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>

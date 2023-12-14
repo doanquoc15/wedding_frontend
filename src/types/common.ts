@@ -46,6 +46,7 @@ export interface TitleHeadType {
 }
 
 export type SearchProps = {
+  query?: any;
   wordSearch?: string;
   onSearch?: Function;
   onChange?: Function;
@@ -214,4 +215,13 @@ export interface IUser {
   status?: string;
   gender?: GENDER;
   dateOfBirth?: string;
+}
+
+export interface IDish {
+  id: number;
+  dishName: string;
+  description?: string;
+  image?: string;
+  typeId?: number;
+  comboItems: any
 }
