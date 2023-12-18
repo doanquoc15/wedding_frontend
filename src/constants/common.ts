@@ -104,4 +104,5 @@ export const PATH = {
   MANAGEMENT_DISH: "/admin/dishes",
   MANAGEMENT_SERVICE: "/admin/services",
   MANAGEMENT_MENU_COMBO: "/admin/combo",
+  MANAGEMENT_BOOKING: "/admin/booking",
 };

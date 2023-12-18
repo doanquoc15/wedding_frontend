@@ -13,7 +13,7 @@ import { UploadImage } from "@/services/upload";
 import TextInputField from "@/components/common/TextInputField";
 import Error from "@/components/common/Error";
 import SelectField from "@/components/common/SelectField";
-import { GENDER_OPTIONS, SHORT_DATE } from "@/constants/common";
+import { GENDER_OPTIONS, PATH, SHORT_DATE } from "@/constants/common";
 import { callAPIAddress, getAllProvince } from "@/services/addressApi";
 import { useAppDispatch } from "@/stores/hook";
 import { statusApiReducer } from "@/stores/reducers/statusAPI";
@@ -189,7 +189,7 @@ const Detail_New_User = ({ params }) => {
       }
       await getAllProvince();
       setIsLoading(false);
-      router.push("/admin/users");
+      router.push(PATH.MANAGEMENT_USER);
       dispatch(usersReducer.actions.setStatus());
     } catch
     (error: any) {

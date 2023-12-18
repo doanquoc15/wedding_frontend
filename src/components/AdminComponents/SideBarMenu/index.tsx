@@ -29,7 +29,7 @@ export const MENU_SIDEBAR_LIST = [
     id: 4,
     title: "Menu combo",
     icon: <BallotIcon/>,
-    link: "/admin/menu-combo",
+    link: "/admin/combo",
   }, {
     id: 4,
     title: "Món ăn",
@@ -182,7 +182,7 @@ const SubMenuWrapper = styled(Box)(
 );
 
 function SidebarMenu() {
-  const currentRoute = usePathname();
+  const currentRoute: any = usePathname();
   const router = useRouter();
 
   const closeSidebar = (link: string) => {
@@ -207,9 +207,9 @@ function SidebarMenu() {
                   <div className="mb-2" key={index}>
                     <ButtonBtn
                       className={
-                        currentRoute === item?.link ? "active" : ""
+                        currentRoute?.includes(item?.link) ? "active" : ""
                       }
-                      bg={currentRoute === item?.link ? "var(--clr-blue-400)" : "transparent"}
+                      bg={currentRoute?.includes(item?.link) ? "var(--clr-blue-400)" : "transparent"}
                       width="100%"
                       style={{
                         color: "var(--clr-gray-100)",

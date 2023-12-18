@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { SelectProps, TextFieldProps } from "@mui/material";
+import { SelectChangeEvent, SelectProps, TextFieldProps } from "@mui/material";
 import { Control } from "react-hook-form";
 
 import { GENDER, REGENCY, TYPE_NOTIFICATION } from "./enums";
@@ -147,6 +147,7 @@ export interface IDetailModalBookProps {
   serviceId: number | undefined;
   comboMenuId: number | undefined;
   priceTotalDish: any;
+  comboMenuItem?: any;
 }
 
 export interface IZones {
@@ -233,4 +234,29 @@ export interface IService {
   capacity: number;
   image?: string;
   comboMenus?: any;
+}
+
+export interface SelectOptions {
+  value: any;
+  label: any;
+}
+
+export interface SelectOptionProps {
+  defaultValue?: any;
+  value?: any;
+  className?: string;
+  options: SelectOptions[];
+  onChange?: (event: SelectChangeEvent) => void;
+}
+
+export interface IComboMenu {
+  id: number;
+  comboName: string;
+  description: string;
+  totalPrice: number;
+  serviceId: number;
+  bookings?: any;
+  comboItems?: any;
+  customizedComboMenus?: any;
+  feedbacks?: any;
 }

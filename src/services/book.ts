@@ -23,3 +23,7 @@ export const updateBooking = async (id: number, params: any) => {
   const { data }: any = await Api.patch(`${Apis.BOOK_URL}/${id}`, params);
   return data;
 };
+export const deleteBooking = async (id: number) => {
+  const { data }: any = await Api.delete(`${Apis.BOOK_URL}/${id}`);
+  return data;
+};

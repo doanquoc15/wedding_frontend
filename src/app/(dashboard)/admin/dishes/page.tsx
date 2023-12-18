@@ -48,7 +48,7 @@ const DishListPage = ({ searchParams }) => {
   const [dish, setDish] = useState<IDish>();
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [totalUsersCount, setTotalUsersCount] = useState<number>(0);
-  const [search, setSearch] = useState<string>(getQueryParam("search"));
+  const [search, setSearch] = useState<string>(getQueryParam("search") as string);
   const [typeDishes, setTypeDishes] = useState<any[]>([]);
 
   //const
@@ -141,13 +141,13 @@ const DishListPage = ({ searchParams }) => {
   // @ts-ignore
   return (
     <div className="text-[--clr-gray-500]">
-      <PageHeader title="Quản lý món ăn" />
+      <PageHeader title="Quản lý món ăn"/>
       <div className="flex justify-between items-center mb-4">
         <div className="flex gap-2 items-center">
           <span className="text-[14px] text-[--clr-gray-500] italic">
             Tên món ăn
           </span>
-          <SearchInFilter onSearch={handleSearch} isResetAll={true} />
+          <SearchInFilter onSearch={handleSearch} isResetAll={true}/>
           <span className="text-[14px] text-[--clr-gray-500] italic ml-10">
             Loại món ăn
           </span>
@@ -171,13 +171,13 @@ const DishListPage = ({ searchParams }) => {
           sx={{ mt: { xs: 2, md: 0, marginBottom: "10px" } }}
           variant="contained"
           onClick={() => router.push(`${PATH.MANAGEMENT_DISH}/new`)}
-          startIcon={<AddTwoToneIcon fontSize="small" />}
+          startIcon={<AddTwoToneIcon fontSize="small"/>}
         >
           Thêm món ăn
         </Button>
       </div>
 
-      {isLoading && <Loading />}
+      {isLoading && <Loading/>}
       <CheckNotFound data={allDish} isLoading={isLoading}>
         <TableContainer>
           <Table>
@@ -264,7 +264,7 @@ const DishListPage = ({ searchParams }) => {
                         color="inherit"
                         size="small"
                       >
-                        <EditTwoToneIcon fontSize="small" />
+                        <EditTwoToneIcon fontSize="small"/>
                       </IconButton>
                     </Tooltip>
                     <Tooltip title="Xóa" arrow>
@@ -280,7 +280,7 @@ const DishListPage = ({ searchParams }) => {
                         color="inherit"
                         size="small"
                       >
-                        <DeleteTwoToneIcon fontSize="small" />
+                        <DeleteTwoToneIcon fontSize="small"/>
                       </IconButton>
                     </Tooltip>
                   </TableCell>
@@ -319,7 +319,7 @@ const DishListPage = ({ searchParams }) => {
               width={100}
               bg="var(--clr-orange-400)"
               onClick={handleClickCancel}
-              startIcon={<CheckIcon fill="white" />}
+              startIcon={<CheckIcon fill="white"/>}
             >
               <span className="font-semibold">Thoát</span>
             </ButtonBtn>
@@ -327,7 +327,7 @@ const DishListPage = ({ searchParams }) => {
               width={100}
               bg="var(--clr-blue-400)"
               onClick={handleClickDelete}
-              startIcon={isLoading && <LoadingButton />}
+              startIcon={isLoading && <LoadingButton/>}
             >
               <span className="font-semibold">Xóa</span>
             </ButtonBtn>

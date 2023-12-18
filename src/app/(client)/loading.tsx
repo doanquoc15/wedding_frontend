@@ -7,7 +7,7 @@ const Loading = () => {
   return (
     <div className="min-h-full w-full">
       <div className="flex justify-center items-center">
-        <Image alt="LoadingIcon" src={LoadingIcon} />
+        <Image alt="LoadingIcon" src={LoadingIcon}/>
       </div>
     </div>
   );

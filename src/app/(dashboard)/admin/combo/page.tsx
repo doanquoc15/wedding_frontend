@@ -21,8 +21,7 @@ import Button from "@mui/material/Button";
 import { useRouter } from "next/navigation";
 
 import PageHeader from "@/components/AdminComponents/PageHeader";
-import { deleteService, getAllService } from "@/services/service";
-import { IService } from "@/types/common";
+import { IComboMenu } from "@/types/common";
 import { statusApiReducer } from "@/stores/reducers/statusAPI";
 import { useAppDispatch } from "@/stores/hook";
 import { PATH } from "@/constants/common";
@@ -36,34 +35,39 @@ import { MESSAGE_SUCCESS } from "@/constants/errors";
 import SearchInFilter from "@/components/common/SearchInFilter";
 import { getQueryParam } from "@/utils/route";
 import { formatMoney } from "@/utils/formatMoney";
+import { deleteComboMenu, getAllComboMenu } from "@/services/combo";
+import SelectFilter from "@/components/common/SelectFilter";
+import { getAllService } from "@/services/service";
 
-const ServicePage = () => {
+const ServicePage = ({ searchParams }) => {
   //useState
   const theme = useTheme();
   const [pageSize, setPageSize] = useState(5);
   const [pageIndex, setPageIndex] = useState(0);
-  const [allService, setAllService] = useState<IService[]>([]);
+  const [allCombo, setAllCombo] = useState<IComboMenu[]>([]);
   const [isLoading, setLoading] = useState<boolean>(true);
-  const [service, setService] = useState<IService>();
+  const [combo, setCombo] = useState<IComboMenu>();
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
-  const [totalServiceCount, setTotalServiceCount] = useState<number>(0);
+  const [totalComboCount, setTotalComboCount] = useState<number>(0);
   const [search, setSearch] = useState<any>(getQueryParam("search"));
+  const [serviceOption, setServiceOption] = useState<any>([]);
 
   //const
   const dispatch = useAppDispatch();
   const router = useRouter();
 
   //function
-  const fetchAllService = async () => {
+  const fetchAllComboMenu = async () => {
     setLoading(true);
     try {
-      const { data, total } = await getAllService({
+      const { data, total } = await getAllComboMenu({
         pageSize,
         pageIndex: pageIndex + 1,
         search,
+        serviceId: getQueryParam("serviceId") || undefined,
       });
-      setAllService(data);
-      setTotalServiceCount(total);
+      setAllCombo(data);
+      setTotalComboCount(total);
     } catch (error: any) {
       dispatch(statusApiReducer.actions.setMessageError(error?.data?.message));
     } finally {
@@ -94,17 +98,17 @@ const ServicePage = () => {
     setIsOpenModal(false);
   };
 
-  const handleClickDelete = async () => {
-    setIsOpenModal(false);
+  const fetchAllService = async () => {
     setLoading(true);
     try {
-      await deleteService(Number(service?.id));
-      dispatch(
-        statusApiReducer.actions.setMessageSuccess(
-          MESSAGE_SUCCESS.DELETE_SERVICE_SUCCESS
-        )
-      );
-      fetchAllService();
+      const { data } = await getAllService({
+        pageSize: 1000
+      });
+      setServiceOption(data?.map(item => ({
+        id: item?.id,
+        label: item?.serviceName,
+        value: item?.id
+      })) || []);
     } catch (error: any) {
       dispatch(statusApiReducer.actions.setMessageError(error?.data?.message));
     } finally {
@@ -112,49 +116,92 @@ const ServicePage = () => {
     }
   };
 
+  const handleClickDelete = async () => {
+    setIsOpenModal(false);
+    setLoading(true);
+    try {
+      await deleteComboMenu(Number(combo?.id));
+      dispatch(
+        statusApiReducer.actions.setMessageSuccess(
+          MESSAGE_SUCCESS.DELETE_COMBO_SUCCESS
+        )
+      );
+      fetchAllComboMenu();
+    } catch (error: any) {
+      dispatch(statusApiReducer.actions.setMessageError(error?.data?.message));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const resetPageIndex = () => {
+    setPageIndex(0);
+  };
+
   //useEffect
   useEffect(() => {
+    fetchAllComboMenu();
+  }, [pageIndex, pageSize, search, searchParams]);
+
+  useEffect(() => {
     fetchAllService();
-  }, [pageIndex, pageSize, search]);
+  }, []);
 
   // @ts-ignore
   return (
     <div className="text-[--clr-gray-500]">
-      <PageHeader title="Quản lý dịch vụ"/>
+      <PageHeader title="Quản lý menu"/>
       <div className="flex justify-between items-center mb-4">
         <div className="flex gap-2 items-center">
           <span className="text-[14px] text-[--clr-gray-500] italic">
-            Tên dich vụ
+            Tên menu
           </span>
           <SearchInFilter onSearch={handleSearch} isResetAll={true}/>
+          <span className="text-[14px] text-[--clr-gray-500] italic ml-10">
+            Loại dịch vụ
+          </span>
+          <SelectFilter
+            resetPageIndex={resetPageIndex}
+            query={...searchParams}
+            options={[{ id: 0, label: "Tất cả" }, ...serviceOption]}
+            value={searchParams?.serviceId || 0}
+            typeQuery="serviceId"
+            sx={{
+              fontSize: "13px",
+              fontWeight: " 400",
+              height: "34px",
+              minWidth: 168,
+              boxShadow: "0px 4px 4px rgba(0, 0, 0, 0.08)",
+            }}
+          />
         </div>
         <Button
           sx={{ mt: { xs: 2, md: 0, marginBottom: "10px" } }}
           variant="contained"
-          onClick={() => router.push(`${PATH.MANAGEMENT_SERVICE}/new`)}
+          onClick={() => router.push(`${PATH.MANAGEMENT_MENU_COMBO}/new`)}
           startIcon={<AddTwoToneIcon fontSize="small"/>}
         >
-          Thêm dich vụ
+          Thêm menu
         </Button>
       </div>
 
       {isLoading && <Loading/>}
-      <CheckNotFound data={allService} isLoading={isLoading}>
+      <CheckNotFound data={allCombo} isLoading={isLoading}>
         <TableContainer>
           <Table>
             <TableHead>
               <TableRow>
                 <TableCell>STT</TableCell>
-                <TableCell>Tên dịch vụ</TableCell>
-                <TableCell>Phí dịch vụ</TableCell>
-                <TableCell>Sức chứa tối đa</TableCell>
-                <TableCell>Menu có sẵn</TableCell>
+                <TableCell>Tên menu</TableCell>
+                <TableCell>Mô tả</TableCell>
+                <TableCell>Tổng tiền</TableCell>
+                <TableCell>Số lượng món ăn</TableCell>
                 <TableCell align="center">Thao tác</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {allService?.map((service: any, index) => (
-                <TableRow hover key={service?.id}>
+              {allCombo?.map((combo: any, index) => (
+                <TableRow hover key={combo?.id}>
                   <TableCell>
                     <Typography
                       sx={{ fontSize: "13px" }}
@@ -173,7 +220,23 @@ const ServicePage = () => {
                       gutterBottom
                       noWrap
                     >
-                      {service?.serviceName}
+                      {combo?.comboName}
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography
+                      variant="body1"
+                      color="text.primary"
+                      gutterBottom
+                      noWrap
+                      sx={{
+                        width: "200px",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis"
+                      }}
+                    >
+                      {combo?.description || "Chưa có mô tả"}
                     </Typography>
                   </TableCell>
                   <TableCell>
@@ -183,7 +246,7 @@ const ServicePage = () => {
                       gutterBottom
                       noWrap
                     >
-                      {formatMoney(service.price)} vnd
+                      {formatMoney(combo.totalPrice)} vnd
                     </Typography>
                   </TableCell>
                   <TableCell>
@@ -193,17 +256,7 @@ const ServicePage = () => {
                       gutterBottom
                       noWrap
                     >
-                      {service?.capacity} người
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography
-                      variant="body1"
-                      color="text.primary"
-                      gutterBottom
-                      noWrap
-                    >
-                      {service?.comboMenus?.length} menu
+                      {combo?.comboItems?.length} món
                     </Typography>
                   </TableCell>
 
@@ -212,7 +265,7 @@ const ServicePage = () => {
                       <IconButton
                         onClick={() =>
                           router.push(
-                            `${PATH.MANAGEMENT_SERVICE}/${service.id}`
+                            `${PATH.MANAGEMENT_MENU_COMBO}/${combo.id}`
                           )
                         }
                         sx={{
@@ -230,7 +283,7 @@ const ServicePage = () => {
                     <Tooltip title="Xóa" arrow>
                       <IconButton
                         onClick={() => {
-                          setService(service);
+                          setCombo(combo);
                           setIsOpenModal(true);
                         }}
                         sx={{
@@ -252,7 +305,7 @@ const ServicePage = () => {
         <Box p={2}>
           <TablePagination
             component="div"
-            count={totalServiceCount}
+            count={totalComboCount}
             onPageChange={handlePageChange}
             onRowsPerPageChange={handleLimitChange}
             page={pageIndex}
@@ -263,14 +316,14 @@ const ServicePage = () => {
       </CheckNotFound>
       <ModalPopup
         open={isOpenModal}
-        title="Xóa dich vụ"
+        title="Xóa menu"
         setOpen={setIsOpenModal}
         closeModal={handleCloseModal}
       >
         <div className="min-w-[500px] h-auto p-6 relative">
           <div className="flex flex-col gap-4 w-full actual-receipt">
             <div className="py-3 text-[14px] text-[--clr-gray-500]">
-              Bạn có muốn <b>xoá</b> dịch vụ <b>{service?.serviceName}</b> vĩnh
+              Bạn có muốn <b>xoá</b> menu món ăn <b>{combo?.comboName}</b> vĩnh
               viễn không ?
             </div>
           </div>

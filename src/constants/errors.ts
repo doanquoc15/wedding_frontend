@@ -39,4 +39,9 @@ export const MESSAGE_SUCCESS = {
   DELETE_DISH_SUCCESS: "Xóa món ăn thành công",
   CREATE_SERVICE_SUCCESS: "Tạo dịch vụ thành công",
   DELETE_SERVICE_SUCCESS: "Xóa dịch vụ thành công",
+  CREATE_BOOKING_SUCCESS: "Tạo đơn hàng thành công",
+  DELETE_BOOKING_SUCCESS: "Xóa đơn hàng thành công",
+  CREATE_COMBO_SUCCESS: "Tạo menu món ăn thành công",
+  DELETE_COMBO_SUCCESS: "Xóa menu món ăn thành công",
+  CHOOSE_FOOD: "Vui lòng chọn món ăn",
 };

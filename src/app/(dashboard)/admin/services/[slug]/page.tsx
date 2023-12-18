@@ -18,14 +18,10 @@ import { useAppDispatch } from "@/stores/hook";
 import { MESSAGE_SUCCESS } from "@/constants/errors";
 import { UploadImage } from "@/services/upload";
 import { serviceSchema } from "@/libs/validation/serviceSchema";
-import {
-  createService,
-  getServiceById,
-  updateService,
-} from "@/services/service";
+import { createService, getServiceById, updateService, } from "@/services/service";
 import { PATH } from "@/constants/common";
 
-const Detail_New_Dish = ({ params }) => {
+const Detail_New_Service = ({ params }) => {
   //useForm
   const {
     handleSubmit,
@@ -164,7 +160,7 @@ const Detail_New_Dish = ({ params }) => {
                   className="w-full max-h-[40px] input-custom"
                   helperText={
                     errors?.serviceName && (
-                      <Error message={errors?.serviceName?.message as string} />
+                      <Error message={errors?.serviceName?.message as string}/>
                     )
                   }
                 />
@@ -185,7 +181,7 @@ const Detail_New_Dish = ({ params }) => {
                   className="w-full max-h-[40px] input-custom"
                   helperText={
                     errors?.price && (
-                      <Error message={errors?.price?.message as string} />
+                      <Error message={errors?.price?.message as string}/>
                     )
                   }
                 />
@@ -206,7 +202,7 @@ const Detail_New_Dish = ({ params }) => {
                   className="w-full max-h-[40px] input-custom"
                   helperText={
                     errors?.capacity && (
-                      <Error message={errors?.capacity?.message as string} />
+                      <Error message={errors?.capacity?.message as string}/>
                     )
                   }
                 />
@@ -215,7 +211,7 @@ const Detail_New_Dish = ({ params }) => {
           </div>
           <div className="mt-10">
             <ButtonBtn
-              startIcon={isLoading && <LoadingButton />}
+              startIcon={isLoading && <LoadingButton/>}
               type="submit"
               width={150}
             >
@@ -228,4 +224,4 @@ const Detail_New_Dish = ({ params }) => {
   );
 };
 
-export default Detail_New_Dish;
+export default Detail_New_Service;

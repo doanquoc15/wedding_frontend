@@ -51,7 +51,7 @@ const UsersPage = () => {
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [isOpenModalStatus, setIsOpenModalStatus] = useState<boolean>(false);
   const [totalUsersCount, setTotalUsersCount] = useState<number>(0);
-  const [search, setSearch] = useState<string>(getQueryParam("search"));
+  const [search, setSearch] = useState<any>(getQueryParam("search"));
 
   //const
   const dispatch = useAppDispatch();

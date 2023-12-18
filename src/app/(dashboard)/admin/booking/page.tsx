@@ -23,12 +23,9 @@ import Button from "@mui/material/Button";
 import { useRouter } from "next/navigation";
 
 import PageHeader from "@/components/AdminComponents/PageHeader";
-import { deleteUser, getAllUsers, updateUser } from "@/services/user";
-import { IUser } from "@/types/common";
 import { statusApiReducer } from "@/stores/reducers/statusAPI";
 import { useAppDispatch } from "@/stores/hook";
-import { checkEmpty } from "@/utils/checkEmpty";
-import { GenderObjectLiteral, PATH } from "@/constants/common";
+import { PATH } from "@/constants/common";
 import CheckNotFound from "@/components/common/CheckNotFound";
 import Loading from "@/components/Loading";
 import ModalPopup from "@/components/common/ModalPopup";
@@ -36,34 +33,53 @@ import ButtonBtn from "@/components/common/Button";
 import { CheckIcon } from "@/components/Icons";
 import LoadingButton from "@/components/common/Loading";
 import { MESSAGE_SUCCESS } from "@/constants/errors";
-import { capitalizeFirstLetter } from "@/utils/capitalizeFirstLetter";
 import SearchInFilter from "@/components/common/SearchInFilter";
 import { getQueryParam } from "@/utils/route";
+import { deleteBooking, getAllBooking, updateBooking } from "@/services/book";
+import { formatMoney } from "@/utils/formatMoney";
+import SelectOption from "@/components/common/SelectOption";
 
+const options = [
+  {
+    value: "PENDING",
+    label: "Chờ duyêt"
+  },
+  {
+    value: "APPROVED",
+    label: "Xác nhận"
+  },
+  {
+    value: "REJECTED",
+    label: "Hủy"
+  }
+];
 const BookingPage = () => {
   //useState
   const theme = useTheme();
   const [pageSize, setPageSize] = useState(5);
   const [pageIndex, setPageIndex] = useState(0);
-  const [allUsers, setAllUsers] = useState<IUser[]>([]);
+  const [allBooking, setAllBooking] = useState<any[]>([]);
   const [isLoading, setLoading] = useState<boolean>(true);
-  const [user, setUser] = useState<IUser>();
+  const [booking, setBooking] = useState<any>();
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [isOpenModalStatus, setIsOpenModalStatus] = useState<boolean>(false);
-  const [totalUsersCount, setTotalUsersCount] = useState<number>(0);
-  const [search, setSearch] = useState<string>(getQueryParam("search"));
+  const [totalBookingCount, setTotalBookingCount] = useState<number>(0);
+  const [search, setSearch] = useState<string | undefined>(getQueryParam("search"));
+  const [statusBooking, setStatusBooking] = useState<string | undefined>();
+
+  console.log(statusBooking);
 
   //const
   const dispatch = useAppDispatch();
   const router = useRouter();
 
   //function
-  const fetchAllUsers = async () => {
+  const fetchAllBooking = async () => {
     setLoading(true);
     try {
-      const { users, total } = await getAllUsers({ pageSize, pageIndex: pageIndex + 1, search });
-      setAllUsers(users);
-      setTotalUsersCount(total);
+      const { booking, total } = await getAllBooking({ pageSize, pageIndex: pageIndex + 1, search });
+      setAllBooking(booking);
+      setTotalBookingCount(total);
 
     } catch (error: any) {
       dispatch(statusApiReducer.actions.setMessageError(error.message));
@@ -94,13 +110,17 @@ const BookingPage = () => {
     setIsOpenModal(false);
   };
 
+  const handleOnChangeStatus = (value) => {
+    setStatusBooking(value);
+  };
+
   const handleClickDelete = async () => {
     setIsOpenModal(false);
     setLoading(true);
     try {
-      await deleteUser(Number(user?.id));
-      dispatch(statusApiReducer.actions.setMessageSuccess(MESSAGE_SUCCESS.DELETE_USER_SUCCESS));
-      fetchAllUsers();
+      await deleteBooking(Number(booking?.id));
+      dispatch(statusApiReducer.actions.setMessageSuccess(MESSAGE_SUCCESS.DELETE_BOOKING_SUCCESS));
+      fetchAllBooking();
     } catch (error: any) {
       dispatch(statusApiReducer.actions.setMessageError(error.message));
     } finally {
@@ -110,10 +130,10 @@ const BookingPage = () => {
   const handleClickChangeStatus = async () => {
     setLoading(true);
     try {
-      await updateUser(Number(user?.id), { status: user?.status === "ACTIVE" ? "INACTIVE" : "ACTIVE" });
+      await updateBooking(Number(booking?.id), { statusBooking: statusBooking });
       dispatch(statusApiReducer.actions.setMessageSuccess(MESSAGE_SUCCESS.UPDATED_SUCCESS));
       setIsOpenModalStatus(false);
-      fetchAllUsers();
+      fetchAllBooking();
     } catch (error: any) {
       dispatch(statusApiReducer.actions.setMessageError(error.message));
     } finally {
@@ -123,7 +143,7 @@ const BookingPage = () => {
 
   //useEffect
   useEffect(() => {
-    fetchAllUsers();
+    fetchAllBooking();
   }, [pageIndex, pageSize, search]);
 
   // @ts-ignore
@@ -132,39 +152,46 @@ const BookingPage = () => {
       <PageHeader title="Quản lý người dùng"/>
       <div className="flex justify-between items-center mb-4">
         <div className="flex gap-2 items-center">
-          <span className="text-[14px] text-[--clr-gray-500] italic">Tên tài koản</span>
+          <span className="text-[14px] text-[--clr-gray-500] italic">Tên đơn hàng</span>
           <SearchInFilter onSearch={handleSearch} isResetAll={true}/>
         </div>
         <Button
           sx={{ mt: { xs: 2, md: 0, marginBottom: "10px" } }}
           variant="contained"
-          onClick={() => router.push(`${PATH.MANAGEMENT_USER}/new`)}
+          onClick={() => router.push(`${PATH.MANAGEMENT_BOOKING}/new`)}
           startIcon={<AddTwoToneIcon fontSize="small"/>}
         >
-          Thêm tài khoản
+          Thêm đơn hàng
         </Button>
       </div>
 
       {isLoading && <Loading/>}
-      <CheckNotFound data={allUsers} isLoading={isLoading}>
+      <CheckNotFound data={allBooking} isLoading={isLoading}>
         <TableContainer>
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>STT</TableCell>
-                <TableCell>Họ tên</TableCell>
-                <TableCell>Email</TableCell>
-                <TableCell>Ngày sinh</TableCell>
-                <TableCell>Giới tính</TableCell>
-                <TableCell>Trạng thái</TableCell>
-                <TableCell>Thao tác</TableCell>
+                <TableCell sx={{ whiteSpace: "nowrap" }}>STT</TableCell>
+                <TableCell sx={{ whiteSpace: "nowrap" }}>Người đặt</TableCell>
+                <TableCell sx={{ whiteSpace: "nowrap" }}>Loại dịch vụ</TableCell>
+                <TableCell sx={{ whiteSpace: "nowrap" }}>Tên menu</TableCell>
+                <TableCell sx={{ whiteSpace: "nowrap" }}>Khu vực</TableCell>
+                <TableCell sx={{ whiteSpace: "nowrap" }}>Lương khách</TableCell>
+                <TableCell sx={{ whiteSpace: "nowrap" }}>Số lượng bàn</TableCell>
+                <TableCell sx={{ whiteSpace: "nowrap" }}>Tổng tiền</TableCell>
+                <TableCell sx={{ whiteSpace: "nowrap" }}>Tiền cọc trước</TableCell>
+                <TableCell sx={{ whiteSpace: "nowrap" }}>Ngày nhận</TableCell>
+                <TableCell sx={{ whiteSpace: "nowrap" }}>Giờ bắt đầu</TableCell>
+                <TableCell sx={{ whiteSpace: "nowrap" }}>Giờ kết thúc</TableCell>
+                <TableCell sx={{ whiteSpace: "nowrap" }}>Trạng thái</TableCell>
+                <TableCell sx={{ whiteSpace: "nowrap" }}>Hành động</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {allUsers?.map((user: any, index) => (
+              {allBooking?.map((booking: any, index) => (
                 <TableRow
                   hover
-                  key={user?.id}
+                  key={booking?.id}
                 >
                   <TableCell>
                     <Typography
@@ -183,7 +210,7 @@ const BookingPage = () => {
                       gutterBottom
                       noWrap
                     >
-                      {user?.name}
+                      {booking?.user?.name}
                     </Typography>
                   </TableCell>
                   <TableCell>
@@ -193,7 +220,7 @@ const BookingPage = () => {
                       gutterBottom
                       noWrap
                     >
-                      {user.email}
+                      {booking.comboMenu?.service?.serviceName}
                     </Typography>
                   </TableCell>
                   <TableCell>
@@ -203,7 +230,19 @@ const BookingPage = () => {
                       gutterBottom
                       noWrap
                     >
-                      {user?.dateOfBirth && moment(user?.dateOfBirth).format("DD/MM/YYYY")}
+                      {booking?.comboMenu?.comboName}
+
+                    </Typography>
+                  </TableCell>
+
+                  <TableCell>
+                    <Typography
+                      variant="body1"
+                      color="text.primary"
+                      gutterBottom
+                      noWrap
+                    >
+                      {booking?.zone?.zoneName}
 
                     </Typography>
                   </TableCell>
@@ -214,7 +253,72 @@ const BookingPage = () => {
                       gutterBottom
                       noWrap
                     >
-                      {user.gender && checkEmpty(GenderObjectLiteral[user.gender])}
+                      {booking?.numberOfGuest}
+
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography
+                      variant="body1"
+                      color="text.primary"
+                      gutterBottom
+                      noWrap
+                    >
+                      {booking?.numberTable}
+
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography
+                      variant="body1"
+                      color="text.primary"
+                      gutterBottom
+                      noWrap
+                    >
+                      {formatMoney(booking?.totalMoney)} vnd
+
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography
+                      variant="body1"
+                      color="text.primary"
+                      gutterBottom
+                      noWrap
+                    >
+                      {formatMoney(booking?.depositMoney)} vnd
+
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography
+                      variant="body1"
+                      color="text.primary"
+                      gutterBottom
+                      noWrap
+                    >
+                      {booking?.toTime && moment(booking?.toTime).format("DD/MM/YYYY")}
+
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography
+                      variant="body1"
+                      color="text.primary"
+                      gutterBottom
+                      noWrap
+                    >
+                      {booking?.comeInAt && moment(booking?.comeInAt).format("HH:mm")}
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography
+                      variant="body1"
+                      color="text.primary"
+                      gutterBottom
+                      noWrap
+                    >
+                      {booking?.comeOutAt && moment(booking?.comeOutAt).format("HH:mm")}
                     </Typography>
                   </TableCell>
                   <TableCell>
@@ -226,11 +330,12 @@ const BookingPage = () => {
                       noWrap
                     >
                       <span
-                        className={`px-4 px-2 text-white rounded-[5px] ${user?.status === "ACTIVE" ?
-                          "bg-[--clr-green-400]" : "bg-[--clr-red-400]"}`}>{capitalizeFirstLetter(user?.status)}</span>
+                        className={`px-4 px-2 text-white rounded-[5px] ${booking?.statusBooking === "PENDING" ?
+                          "bg-[--clr-green-400]" : booking?.statusBooking === "REJECTED" ? "bg-[--clr-red-400]" :
+                            "bg-[--clr-blue-400]"}`}>{booking?.statusBooking}</span>
                       <IconButton
                         onClick={() => {
-                          setUser(user);
+                          setBooking(booking);
                           setIsOpenModalStatus(true);
                         }}
                         sx={{
@@ -248,7 +353,7 @@ const BookingPage = () => {
                   <TableCell align="center" className="flex gap-3">
                     <Tooltip title="Chỉnh sửa" arrow>
                       <IconButton
-                        onClick={() => router.push(`${PATH.MANAGEMENT_USER}/${user.id}`)}
+                        onClick={() => router.push(`${PATH.MANAGEMENT_BOOKING}/${booking.id}`)}
                         sx={{
                           "&:hover": {
                             background: theme.colors.primary.lighter
@@ -264,7 +369,7 @@ const BookingPage = () => {
                     <Tooltip title="Xóa" arrow>
                       <IconButton
                         onClick={() => {
-                          setUser(user);
+                          setBooking(booking);
                           setIsOpenModal(true);
                         }}
                         sx={{
@@ -286,7 +391,7 @@ const BookingPage = () => {
         <Box p={2}>
           <TablePagination
             component="div"
-            count={totalUsersCount}
+            count={totalBookingCount}
             onPageChange={handlePageChange}
             onRowsPerPageChange={handleLimitChange}
             page={pageIndex}
@@ -303,8 +408,8 @@ const BookingPage = () => {
       >
         <div className="min-w-[500px] h-auto p-6 relative">
           <div className="flex flex-col gap-4 w-full actual-receipt">
-            <div className="py-3 text-[14px] text-[--clr-gray-500]">Bạn có muốn <b>xoá</b> người
-              dùng <b>{user?.name}</b> vĩnh viễn
+            <div className="py-3 text-[14px] text-[--clr-gray-500]">Bạn có muốn <b>xoá</b> đơn hàng
+              <b>{booking?.name}</b> vĩnh viễn
               không ?
             </div>
           </div>
@@ -335,16 +440,10 @@ const BookingPage = () => {
         closeModal={handleCloseModalStatus}
       >
         <div className="min-w-[500px] h-auto p-6 relative">
-          <div className="flex flex-col gap-4 w-full actual-receipt">
-            {
-              user?.status === "ACTIVE" ? <div>Bạn có muốn thay đổi trạng thái của tài khoản người
-                dùng <b>{user?.name}</b> thành <b>INACTIVE</b> (khóa) ?</div> : (
-                <div>
-                  Bạn có muốn thay đổi trạng thái của tài khoản người
-                  dùng <b>{user?.name}</b> thành <b> ACTIVE</b> ?
-                </div>
-              )
-            }
+          <div className="flex items-center gap-4 w-full actual-receipt">
+            <span>Trạng thái đơn hàng </span><SelectOption defaultValue={options[0]?.label}
+              options={options.filter(item => item?.value !== booking?.statusBooking)}
+              onChange={handleOnChangeStatus}/>
           </div>
           <div className="flex justify-end mt-[0.25rem] gap-4">
             <ButtonBtn

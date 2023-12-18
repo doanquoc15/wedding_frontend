@@ -15,7 +15,7 @@ import ButtonBtn from "@/components/common/Button";
 import { formatMoney } from "@/utils/formatMoney";
 import CheckBox from "@/components/common/Checkbox";
 import SearchInFilter from "@/components/common/SearchInFilter";
-import { getAllFood } from "@/services/menu-item";
+import { getAllDish } from "@/services/menu-item";
 import { getQueryParam } from "@/utils/route";
 import { LocalStorage } from "@/shared/config/localStorage";
 import BookingPDF from "@/components/PDF/BookingPdf";
@@ -77,7 +77,7 @@ const DetailMenu = () => {
 
   const fetchMenuItemTypeDish = async () => {
     try {
-      const res = await getAllFood({ pageSize: 100, search });
+      const res = await getAllDish({ pageSize: 100, search });
       setMenuItems(res?.menus);
     } catch (error: any) {
       dispatch(statusApiReducer.actions.setMessageError(error?.message));
@@ -303,6 +303,17 @@ const DetailMenu = () => {
   const handleChooseTable = () => {
     setIsOpenModalChooseTable(true);
   };
+
+  const covertDataMenuItems = (menuData) => (
+    menuData.flatMap(menu => menu.dishes.map(dish => ({
+      menuItemId: dish.id,
+      quantity: dish.quantity,
+      totalPrice: dish.quantity * dish.price
+    }))));
+
+  console.log(covertDataMenuItems(organizeDishesByType(
+    handleJsonParse("menuComboCustomized") || menuData)
+  ));
 
   //handle delete dishes
   const handleDeleteDishes = () => {
@@ -561,6 +572,9 @@ const DetailMenu = () => {
               handleCloseModals={handleCloseModalChooseTable}
               serviceId={serviceId}
               comboMenuId={comboMenuId}
+              comboMenuItem={covertDataMenuItems(organizeDishesByType(
+                handleJsonParse("menuComboCustomized") || menuData)
+              )}
               priceTotalDish={totalPrices()}/>
           </ModalPopup>
           <div>
