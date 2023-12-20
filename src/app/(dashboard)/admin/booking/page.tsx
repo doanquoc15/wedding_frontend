@@ -38,6 +38,8 @@ import { getQueryParam } from "@/utils/route";
 import { deleteBooking, getAllBooking, updateBooking } from "@/services/book";
 import { formatMoney } from "@/utils/formatMoney";
 import SelectOption from "@/components/common/SelectOption";
+import SelectFilter from "@/components/common/SelectFilter";
+import DatePickerFilter from "@/components/common/DatePickerFilter";
 
 const options = [
   {
@@ -53,7 +55,7 @@ const options = [
     label: "Hủy"
   }
 ];
-const BookingPage = () => {
+const BookingPage = ({ searchParams }) => {
   //useState
   const theme = useTheme();
   const [pageSize, setPageSize] = useState(5);
@@ -66,9 +68,7 @@ const BookingPage = () => {
   const [totalBookingCount, setTotalBookingCount] = useState<number>(0);
   const [search, setSearch] = useState<string | undefined>(getQueryParam("search"));
   const [statusBooking, setStatusBooking] = useState<string | undefined>();
-
-  console.log(statusBooking);
-
+  const [selectDate, setSelectDate] = useState<string | undefined>(getQueryParam("toTime"));
   //const
   const dispatch = useAppDispatch();
   const router = useRouter();
@@ -77,12 +77,18 @@ const BookingPage = () => {
   const fetchAllBooking = async () => {
     setLoading(true);
     try {
-      const { booking, total } = await getAllBooking({ pageSize, pageIndex: pageIndex + 1, search });
+      const { booking, total } = await getAllBooking({
+        pageSize,
+        pageIndex: pageIndex + 1,
+        search,
+        statusBooking: searchParams?.status,
+        toTime: selectDate
+      });
       setAllBooking(booking);
       setTotalBookingCount(total);
 
     } catch (error: any) {
-      dispatch(statusApiReducer.actions.setMessageError(error.message));
+      dispatch(statusApiReducer.actions.setMessageError(error?.data?.message));
     } finally {
       setLoading(false);
     }
@@ -90,6 +96,10 @@ const BookingPage = () => {
   const handleSearch = (querySearch: string) => {
     setSearch(querySearch);
     setPageIndex(0);
+  };
+
+  const handleChangeDate = (dateChange) => {
+    setSelectDate(dateChange);
   };
 
   const handleLimitChange = (event) => {
@@ -141,10 +151,14 @@ const BookingPage = () => {
     }
   };
 
+  const resetPageIndex = () => {
+    setPageIndex(0);
+  };
+
   //useEffect
   useEffect(() => {
     fetchAllBooking();
-  }, [pageIndex, pageSize, search]);
+  }, [pageIndex, pageSize, search, searchParams, selectDate]);
 
   // @ts-ignore
   return (
@@ -152,8 +166,25 @@ const BookingPage = () => {
       <PageHeader title="Quản lý người dùng"/>
       <div className="flex justify-between items-center mb-4">
         <div className="flex gap-2 items-center">
-          <span className="text-[14px] text-[--clr-gray-500] italic">Tên đơn hàng</span>
+          <span className="text-[14px] text-[--clr-gray-500] italic">Tên người đặt</span>
           <SearchInFilter onSearch={handleSearch} isResetAll={true}/>
+          <span className="text-[14px] text-[--clr-gray-500] italic">Trạng thái</span>
+          <SelectFilter
+            resetPageIndex={resetPageIndex}
+            query={...searchParams}
+            options={[{ id: 0, label: "Tất cả" }, ...options]}
+            value={searchParams?.status || 0}
+            typeQuery="status"
+            sx={{
+              fontSize: "13px",
+              fontWeight: " 400",
+              height: "34px",
+              minWidth: 168,
+              boxShadow: "0px 4px 4px rgba(0, 0, 0, 0.08)",
+            }}
+          />
+          <span className="text-[14px] text-[--clr-gray-500] italic">Ngày nhận</span>
+          <DatePickerFilter onChangeDate={handleChangeDate} typeQuery="toTime"/>
         </div>
         <Button
           sx={{ mt: { xs: 2, md: 0, marginBottom: "10px" } }}

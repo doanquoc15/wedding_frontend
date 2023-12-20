@@ -1,13 +1,15 @@
 //get query by key
 export const getQueryParam = (key: string) => {
-  if (!window) return;
+  if (typeof window === "undefined")
+    return;
   const url = new URL(window?.location?.href);
   return url.searchParams.get(key) || "";
 };
 
 //add query with key - value
 export const addQueryParam = (key: string, value: string) => {
-  if (!window) return;
+  if (typeof window === "undefined")
+    return;
   const url = new URL(window.location.href);
   url.searchParams.set(key, value);
   window.history.pushState({}, "", url.toString());
@@ -15,7 +17,7 @@ export const addQueryParam = (key: string, value: string) => {
 
 //add multiple queries
 export const addQueryParams = (params: Object) => {
-  if (!window) return;
+  if (typeof window === "undefined") return;
 
   const url = new URL(window.location.href);
   Object.entries(params).forEach(([key, value]) => {

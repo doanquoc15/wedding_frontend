@@ -27,3 +27,8 @@ export const deleteBooking = async (id: number) => {
   const { data }: any = await Api.delete(`${Apis.BOOK_URL}/${id}`);
   return data;
 };
+
+export const getBookingById = async (id: number) => {
+  const { data }: any = await Api.get(`${Apis.BOOK_URL}/${id}`);
+  return data;
+};
