@@ -1,156 +1,5 @@
 "use client";
-// import BadgeCustom from "@/components/Badge";
-// //
-// import { shortName } from "../../utils/shortName";
-//
-// function NavBar() {
-//   //useState
-//   const [_, setAnchorElUser] = useState<null | HTMLElement>(null);
-//
-//   const [isHeaderFixed, setHeaderFixed] = useState<boolean>(false);
-//   const [user, setUser] = useState<any>(null);
-//   const socketIo = useContext(SocketContext);
-//   const id = getUserLocal()?.id;
-//
-//   //constant
-//   const router = useRouter();
-//   const def = useAppSelector(selectStatus());
-//   const dispatch = useAppDispatch();
-//
-//   const pathname = usePathname();
-//
-//   //function
-//   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
-//     setAnchorElUser(event.currentTarget);
-//   };
-//
-//   const handleScroll = () => {
-//     if (window.scrollY > 0) {
-//       setHeaderFixed(true);
-//     } else {
-//       setHeaderFixed(false);
-//     }
-//   };
-//
-//   const handleFixedHeader = () => {
-//     if (isHeaderFixed) return "fixed";
-//     return "sticky";
-//   };
-//
-//   const handleCLickAcc = () => {
-//     router.push("/tai-khoan");
-//   };
-//
-//   //useEffect
-//   useEffect(() => {
-//     window.addEventListener("scroll", handleScroll);
-//
-//     return () => {
-//       window.removeEventListener("scroll", handleScroll);
-//     };
-//   }, []);
-//
-//   const cookieRole = CookiesStorage.getCookieData("role");
-//   useEffect(() => {
-//     const savedUser = LocalStorage.get("user");
-//     if (savedUser) {
-//       setUser(JSON.parse(savedUser));
-//     }
-//   }, [def]);
-//
-//   useEffect(() => {
-//     socketIo.emit("join", id);
-//
-//   }, [socketIo, id]);
-//
-//   useEffect(() => {
-//     socketIo.emit("getNotificationsById", id);
-//     socketIo.on("getNotificationsById", (notification) => {
-//       dispatch(usersReducer.actions.setNotificationsUser(notification));
-//     });
-//
-//     if (socketIo) return () => {
-//       socketIo.off("join");
-//       socketIo.off("getNotificationsById");
-//       socketIo.off(String(id));
-//     };
-//   }, []);
-//
-//   const notifications = useAppSelector(selectNotification());
-//
-//   return (
-//     <AppBar
-//       style={{ background: "white", color: "var(--clr-gray-500)", zIndex: 1 }}
-//       position={handleFixedHeader()}
-//       className="text-gray-700"
-//     >
-//       <Container maxWidth="xl">
-//
-//         <Image
-//           src={logo_sky_view}
-//           width={50}
-//           height={50}
-//           priority={true}
-//           alt="Logo sky view restaurant"
-//         />
-//         <div className="flex flex-1 justify-between">
-//           <Box
-//             className={`${style.navbar}`}
-//             sx={{ flexGrow: 0, display: "flex", gap: 4 }}
-//           >
-//             {dataPages.map((page: any) => (
-//               <Link
-//                 replace
-//                 style={{ color: "var(--clr-gray-500)" }}
-//                 className={`whitespace-nowrap ${
-//                   page.link === pathname && style.navbarItem
-//                 } ${page.link === pathname && style.selected}`}
-//                 key={page.id}
-//                 href={page.link}
-//               >
-//                 {page.title}
-//               </Link>
-//             ))}
-//           </Box>
-//           <Box className="flex gap-10 items-center">
-//             <div
-//               style={{
-//                 display: "flex",
-//                 gap: 2,
-//                 alignItems: "center"
-//               }}
-//             >
-//               <BadgeCustom notifications={notifications}/>
-//             </div>
-//             <div style={{ flexGrow: 0 }}>
-//               <Tooltip title={cookieRole && "Open settings"}>
-//                 <div
-//                   onClick={handleOpenUserMenu}
-//                   style={{ display: "flex", gap: 1, alignItems: "center", cursor: "pointer" }}
-//                 >{cookieRole ?
-//                     <div onClick={handleCLickAcc} className="flex items-center gap-3">
-//                       <Avatar
-//                         className="border-[1px] border-gray-100"
-//                         alt="avatar of customer"
-//                         src={user?.image || "https://inkythuatso.com/uploads/thumbnails/800/2022/03/4a7f73035bb4743ee57c0e351b3c8bed-29-13-53-17.jpg"}
-//                       />
-//                       <span>{shortName(user?.name)}</span>
-//                     </div> : <div className="flex items-center">
-//                       <Link className="cursor-pointer" href="/dang-nhap">Đăng nhập </Link>
-//                     / <Link className="cursor-pointer" href="/dang-ky">Đăng ký</Link>
-//                     </div>}
-//                 </div>
-//               </Tooltip>
-//             </div>
-//           </Box>
-//         </div>
-//       </Container>
-//     </AppBar>
-//   );
-//
-// }
-//
-// export default NavBar;
+
 import React, { useContext, useEffect, useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Container from "@mui/material/Container";
@@ -167,12 +16,13 @@ import MenuIcon from "@mui/icons-material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
 import Link from "next/link";
+import { useSelector } from "react-redux";
 
 import style from "@/styles/navbar.module.scss";
 import { selectNotification, selectStatus, usersReducer } from "@/stores/reducers/user";
 import { SocketContext } from "@/context/sockets";
 import { getUserLocal } from "@/services/getUserLocal";
-import { useAppDispatch, useAppSelector } from "@/stores/hook";
+import { useAppDispatch } from "@/stores/hook";
 import { CookiesStorage } from "@/shared/config/cookie";
 import { LocalStorage } from "@/shared/config/localStorage";
 import logo_sky_view from "@/statics/images/logo-c-skyview.png";
@@ -197,7 +47,7 @@ function ResponsiveAppBar() {
 
   //constant
   const router = useRouter();
-  const def = useAppSelector(selectStatus());
+  const def = useSelector(selectStatus());
   const dispatch = useAppDispatch();
 
   const pathname = usePathname();
@@ -209,6 +59,7 @@ function ResponsiveAppBar() {
   };
 
   const handleScroll = () => {
+    if (typeof window === "undefined") return;
     if (window.scrollY > 0) {
       setHeaderFixed(true);
     } else {
@@ -223,6 +74,7 @@ function ResponsiveAppBar() {
 
   //useEffect
   useEffect(() => {
+    if (typeof window === "undefined") return;
     window.addEventListener("scroll", handleScroll);
 
     return () => {
@@ -236,7 +88,7 @@ function ResponsiveAppBar() {
     if (savedUser) {
       setUser(JSON.parse(savedUser));
     }
-  }, [def]);
+  }, []);
 
   useEffect(() => {
     socketIo.emit("join", id);
@@ -256,7 +108,7 @@ function ResponsiveAppBar() {
     };
   }, []);
 
-  const notifications = useAppSelector(selectNotification());
+  const notifications = useSelector(selectNotification());
   return (
     <AppBar style={{ background: "white", color: "var(--clr-gray-500)", zIndex: 1 }}
       position={handleFixedHeader()}

@@ -16,6 +16,7 @@ import { getQueryParam } from "@/utils/route";
 import { useAppDispatch } from "@/stores/hook";
 import { breadCrumbReducer } from "@/stores/reducers/breadCrumb";
 import { statusApiReducer } from "@/stores/reducers/statusAPI";
+import NotFound from "@/components/NotFound";
 
 const MenuPage = () => {
   //state
@@ -37,18 +38,20 @@ const MenuPage = () => {
   //function
   const getTypeDish = async () => {
     try {
-      const type = await getAllTypeDish({ pageSize: 1000 });
-      const getAllDish = type?.data.reduce(
+      const { typeDishes, total } = await getAllTypeDish({ pageSize: 1000 });
+
+      const getAllDish = typeDishes?.reduce(
         (total, item) => total?.concat(item.menuItems),
         []
       );
+      setTotal((total));
       setTypeDishes([
         {
           id: 0,
           typeName: "Tất cả món ăn",
           menuItems: getAllDish,
         },
-        ...type.data,
+        ...typeDishes,
       ]);
     } catch (error: any) {
       dispatch(statusApiReducer.actions.setMessageError(error.message));
@@ -77,13 +80,6 @@ const MenuPage = () => {
   const handleClick = (indexActive: number | string) => {
     setPageSize(MENU_PAGE_SIZE);
     setSelectActive(indexActive);
-  };
-
-  const loadMoreData = () => {
-    setPageSize((pageSize) => pageSize + MENU_PAGE_SIZE);
-  };
-  const handleHidden = () => {
-    setPageSize(MENU_PAGE_SIZE);
   };
 
   //useEffect
@@ -145,18 +141,21 @@ const MenuPage = () => {
           </div>
         </Grid>
         <Grid item xs={12} sm={9}>
-          <SearchInFilter onSearch={handleSearch} isResetAll={true} />
+          <SearchInFilter onSearch={handleSearch} isResetAll={true}/>
 
-          <div className="grid grid-cols-2 gap-8">
-            {foodByType?.map((food: any) => (
+          {foodByType?.length > 0 ? foodByType?.map((food: any) => (
+            <div className="grid grid-cols-2 gap-8" key={food.id}>
               <div
-                key={food.id}
+
                 className="border-b-[2px] border-[--clr-gray-200] p-4"
               >
-                <FoodDetail food={food} />
+                <FoodDetail food={food}/>
               </div>
-            ))}
-          </div>
+
+            </div>))
+            : <div className="flex justify-center items-center w-full h-full flex-1">
+              <NotFound/>
+            </div>}
         </Grid>
       </Grid>
     </div>
