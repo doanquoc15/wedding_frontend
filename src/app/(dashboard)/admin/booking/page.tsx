@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Box,
   Table,
@@ -35,11 +35,12 @@ import LoadingButton from "@/components/common/Loading";
 import { MESSAGE_SUCCESS } from "@/constants/errors";
 import SearchInFilter from "@/components/common/SearchInFilter";
 import { getQueryParam } from "@/utils/route";
-import { deleteBooking, getAllBooking, updateBooking } from "@/services/book";
+import { deleteBooking, getAllBooking, updateStatusBooking } from "@/services/book";
 import { formatMoney } from "@/utils/formatMoney";
 import SelectOption from "@/components/common/SelectOption";
 import SelectFilter from "@/components/common/SelectFilter";
 import DatePickerFilter from "@/components/common/DatePickerFilter";
+import { SocketContext } from "@/context/sockets";
 
 const options = [
   {
@@ -72,6 +73,7 @@ const BookingPage = ({ searchParams }) => {
   //const
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const socketIo = useContext(SocketContext);
 
   //function
   const fetchAllBooking = async () => {
@@ -140,8 +142,9 @@ const BookingPage = ({ searchParams }) => {
   const handleClickChangeStatus = async () => {
     setLoading(true);
     try {
-      await updateBooking(Number(booking?.id), { statusBooking: statusBooking });
+      await updateStatusBooking(Number(booking?.id), { statusBooking: statusBooking });
       dispatch(statusApiReducer.actions.setMessageSuccess(MESSAGE_SUCCESS.UPDATED_SUCCESS));
+
       setIsOpenModalStatus(false);
       fetchAllBooking();
     } catch (error: any) {
@@ -155,7 +158,6 @@ const BookingPage = ({ searchParams }) => {
     setPageIndex(0);
   };
 
-  //useEffect
   useEffect(() => {
     fetchAllBooking();
   }, [pageIndex, pageSize, search, searchParams, selectDate]);
@@ -163,7 +165,7 @@ const BookingPage = ({ searchParams }) => {
   // @ts-ignore
   return (
     <div className="text-[--clr-gray-500]">
-      <PageHeader title="Quản lý người dùng"/>
+      <PageHeader title="Quản lý thông báo"/>
       <div className="flex justify-between items-center mb-4">
         <div className="flex gap-2 items-center">
           <span className="text-[14px] text-[--clr-gray-500] italic">Tên người đặt</span>
@@ -361,7 +363,7 @@ const BookingPage = ({ searchParams }) => {
                       noWrap
                     >
                       <span
-                        className={`px-4 px-2 text-white rounded-[5px] ${booking?.statusBooking === "PENDING" ?
+                        className={`px-4 text-white rounded-[5px] ${booking?.statusBooking === "PENDING" ?
                           "bg-[--clr-green-400]" : booking?.statusBooking === "REJECTED" ? "bg-[--clr-red-400]" :
                             "bg-[--clr-blue-400]"}`}>{booking?.statusBooking}</span>
                       <IconButton

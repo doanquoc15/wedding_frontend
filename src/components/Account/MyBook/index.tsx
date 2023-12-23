@@ -8,7 +8,7 @@ import ApprovedPage from "@/components/Account/MyBook/ApprovedBook";
 import ReceivedPage from "@/components/Account/MyBook/ReceivedBook";
 import { useAppDispatch } from "@/stores/hook";
 import { statusApiReducer } from "@/stores/reducers/statusAPI";
-import { getAllBookingByUser } from "@/services/book";
+import { getAllBookingByUser, updateStatusBooking } from "@/services/book";
 import { LONG_DATE } from "@/constants/common";
 import RejectedPage from "@/components/Account/MyBook/RejectedBook";
 
@@ -65,7 +65,22 @@ const MyBookService = () => {
         )
       );
 
+      //update status booking 
+      res?.filter(item => (new Date(moment(item?.comeInAt).format(LONG_DATE)).getTime() <= currentDate.getTime() &&
+        item?.statusBooking === "PENDING"))?.map(booking => {
+        updateStatusBookings(booking?.id, { statusBooking: "REJECTED" });
+      }
+      );
+
       setAllBook(res);
+    } catch (error: any) {
+      dispatch(statusApiReducer.actions.setMessageError(error?.data?.message));
+    }
+  };
+
+  const updateStatusBookings = async (id, status) => {
+    try {
+      await updateStatusBooking(id, status);
     } catch (error: any) {
       dispatch(statusApiReducer.actions.setMessageError(error?.data?.message));
     }

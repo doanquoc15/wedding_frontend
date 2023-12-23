@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
@@ -26,6 +26,7 @@ import { useAppDispatch } from "@/stores/hook";
 import { CookiesStorage } from "@/shared/config/cookie";
 import { usersReducer } from "@/stores/reducers/user";
 import { LocalStorage } from "@/shared/config/localStorage";
+import { SocketContext } from "@/context/sockets";
 
 const SignInPage = () => {
   const { register, handleSubmit } = useForm();
@@ -35,6 +36,7 @@ const SignInPage = () => {
   //variable
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const socketIo = useContext(SocketContext);
 
   //Function
   const onSubmit = async (values: SignInType | any) => {
@@ -62,7 +64,7 @@ const SignInPage = () => {
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
   };
-
+  
   return (
     <Container component="main" maxWidth="lg">
       <Box

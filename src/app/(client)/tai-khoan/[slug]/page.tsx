@@ -2,10 +2,9 @@
 import React, { useState } from "react";
 import { Grid } from "@mui/material";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 import SettingIcon from "@/statics/svg/ic-setting.svg";
-import { getQueryParam } from "@/utils/route";
 import { CookiesStorage } from "@/shared/config/cookie";
 import { LocalStorage } from "@/shared/config/localStorage";
 import { LogoutAPI } from "@/services/auth";
@@ -15,33 +14,56 @@ import MyInformation from "@/components/Account/MyInformation";
 import ChangePassword from "@/components/Account/ChangePassword";
 import MyBook from "@/components/Account/MyBook";
 import { usersReducer } from "@/stores/reducers/user";
+import { getPath } from "@/utils/getPath";
 
 const LIST_TABS = [
   {
     id: 1,
-    label: "Thông tin"
+    label: "Thông tin",
+    link: "thong-tin"
   },
   {
     id: 2,
-    label: "Đổi mật khẩu"
+    label: "Đổi mật khẩu",
+    link: "doi-mat-khau"
   },
   {
     id: 3,
-    label: "Lịch sử"
+    label: "Lịch sử",
+    link: "lich-su"
+  }
+];
+
+const TAB = [
+  {
+    id: 1,
+    link: "thong-tin",
+    page: <MyInformation/>
+  },
+  {
+    id: 2,
+    link: "doi-mat-khau",
+    page: <ChangePassword/>
+  },
+  {
+    id: 3,
+    link: "lich-su",
+    page: <MyBook/>
   }
 ];
 
 const SettingPage = () => {
   //useState
-  const [indexTab, setIndexTab] = useState<number>(Number(getQueryParam("tab")));
+  const [indexTab, setIndexTab] = useState<any>(getPath(usePathname()));
   //const
   const router = useRouter();
   const dispatch = useAppDispatch();
 
   //function
-  const handleClickTab = (index: number) => {
-    setIndexTab(index);
-    router.push(`/tai-khoan?tab=${index}`);
+  const handleClickTab = (tab) => {
+    setIndexTab(tab.link);
+    console.log(tab);
+    router.push(`/tai-khoan/${tab?.link}`);
   };
 
   //Logout
@@ -59,12 +81,7 @@ const SettingPage = () => {
   };
 
   const renderTab = () => {
-    const TABS = {
-      0: <MyInformation/>,
-      1: <ChangePassword/>,
-      2: <MyBook/>,
-    };
-    return TABS[`${indexTab}`];
+    return TAB.filter((tab) => tab.link === indexTab)[0]?.page;
   };
 
   //useEffect
@@ -80,10 +97,10 @@ const SettingPage = () => {
               <div className="flex flex-col">
                 {LIST_TABS.map((tab, index) => (
                   <div
-                    onClick={() => handleClickTab(index)}
+                    onClick={() => handleClickTab(tab)}
                     key={index}
                     className={`rounded-tl-[12px] font-bold cursor-pointer hover:bg-[--clr-gray-125] px-2 py-3 
-                    ${index === indexTab ? "bg-[--clr-gray-325]" : ""}`}
+                    ${tab?.link === indexTab ? "bg-[--clr-gray-325]" : ""}`}
                   >
                     {tab.label}
                   </div>

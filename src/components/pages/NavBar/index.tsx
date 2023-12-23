@@ -11,15 +11,11 @@ import Tooltip from "@mui/material/Tooltip";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
-import Menu from "@mui/material/Menu";
-import MenuIcon from "@mui/icons-material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import AdbIcon from "@mui/icons-material/Adb";
 import Link from "next/link";
 import { useSelector } from "react-redux";
 
 import style from "@/styles/navbar.module.scss";
-import { selectNotification, selectStatus, usersReducer } from "@/stores/reducers/user";
+import { selectStatus, usersReducer } from "@/stores/reducers/user";
 import { SocketContext } from "@/context/sockets";
 import { getUserLocal } from "@/services/getUserLocal";
 import { useAppDispatch } from "@/stores/hook";
@@ -28,6 +24,9 @@ import { LocalStorage } from "@/shared/config/localStorage";
 import logo_sky_view from "@/statics/images/logo-c-skyview.png";
 import BadgeCustom from "@/components/Badge";
 import { dataPages } from "@/data";
+import { statusApiReducer } from "@/stores/reducers/statusAPI";
+import { getNotificationUnRead } from "@/services/notification";
+import { PATH } from "@/constants/common";
 
 function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
@@ -44,6 +43,8 @@ function ResponsiveAppBar() {
   const [user, setUser] = useState<any>(null);
   const socketIo = useContext(SocketContext);
   const id = getUserLocal()?.id;
+  const [notifications, setNotifications] = useState<any[]>([]);
+  const [badge, setBadge] = useState<number>(0);
 
   //constant
   const router = useRouter();
@@ -54,7 +55,7 @@ function ResponsiveAppBar() {
 
   //function
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
-    router.push("/tai-khoan");
+    router.push(PATH.ACCOUNT);
     setAnchorElUser(event.currentTarget);
   };
 
@@ -80,7 +81,7 @@ function ResponsiveAppBar() {
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, []);
+  }, [def]);
 
   CookiesStorage.getCookieData("role");
   useEffect(() => {
@@ -89,26 +90,38 @@ function ResponsiveAppBar() {
       setUser(JSON.parse(savedUser));
     }
   }, []);
-
+  //useEffect
   useEffect(() => {
-    socketIo.emit("join", id);
+    const savedUser = LocalStorage.get("user") && JSON.parse(LocalStorage.get("user") || "{}");
 
-  }, [socketIo, id]);
-
-  useEffect(() => {
-    socketIo.emit("getNotificationsById", id);
-    socketIo.on("getNotificationsById", (notification) => {
-      dispatch(usersReducer.actions.setNotificationsUser(notification));
+    if (!savedUser) return;
+    socketIo.on("updateBadge", (authorId) => {
+      fetchAllNotificationByUserId(user?.id);
+      if (savedUser?.id === authorId)
+        setBadge((prev) => +prev + 1);
     });
 
-    if (socketIo) return () => {
-      socketIo.off("join");
-      socketIo.off("getNotificationsById");
-      socketIo.off(String(id));
-    };
-  }, []);
+    if (socketIo)
+      return () => {
+        socketIo.off("updateBadge");
+        socketIo.off(String(savedUser?.id));
+      };
+  }, [user?.id]);
 
-  const notifications = useSelector(selectNotification());
+  const fetchAllNotificationByUserId = async (id) => {
+    try {
+      const count = await getNotificationUnRead(id);
+      dispatch(usersReducer.actions.setIsFetchedNotification(true));
+      setBadge(count);
+    } catch (error: any) {
+      dispatch(statusApiReducer.actions.setMessageError(error?.data?.message));
+    }
+  };
+
+  useEffect(() => {
+    if (!user) return;
+    fetchAllNotificationByUserId(user?.id);
+  }, [user?.id]);
   return (
     <AppBar style={{ background: "white", color: "var(--clr-gray-500)", zIndex: 1 }}
       position={handleFixedHeader()}
@@ -133,9 +146,7 @@ function ResponsiveAppBar() {
             sx={{
               mr: 2,
               display: { xs: "none", md: "flex" },
-              fontFamily: "monospace",
               fontWeight: 700,
-              letterSpacing: ".3rem",
               color: "inherit",
               textDecoration: "none",
             }}
@@ -143,45 +154,6 @@ function ResponsiveAppBar() {
             Sky View
           </Typography>
 
-          <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
-            <IconButton
-              size="large"
-              aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={handleOpenNavMenu}
-              color="inherit"
-            >
-              <MenuIcon/>
-            </IconButton>
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorElNav}
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "left",
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "left",
-              }}
-              open={Boolean(anchorElNav)}
-              onClose={handleCloseNavMenu}
-              sx={{
-                display: { xs: "block", md: "none" },
-              }}
-            >
-              {dataPages.map((page) => (
-                <MenuItem key={page.id} onClick={handleCloseNavMenu}>
-                  <Typography className={`whitespace-nowrap ${
-                    page.link === pathname && style.navbarItem
-                  } ${page.link === pathname && style.selected}`} textAlign="center">{page?.title}</Typography>
-                </MenuItem>
-              ))}
-            </Menu>
-          </Box>
-          <AdbIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }}/>
           <Typography
             variant="h5"
             noWrap
@@ -217,9 +189,9 @@ function ResponsiveAppBar() {
 
           {CookiesStorage.getCookieData("role") ?
             <Box sx={{ flexGrow: 1, display: "flex", gap: "20px", justifyContent: "end" }}
-              onClick={() => router.push("tai-khoan")}>
-              <BadgeCustom notifications={notifications}/>
-              <Tooltip title="Tài khoản">
+            >
+              <BadgeCustom setBadge={setBadge} badge={badge}/>
+              <Tooltip title="Tài khoản" onClick={() => router.push(PATH.ACCOUNT)}>
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                   <Avatar alt="Avatar user" defaultValue={user?.name}
                     src={user?.image || "https://inkythuatso.com/uploads/thumbnails/800/2022/03/4a7f73035bb4743ee57c0e351b3c8bed-29-13-53-17.jpg"}/>

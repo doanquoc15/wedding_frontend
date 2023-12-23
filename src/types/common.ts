@@ -195,17 +195,6 @@ export type TextAreaFieldPropsType = TextFieldProps & {
   cols?: number;
 };
 
-export interface INotification {
-  id: number;
-  title: string;
-  description?: string;
-  isRead: boolean;
-  userId: number;
-  image?: string;
-  type: TYPE_NOTIFICATION;
-  link?: string;
-}
-
 export interface IUser {
   id: number;
   name: string;
@@ -234,6 +223,18 @@ export interface IService {
   capacity: number;
   image?: string;
   comboMenus?: any;
+}
+
+export interface INotification {
+  id: number;
+  title: string;
+  description: string;
+  userId: number;
+  image?: string;
+  comboMenus?: any;
+  isRead?: boolean;
+  type?: TYPE_NOTIFICATION;
+  link?: string;
 }
 
 export interface SelectOptions {

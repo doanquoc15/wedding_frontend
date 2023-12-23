@@ -4,6 +4,8 @@ import { usePathname, useRouter } from "next/navigation";
 import Person3Icon from "@mui/icons-material/Person3";
 import BallotIcon from "@mui/icons-material/Ballot";
 import FastfoodIcon from "@mui/icons-material/Fastfood";
+import NotificationsPausedIcon from "@mui/icons-material/NotificationsPaused";
+import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
 
 import ButtonBtn from "@/components/common/Button";
 
@@ -28,13 +30,18 @@ export const MENU_SIDEBAR_LIST = [
   }, {
     id: 4,
     title: "Menu combo",
-    icon: <BallotIcon/>,
+    icon: <RestaurantMenuIcon/>,
     link: "/admin/combo",
   }, {
-    id: 4,
+    id: 5,
     title: "Món ăn",
     link: "/admin/dishes",
     icon: <FastfoodIcon/>
+  }, {
+    id: 6,
+    title: "Thông báo",
+    link: "/admin/notifications",
+    icon: <NotificationsPausedIcon/>
   },
 
 ];

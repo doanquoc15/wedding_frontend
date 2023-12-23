@@ -311,10 +311,6 @@ const DetailMenu = () => {
       totalPrice: dish.quantity * dish.price
     }))));
 
-  console.log(covertDataMenuItems(organizeDishesByType(
-    handleJsonParse("menuComboCustomized") || menuData)
-  ));
-
   //handle delete dishes
   const handleDeleteDishes = () => {
 

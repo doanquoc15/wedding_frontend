@@ -2,6 +2,8 @@ import Api from "@/shared/config/api";
 
 const Apis = {
   BOOK_URL: "/book",
+  UPDATE_STATUS_BOOK_URL: "/book/status",
+  UPDATE_ALL_READ_URL: "/notification/read-all",
 };
 
 export const getAllBooking = async (params: object) => {
@@ -23,6 +25,17 @@ export const updateBooking = async (id: number, params: any) => {
   const { data }: any = await Api.patch(`${Apis.BOOK_URL}/${id}`, params);
   return data;
 };
+
+export const updateStatusBooking = async (id: number, params: any) => {
+  const { data }: any = await Api.patch(`${Apis.UPDATE_STATUS_BOOK_URL}/${id}`, params);
+  return data;
+};
+
+export const updateAllRead = async (id: number, params: any) => {
+  const { data }: any = await Api.patch(`${Apis.UPDATE_ALL_READ_URL}/${id}`, params);
+  return data;
+};
+
 export const deleteBooking = async (id: number) => {
   const { data }: any = await Api.delete(`${Apis.BOOK_URL}/${id}`);
   return data;

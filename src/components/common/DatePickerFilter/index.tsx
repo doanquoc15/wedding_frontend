@@ -30,7 +30,6 @@ export default function DatePickerFilter(props: any) {
     const params = getParams()
     ;
     const formattedDate = date ? moment(date).utc(true).format(SHORT_DATE) as string : "";
-    console.log({ formattedDate });
     onChangeDate && onChangeDate(formattedDate);
     if (!formattedDate) {
       const queryString = new URLSearchParams(

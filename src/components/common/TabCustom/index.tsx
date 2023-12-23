@@ -3,9 +3,11 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
+import { usePathname, useRouter } from "next/navigation";
 
 import stylesCommon from "@/constants/style";
 import { TabPanelProps } from "@/types/common";
+import { getQueryParam } from "@/utils/route";
 
 import style from "./style.module.scss";
 
@@ -38,10 +40,13 @@ function a11yProps(index: number) {
 
 export default function BasicTabs(props) {
   const { data } = props;
-  const [value, setValue] = React.useState(0);
+  const [value, setValue] = React.useState<any>(Number(getQueryParam("tab")) || 0);
+  const pathname = usePathname();
+  const router = useRouter();
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
+    router.push(`${pathname}?tab=${newValue}`);
   };
 
   return (

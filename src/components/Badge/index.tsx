@@ -10,14 +10,18 @@ import Menu from "@mui/material/Menu";
 import Divider from "@mui/material/Divider";
 import Tooltip from "@mui/material/Tooltip";
 import InfiniteScroll from "react-infinite-scroll-component";
+import { useRouter } from "next/navigation";
 
 import Bell from "@/statics/svg/bell.svg";
 import Notification from "@/components/Notification";
 import closeIcon from "@/statics/svg/ic-closeBadge.svg";
-import { SocketContext } from "@/context/sockets";
 import { getUserLocal } from "@/services/getUserLocal";
-import { useAppDispatch } from "@/stores/hook";
-import { usersReducer } from "@/stores/reducers/user";
+import { useAppDispatch, useAppSelector } from "@/stores/hook";
+import { statusApiReducer } from "@/stores/reducers/statusAPI";
+import { getNotificationByUserId, updateNotification } from "@/services/notification";
+import { selectUsers } from "@/stores/reducers/user";
+import { SocketContext } from "@/context/sockets";
+import { updateAllRead } from "@/services/book";
 
 const LIST_NOTIFICATION_SIZE = 10;
 
@@ -31,16 +35,19 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
   },
 }));
 
-const BadgeCustom = ({ notifications }) => {
+const BadgeCustom = ({ setBadge, badge }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const [page] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(LIST_NOTIFICATION_SIZE);
+  const [notificationList, setNotificationList] = useState<any[]>([]);
 
   const open = Boolean(anchorEl);
   const socketIo = useContext(SocketContext);
   const dispatch = useAppDispatch();
+  const { isFetchedUnreadNotification } = useAppSelector(selectUsers());
+  const router = useRouter();
 
   const handleClick = (event) => {
+    fetchAllNotificationByUserId(getUserLocal()?.id);
     setAnchorEl(event.currentTarget);
   };
 
@@ -53,24 +60,48 @@ const BadgeCustom = ({ notifications }) => {
   };
 
   const needLoadMore = pageSize < 10;
+
   useEffect(() => {
     socketIo.emit("join", getUserLocal()?.id);
   }, [socketIo, getUserLocal()?.id]);
 
   const handleClickNotification = (updatedRead) => {
-    if (!updatedRead.isRead) {
-      dispatch(usersReducer.actions.setReadNotification(updatedRead?.id));
-      socketIo.emit("updatedRead", updatedRead?.id);
-      socketIo.on("updatedRead", (data) => {
-        return;
-      });
-    }
-
-    if (socketIo) {
-      socketIo.off("updatedRead");
+    router.replace(updatedRead?.link);
+    try {
+      if (updatedRead?.isRead) return;
+      updateNotification(updatedRead?.id, { isRead: true });
+      setBadge(prev => prev - 1);
+      fetchAllNotificationByUserId(getUserLocal()?.id);
+    } catch (error: any) {
+      dispatch(statusApiReducer.actions.setMessageError(error?.data?.message));
     }
     handleClose();
   };
+  const fetchAllNotificationByUserId = async (id) => {
+    try {
+      const res = await getNotificationByUserId(id);
+      setNotificationList((res));
+    } catch (error: any) {
+      dispatch(statusApiReducer.actions.setMessageError(error?.data?.message));
+    }
+  };
+
+  const handleReadAll = async () => {
+    try {
+      const res = await updateAllRead(getUserLocal()?.id, { isRead: true });
+      setNotificationList((res));
+      setBadge(0);
+      handleClose();
+      fetchAllNotificationByUserId(getUserLocal()?.id);
+    } catch (error: any) {
+      dispatch(statusApiReducer.actions.setMessageError(error?.data?.message));
+    }
+  };
+
+  useEffect(() => {
+    if (!isFetchedUnreadNotification && getUserLocal()?.id) return;
+    fetchAllNotificationByUserId(getUserLocal()?.id);
+  }, [getUserLocal()?.id, isFetchedUnreadNotification]);
 
   return (
     <div className="relative">
@@ -87,11 +118,11 @@ const BadgeCustom = ({ notifications }) => {
           >
             <StyledBadge
               badgeContent={
-                notifications?.filter((item) => !item?.isRead).length
+                badge
               }
               color="secondary"
             >
-              <Image src={Bell} alt="Bell icon" />
+              <Image src={Bell} alt="Bell icon"/>
             </StyledBadge>
           </IconButton>
         </Tooltip>
@@ -121,7 +152,8 @@ const BadgeCustom = ({ notifications }) => {
             Thông báo
           </span>
           <div className="flex items-center">
-            <span className="mr-4 text-[10px] font-normal text-clr-gray-500 cursor-pointer hover:text-clr-blue-400">
+            <span onClick={handleReadAll}
+              className="mr-4 text-[10px] font-normal text-clr-gray-500 cursor-pointer hover:text-clr-blue-400">
               Đã đọc tất cả
             </span>
             <div onClick={handleClose}>
@@ -133,7 +165,7 @@ const BadgeCustom = ({ notifications }) => {
             </div>
           </div>
         </div>
-        <Divider />
+        <Divider/>
         <InfiniteScroll
           dataLength={pageSize}
           next={loadMoreData}
@@ -141,8 +173,8 @@ const BadgeCustom = ({ notifications }) => {
           loader={null}
           height={200}
         >
-          {notifications.length > 0 &&
-            notifications.map((item, index) => {
+          {notificationList.length > 0 &&
+            notificationList.map((item, index) => {
               return (
                 <Notification
                   isUnRead={item?.isRead}
