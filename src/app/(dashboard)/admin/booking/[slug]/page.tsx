@@ -8,7 +8,7 @@ import FormControl from "@mui/material/FormControl";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import TextField from "@mui/material/TextField";
-import Image from "next/image";
+import Image from "next/legacy/image";
 import moment from "moment/moment";
 import { yupResolver } from "@hookform/resolvers/yup";
 
@@ -34,6 +34,7 @@ import { createBooking, getBookingById, updateBooking } from "@/services/book";
 import { MESSAGE_SUCCESS } from "@/constants/errors";
 import { getAllUsers } from "@/services/user";
 import { bookingSchema } from "@/libs/validation/tableSchema";
+import { formatMoney } from "@/utils/formatMoney";
 
 const Detail_New_Booking = ({ params }) => {
   //useForm
@@ -50,7 +51,7 @@ const Detail_New_Booking = ({ params }) => {
       numberOfGuest: 0,
       date: undefined,
       userId: undefined,
-      zoneId: undefined,
+      zoneId: "Khu thường",
       comeInAt: "",
       comeOutAt: "",
       serviceId: undefined,
@@ -64,7 +65,7 @@ const Detail_New_Booking = ({ params }) => {
   const [comboOption, setComboOption] = useState<any[]>([]);
   const [isLoading, setLoading] = useState(false);
   const [zoneCurrent, setZoneCurrent] = useState<any>("Khu thường");
-  const [zones, setZones] = useState<IZones[]>();
+  const [zones, setZones] = useState<IZones[]>([]);
   const [totalMoney, setTotalMoney] = useState<number>(0);
   const [userOption, setUserOption] = useState<IUser[]>([]);
 
@@ -147,9 +148,9 @@ const Detail_New_Booking = ({ params }) => {
         comeOutAt: moment(data?.comeOutAt).format("HH:mm"),
         serviceId: data?.serviceId,
         comboMenuId: data?.comboMenuId,
-        zoneId: data?.zoneId
+        zoneId: data?.zone?.zoneName
       });
-      setZoneCurrent(data?.zone?.id);
+      setZoneCurrent(data?.zone?.zoneName);
     } catch (error: any) {
       dispatch(statusApiReducer.actions.setMessageError(error?.message));
     }
@@ -164,6 +165,7 @@ const Detail_New_Booking = ({ params }) => {
   };
 
   const onSubmit = async (data) => {
+    const zonePrice = zones?.filter(item => item?.zoneName === zoneCurrent)[0]?.priceRent || 0;
     const timeZone = moment().format("Z");
     const date = moment(data.date).format(SHORT_DATE);
     const comeIn = moment(new Date(date + " " + data.comeInAt)).utc(true)
@@ -177,13 +179,13 @@ const Detail_New_Booking = ({ params }) => {
       numberTable: Number(data.numberTable),
       numberOfGuest: Number(data.numberOfGuest),
       toTime: moment(data.date).format(SHORT_DATE),
-      zoneId: data?.zoneId,
+      zoneId: zones?.filter(item => item?.zoneName === data?.zoneId)[0]?.id,
       comeInAt: comeIn,
       comeOutAt: comeOut,
       serviceId: +data?.serviceId,
       comboMenuId: +data?.comboMenuId,
-      totalMoney: totalMoney + (zoneCurrent == "Khu thường" ? 1500000 : 4000000),
-      depositMoney: (totalMoney + (zoneCurrent == "Khu thường" ? 1500000 : 4000000)) * 15 / 100,
+      totalMoney: totalMoney + zonePrice,
+      depositMoney: (totalMoney + zonePrice) * 15 / 100,
       comboItems: []
     };
     try {
@@ -326,7 +328,7 @@ const Detail_New_Booking = ({ params }) => {
                   <RadioGroup
                     row
                     className="flex flex-row justify-around col-span-1"
-                    value={zoneCurrent}
+                    value={zoneCurrent || zones[0]?.zoneName}
                   >
                     {zones?.map((item, index) => (
                       <FormControlLabel
@@ -347,12 +349,11 @@ const Detail_New_Booking = ({ params }) => {
                           setZoneCurrent(event.target.value);
                           setValue("zoneId", event.target.value);
                         }}
-                        value={item?.id}
+                        value={item?.zoneName}
                         control={
                           <BpRadio
-                            defaultValue={"Khu vip"}
                             onClick={(e) => handleOnClickRadio(e)}
-                            value={item?.id}
+                            value={item?.zoneName}
                           />
                         }
                         label={item?.zoneName}
@@ -363,10 +364,8 @@ const Detail_New_Booking = ({ params }) => {
               />
             </FormControl>
             <div className="flex flex-col gap-2">
-              {zoneCurrent == "Khu thường" &&
-                  <span className="text-[11px] text-gray-300">Giá phòng : 1.500.000 VND</span>}
-              {zoneCurrent == "Khu vip" &&
-                  <span className="text-[11px] text-gray-300">Giá phòng : 4.000.000 VND</span>}
+              <span className="text-[11px] text-gray-400">Giá thuê
+                      : {formatMoney(zones?.filter(item => item?.zoneName === zoneCurrent)[0]?.priceRent || 0)} VND</span>
             </div>
           </div>
           <div className="flex flex-col gap-2">

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Box } from "@mui/material";
-import Image from "next/image";
+import Image from "next/legacy/image";
 
 import MainChefDetail from "@/components/MainChefDetail";
 import TitleHead from "@/components/TitleHead";

@@ -1,6 +1,6 @@
 import { Badge, Box, styled, useTheme } from "@mui/material";
 import Link from "next/link";
-import Image from "next/image";
+import Image from "next/legacy/image";
 
 import logo_sky_view_footer from "@/statics/images/logo_ft.png";
 

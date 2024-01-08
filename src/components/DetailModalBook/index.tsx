@@ -3,11 +3,11 @@ import { Controller, useForm } from "react-hook-form";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormControl from "@mui/material/FormControl";
-import { loadStripe } from "@stripe/stripe-js";
-import Image from "next/image";
+import Image from "next/legacy/image";
 import TextField from "@mui/material/TextField";
 import moment from "moment";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { loadStripe } from "@stripe/stripe-js";
 
 import TextInputField from "@/components/common/TextInputField";
 import Error from "@/components/common/Error";
@@ -20,16 +20,16 @@ import { getAllZones } from "@/services/zone";
 
 import { getServiceById } from "@/services/service";
 import { formatMoney } from "@/utils/formatMoney";
-import { paymentCheckout } from "@/services/payment";
-import { NEXT_PUBLIC_PK_STRIPE_KEY } from "@/app/constant.env";
-import { vndToUsa } from "@/utils/vndToUsa";
 import TimePickerField from "@/components/common/TimePickerField";
 import Clock from "@/statics/svg/ic-clock.svg";
 import DatePickerField from "@/components/common/DatePickerField";
 import stylesCommon from "@/constants/style";
 import { SHORT_DATE } from "@/constants/common";
-import { createBooking, updateBooking } from "@/services/book";
+import { createBooking, updatePaymentBooking } from "@/services/book";
 import { tableSchema } from "@/libs/validation/tableSchema";
+import { getUserLocal } from "@/services/getUserLocal";
+import { NEXT_PUBLIC_PK_STRIPE_KEY } from "@/app/constant.env";
+import { paymentCheckout } from "@/services/payment";
 
 import { CheckIcon } from "../Icons";
 import BpRadio from "../common/BpRadio";
@@ -53,6 +53,7 @@ const DetailModalBook = (props: IDetailModalBookProps) => {
     handleSubmit,
     formState: { errors, isValid, isSubmitting },
     control,
+    reset,
     setValue,
   } = useForm({
     resolver: yupResolver(tableSchema),
@@ -71,7 +72,7 @@ const DetailModalBook = (props: IDetailModalBookProps) => {
   });
 
   //useState
-  const [activeElements, setActiveElements] = useState<any>([]);
+  const [priceDesposit, setPriceDesposit] = useState<any>();
 
   //functions
   const onSubmit = async (data: any) => {
@@ -95,13 +96,15 @@ const DetailModalBook = (props: IDetailModalBookProps) => {
         comeOutAt: comeOut,
         serviceId,
         comboMenuId,
-        totalMoney: calculatorAllPrice(),
-        depositMoney: calculatorAllPrice() * 15 / 100,
-        comboItems: comboMenuItem
+        totalMoney: calculatorAllPrice(+data.numberTable),
+        depositMoney: calculatorAllPrice(+data.numberTable) * 15 / 100,
+        comboItems: comboMenuItem,
+        userId: getUserLocal()?.id
       };
-      const create = await createBooking(dataBook);
+      const { booking } = await createBooking(dataBook);
+      setPriceDesposit(calculatorAllPrice(data.numberTable) * 15 / 100 / 100);
 
-      setBooking(create);
+      setBooking(booking);
       setIsPayment(true);
       dispatch(statusApiReducer.actions.setMessageSuccess("Đặt bàn thành công !"));
     } catch (error: any) {
@@ -119,16 +122,15 @@ const DetailModalBook = (props: IDetailModalBookProps) => {
   };
 
   //all price
-  const calculatorAllPrice = () => {
-    const priceZone = zoneCurrent == "Khu thường" ? 1500000 : (zoneCurrent == "Khu vip" ? 4000000 : 0);
+  const calculatorAllPrice = (numberTable ?: number) => {
+    const priceZone = zones?.filter(item => item?.zoneName === zoneCurrent)[0]?.priceRent || 0;
     const priceService = service?.price;
-    return priceZone + priceService + priceTotalDish;
+    return priceZone + priceService + priceTotalDish * (numberTable || 1);
   };
 
   // payment integration
-  const makePayment = async () => {
-    const price = vndToUsa(calculatorAllPrice() * 15 / 100).toFixed(2);
-    const cart = [{ id: 1, name: "Đặt cọc trước", quantity: 1, price }];
+  const makePayment = async (item) => {
+    const cart = [{ id: 1, name: "Đặt cọc trước", quantity: 1, price: priceDesposit }];
     setIsCheckout(true);
     try {
       if (!NEXT_PUBLIC_PK_STRIPE_KEY) {
@@ -143,7 +145,7 @@ const DetailModalBook = (props: IDetailModalBookProps) => {
         sessionId: response?.id
       });
 
-      await updateBooking(booking?.id, { statusPayment: "PAID" });
+      await updatePaymentBooking(+booking?.id, { statusPayment: "DEPOSIT" });
 
       if (result.error) {
         dispatch(statusApiReducer.actions.setMessageError(result.error));
@@ -166,16 +168,6 @@ const DetailModalBook = (props: IDetailModalBookProps) => {
     }
   };
 
-  const handleClick = (elementId) => {
-    if (activeElements.includes(elementId)) {
-      // If the element is already active, remove it from the list
-      setActiveElements(activeElements.filter((id) => id !== elementId));
-    } else {
-      // If the element is not active, add it to the list
-      setActiveElements([...activeElements, elementId]);
-    }
-  };
-
   const handleOnClickRadio = (e) => {
     setZoneCurrent(e.target.value);
   };
@@ -183,6 +175,10 @@ const DetailModalBook = (props: IDetailModalBookProps) => {
   //useEffect
   useEffect(() => {
     fetchZones();
+    reset({
+      fullName: getUserLocal()?.name,
+      email: getUserLocal()?.email,
+    });
     //eslint-disable-next-line
   }, []);
 
@@ -373,10 +369,9 @@ const DetailModalBook = (props: IDetailModalBookProps) => {
                     />
                   </FormControl>
                   <div>
-                    {zoneCurrent == "Khu thường" &&
-                          <span className="text-[11px] text-gray-100">Giá phòng : 1.500.000 VND</span>}
-                    {zoneCurrent == "Khu vip" &&
-                          <span className="text-[11px] text-gray-100">Giá phòng : 4.000.000 VND</span>}
+                    <span className="text-[11px] text-gray-400">Giá thuê
+                      : {formatMoney(zones?.filter(item => item?.zoneName === zoneCurrent)[0]?.priceRent || 0)} VND</span>
+
                   </div>
                 </div>
               </div>
@@ -482,7 +477,7 @@ const DetailModalBook = (props: IDetailModalBookProps) => {
               </div>
               <div className="flex">
                 <div className="min-w-[200px]">Tổng tiền khu vực</div>
-                {zoneCurrent == "Khu thường" ? formatMoney(1500000) : (zoneCurrent == "Khu vip" ? formatMoney(4000000) : 0)} VND
+                {formatMoney(zones?.filter(item => item?.zoneName === zoneCurrent)[0]?.priceRent || 0)} VND
               </div>
               <div className="flex">
                 <div className="min-w-[200px]">Tổng tiền:</div>

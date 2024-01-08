@@ -8,7 +8,6 @@ import { usePathname } from "next/navigation";
 import TitleHead from "@/components/TitleHead";
 import FoodDetail from "@/components/FoodDetail";
 import SearchInFilter from "@/components/common/SearchInFilter";
-import { getAllTypeDish } from "@/services/type-dish";
 import { TypeDish } from "@/types/common";
 import { MENU_BREADCRUMB, MENU_PAGE_SIZE } from "@/constants/common";
 import { getAllDish } from "@/services/menu-item";
@@ -17,6 +16,7 @@ import { useAppDispatch } from "@/stores/hook";
 import { breadCrumbReducer } from "@/stores/reducers/breadCrumb";
 import { statusApiReducer } from "@/stores/reducers/statusAPI";
 import NotFound from "@/components/NotFound";
+import { getAllType } from "@/services/type-dish";
 
 const MenuPage = () => {
   //state
@@ -38,7 +38,7 @@ const MenuPage = () => {
   //function
   const getTypeDish = async () => {
     try {
-      const { typeDishes, total } = await getAllTypeDish({ pageSize: 1000 });
+      const { typeDishes, total } = await getAllType({ pageSize: 1000 });
 
       const getAllDish = typeDishes?.reduce(
         (total, item) => total?.concat(item.menuItems),
@@ -143,19 +143,18 @@ const MenuPage = () => {
         <Grid item xs={12} sm={9}>
           <SearchInFilter onSearch={handleSearch} isResetAll={true}/>
 
-          {foodByType?.length > 0 ? foodByType?.map((food: any) => (
-            <div className="grid grid-cols-2 gap-8" key={food.id}>
+          <div className="grid grid-cols-2 gap-8">
+            {foodByType?.length > 0 ? foodByType?.map((food: any) => (
               <div
-
+                key={food.id}
                 className="border-b-[2px] border-[--clr-gray-200] p-4"
               >
                 <FoodDetail food={food}/>
               </div>
-
-            </div>))
-            : <div className="flex justify-center items-center w-full h-full flex-1">
+            )) : <div className="flex justify-center items-center w-full h-full flex-1">
               <NotFound/>
             </div>}
+          </div>
         </Grid>
       </Grid>
     </div>

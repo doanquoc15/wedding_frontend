@@ -19,10 +19,10 @@ import IconButton from "@mui/material/IconButton";
 import AddTwoToneIcon from "@mui/icons-material/AddTwoTone";
 import Button from "@mui/material/Button";
 import { useRouter } from "next/navigation";
-import moment from "moment";
 
 import PageHeader from "@/components/AdminComponents/PageHeader";
-import { INotification, } from "@/types/common";
+import { deleteType, getAllType } from "@/services/type-dish";
+import { TypeDish } from "@/types/common";
 import { statusApiReducer } from "@/stores/reducers/statusAPI";
 import { useAppDispatch } from "@/stores/hook";
 import { PATH } from "@/constants/common";
@@ -35,18 +35,17 @@ import LoadingButton from "@/components/common/Loading";
 import { MESSAGE_SUCCESS } from "@/constants/errors";
 import SearchInFilter from "@/components/common/SearchInFilter";
 import { getQueryParam } from "@/utils/route";
-import { deleteNotification, getAllNotification } from "@/services/notification";
 
 const ServicePage = () => {
   //useState
   const theme = useTheme();
   const [pageSize, setPageSize] = useState(5);
   const [pageIndex, setPageIndex] = useState(0);
-  const [allNotification, setAllNotification] = useState<INotification[]>([]);
+  const [allType, setAllType] = useState<TypeDish[]>([]);
   const [isLoading, setLoading] = useState<boolean>(true);
-  const [notification, setNotification] = useState<INotification>();
+  const [type, setType] = useState<TypeDish>();
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
-  const [totalNotificationCount, setTotalNotificationCount] = useState<number>(0);
+  const [totalTypeCount, setTotalTypeCount] = useState<number>(0);
   const [search, setSearch] = useState<any>(getQueryParam("search"));
 
   //const
@@ -54,16 +53,16 @@ const ServicePage = () => {
   const router = useRouter();
 
   //function
-  const fetchAllNotification = async () => {
+  const fetchAllType = async () => {
     setLoading(true);
     try {
-      const { notifications, total } = await getAllNotification({
+      const { typeDishes, total } = await getAllType({
         pageSize,
         pageIndex: pageIndex + 1,
         search,
       });
-      setAllNotification(notifications);
-      setTotalNotificationCount(total);
+      setAllType(typeDishes);
+      setTotalTypeCount(total);
     } catch (error: any) {
       dispatch(statusApiReducer.actions.setMessageError(error?.data?.message));
     } finally {
@@ -98,13 +97,13 @@ const ServicePage = () => {
     setIsOpenModal(false);
     setLoading(true);
     try {
-      await deleteNotification(Number(notification?.id));
+      await deleteType(Number(type?.id));
       dispatch(
         statusApiReducer.actions.setMessageSuccess(
           MESSAGE_SUCCESS.DELETE_SERVICE_SUCCESS
         )
       );
-      fetchAllNotification();
+      fetchAllType();
     } catch (error: any) {
       dispatch(statusApiReducer.actions.setMessageError(error?.data?.message));
     } finally {
@@ -114,47 +113,46 @@ const ServicePage = () => {
 
   //useEffect
   useEffect(() => {
-    fetchAllNotification();
+    fetchAllType();
   }, [pageIndex, pageSize, search]);
 
   // @ts-ignore
   return (
     <div className="text-[--clr-gray-500]">
-      <PageHeader title="Quản lý dịch vụ"/>
+      <PageHeader title="Quản lý loại món ăn"/>
       <div className="flex justify-between items-center mb-4">
         <div className="flex gap-2 items-center">
           <span className="text-[14px] text-[--clr-gray-500] italic">
-            Tên thông báo
+            Tên dich vụ
           </span>
           <SearchInFilter onSearch={handleSearch} isResetAll={true}/>
         </div>
         <Button
           sx={{ mt: { xs: 2, md: 0, marginBottom: "10px" } }}
           variant="contained"
-          onClick={() => router.push(`${PATH.MANAGEMENT_SERVICE}/new`)}
+          onClick={() => router.push(`${PATH.MANAGEMENT_TYPE}/new`)}
           startIcon={<AddTwoToneIcon fontSize="small"/>}
         >
-          Thêm thông báo
+          Thêm dich vụ
         </Button>
       </div>
 
       {isLoading && <Loading/>}
-      <CheckNotFound data={allNotification} isLoading={isLoading}>
+      <CheckNotFound data={allType} isLoading={isLoading}>
         <TableContainer>
           <Table>
             <TableHead>
               <TableRow>
                 <TableCell>STT</TableCell>
-                <TableCell>Tiêu đề</TableCell>
-                <TableCell>Nội dung</TableCell>
-                <TableCell>Trạng thái đọc</TableCell>
-                <TableCell>Ngày gửi</TableCell>
+                <TableCell>Loại món ăn</TableCell>
+                <TableCell>Số lượng món ăn</TableCell>
+                <TableCell>Mô tả</TableCell>
                 <TableCell>Thao tác</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {allNotification?.map((noti: any, index) => (
-                <TableRow hover key={noti?.id}>
+              {allType?.map((type: any, index) => (
+                <TableRow hover key={type?.id}>
                   <TableCell>
                     <Typography
                       sx={{ fontSize: "13px" }}
@@ -173,23 +171,7 @@ const ServicePage = () => {
                       gutterBottom
                       noWrap
                     >
-                      {noti?.title}
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography
-                      sx={{
-                        width: "200px",
-                        whiteSpace: "nowrap",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis"
-                      }}
-                      variant="body1"
-                      color="text.primary"
-                      gutterBottom
-                      noWrap
-                    >
-                      {noti?.description}
+                      {type?.typeName}
                     </Typography>
                   </TableCell>
                   <TableCell>
@@ -199,26 +181,27 @@ const ServicePage = () => {
                       gutterBottom
                       noWrap
                     >
-                      {noti?.read ? "Đã đọc" : "Chưa đọc"}
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography
-                      variant="body1"
-                      color="text.primary"
-                      gutterBottom
-                      noWrap
-                    >
-                      {moment(noti?.created_at).format("DD/MM/YYYY")}
+                      {type?.menuItems?.length || 0} món
                     </Typography>
                   </TableCell>
 
+                  <TableCell>
+                    <Typography
+                      variant="body1"
+                      color="text.primary"
+                      gutterBottom
+                      noWrap
+
+                    >
+                      {type?.description || <span className="text-[--clr-gray-400]">Không có mô tả</span>}
+                    </Typography>
+                  </TableCell>
                   <TableCell align="center" className="flex gap-3">
                     <Tooltip title="Chỉnh sửa" arrow>
                       <IconButton
                         onClick={() =>
                           router.push(
-                            `${PATH.MANAGEMENT_SERVICE}/${noti.id}`
+                            `${PATH.MANAGEMENT_TYPE}/${type.id}`
                           )
                         }
                         sx={{
@@ -236,7 +219,7 @@ const ServicePage = () => {
                     <Tooltip title="Xóa" arrow>
                       <IconButton
                         onClick={() => {
-                          setNotification(noti);
+                          setType(type);
                           setIsOpenModal(true);
                         }}
                         sx={{
@@ -258,7 +241,7 @@ const ServicePage = () => {
         <Box p={2}>
           <TablePagination
             component="div"
-            count={totalNotificationCount}
+            count={totalTypeCount}
             onPageChange={handlePageChange}
             onRowsPerPageChange={handleLimitChange}
             page={pageIndex}
@@ -269,14 +252,14 @@ const ServicePage = () => {
       </CheckNotFound>
       <ModalPopup
         open={isOpenModal}
-        title="Xóa dich vụ"
+        title="Xóa thể loại"
         setOpen={setIsOpenModal}
         closeModal={handleCloseModal}
       >
         <div className="min-w-[500px] h-auto p-6 relative">
           <div className="flex flex-col gap-4 w-full actual-receipt">
             <div className="py-3 text-[14px] text-[--clr-gray-500]">
-              Bạn có muốn <b>xoá</b> dịch vụ <b>{notification?.title}</b> vĩnh
+              Bạn có muốn <b>xoá</b> thể loai <b>{type?.typeName}</b> vĩnh
               viễn không ?
             </div>
           </div>

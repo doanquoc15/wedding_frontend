@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Box, Grid, Paper } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import Image from "next/image";
+import Image from "next/legacy/image";
 import { useRouter, usePathname } from "next/navigation";
 
 import TitleHead from "@/components/TitleHead";

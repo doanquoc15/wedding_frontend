@@ -11,7 +11,7 @@ import Typography from "@mui/material/Typography";
 import { Container, InputAdornment } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import Image from "next/image";
+import Image from "next/legacy/image";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import IconButton from "@mui/material/IconButton";

@@ -4,44 +4,51 @@ import { usePathname, useRouter } from "next/navigation";
 import Person3Icon from "@mui/icons-material/Person3";
 import BallotIcon from "@mui/icons-material/Ballot";
 import FastfoodIcon from "@mui/icons-material/Fastfood";
-import NotificationsPausedIcon from "@mui/icons-material/NotificationsPaused";
 import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
+import QueryStatsIcon from "@mui/icons-material/QueryStats";
+import ChecklistIcon from "@mui/icons-material/Checklist";
 
 import ButtonBtn from "@/components/common/Button";
 
 export const MENU_SIDEBAR_LIST = [
   {
     id: 1,
+    title: "Thống kê",
+    link: "/admin",
+    icon: <QueryStatsIcon/>
+  },
+  {
+    id: 2,
     title: "Quản lý tài khoản",
     link: "/admin/users",
     icon: <Person3Icon/>
   }, {
-    id: 2,
+    id: 3,
     title: "Đơn hàng",
     link: "/admin/booking",
     icon: <BallotIcon/>
 
   }, {
-    id: 3,
+    id: 4,
     title: "Dịch vụ",
     link: "/admin/services",
     icon: <BrightnessLowTwoToneIcon/>
 
   }, {
-    id: 4,
+    id: 5,
     title: "Menu combo",
     icon: <RestaurantMenuIcon/>,
     link: "/admin/combo",
   }, {
-    id: 5,
+    id: 6,
     title: "Món ăn",
     link: "/admin/dishes",
     icon: <FastfoodIcon/>
   }, {
     id: 6,
-    title: "Thông báo",
-    link: "/admin/notifications",
-    icon: <NotificationsPausedIcon/>
+    title: "Loại món ăn",
+    link: "/admin/type-dish",
+    icon: <ChecklistIcon/>
   },
 
 ];

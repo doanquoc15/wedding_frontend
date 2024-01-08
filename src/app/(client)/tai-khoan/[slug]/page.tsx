@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { Grid } from "@mui/material";
-import Image from "next/image";
+import Image from "next/legacy/image";
 import { usePathname, useRouter } from "next/navigation";
 
 import SettingIcon from "@/statics/svg/ic-setting.svg";
@@ -62,7 +62,6 @@ const SettingPage = () => {
   //function
   const handleClickTab = (tab) => {
     setIndexTab(tab.link);
-    console.log(tab);
     router.push(`/tai-khoan/${tab?.link}`);
   };
 

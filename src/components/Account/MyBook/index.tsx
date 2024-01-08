@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import moment from "moment";
+import AutorenewIcon from "@mui/icons-material/Autorenew";
 
 import { ApprovedIcon, CancelIcon, PendingIcon, ReceivedIcon } from "@/components/Icons";
 import TabCustom from "@/components/common/TabCustom";
@@ -9,12 +9,14 @@ import ReceivedPage from "@/components/Account/MyBook/ReceivedBook";
 import { useAppDispatch } from "@/stores/hook";
 import { statusApiReducer } from "@/stores/reducers/statusAPI";
 import { getAllBookingByUser, updateStatusBooking } from "@/services/book";
-import { LONG_DATE } from "@/constants/common";
 import RejectedPage from "@/components/Account/MyBook/RejectedBook";
+import NewBookingPage from "@/components/Account/MyBook/NewBook";
+import { getUserLocal } from "@/services/getUserLocal";
 
 const MyBookService = () => {
   //useState
   const [allBook, setAllBook] = useState([]);
+  const [newBooking, setNewBooking] = useState([]);
   const [pendingBooking, setPendingBooking] = useState([]);
   const [approvedBooking, setApprovedBooking] = useState([]);
   const [receivedBooking, setReceivedBooking] = useState([]);
@@ -22,55 +24,44 @@ const MyBookService = () => {
 
   //const
   const dispatch = useAppDispatch();
-  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const user = getUserLocal();
 
   //functions
 
   const getAllBook = async () => {
     try {
       const res = await getAllBookingByUser(user?.id);
-
-      const currentDate = new Date(moment().format(LONG_DATE));
-
+      setNewBooking(
+        res?.filter(
+          item =>
+            item?.statusBooking === "NEW"
+        )
+      );
       setPendingBooking(
         res?.filter(
           item =>
-            item?.statusBooking === "PENDING" &&
-            new Date(moment(item?.comeInAt).format(LONG_DATE)).getTime() > currentDate.getTime()
+            item?.statusBooking === "PENDING"
         )
       );
 
       setApprovedBooking(
         res?.filter(
           item =>
-            item?.statusBooking === "APPROVED" &&
-            new Date(moment(item?.comeInAt).format(LONG_DATE)).getTime() > currentDate.getTime()
+            item?.statusBooking === "APPROVED"
         )
       );
 
       setReceivedBooking(
         res?.filter(
           item =>
-            item?.statusBooking === "APPROVED" &&
-            new Date(moment(item?.comeInAt).format(LONG_DATE)).getTime() <= currentDate.getTime() &&
-            item?.statusPayment === "PAID"
+            item?.statusBooking === "FINISHED"
         )
       );
 
       setRejectedBooking(
         res?.filter(
-          item =>
-            (item?.statusBooking === "REJECTED" && item?.statusPayment === "UNPAID") ||
-            (new Date(moment(item?.comeInAt).format(LONG_DATE)).getTime() <= currentDate.getTime() && item?.statusBooking === "PENDING")
-        )
-      );
-
-      //update status booking 
-      res?.filter(item => (new Date(moment(item?.comeInAt).format(LONG_DATE)).getTime() <= currentDate.getTime() &&
-        item?.statusBooking === "PENDING"))?.map(booking => {
-        updateStatusBookings(booking?.id, { statusBooking: "REJECTED" });
-      }
-      );
+          item => item?.statusBooking === "REJECTED"
+        ));
 
       setAllBook(res);
     } catch (error: any) {
@@ -97,11 +88,19 @@ const MyBookService = () => {
       label: "Chờ xác nhận",
       icon: <PendingIcon/>,
       componentContent: (
-        <PendingPage data={pendingBooking} reFetchData={getAllBook}/>
+        <PendingPage data={newBooking} reFetchData={getAllBook}/>
       ),
     },
     {
       id: 1,
+      label: "Tạm dừng & Xác nhận thêm",
+      icon: <AutorenewIcon/>,
+      componentContent: (
+        <NewBookingPage data={pendingBooking} reFetchData={getAllBook}/>
+      ),
+    },
+    {
+      id: 2,
       label: "Đã xác nhận",
       icon: <ApprovedIcon/>,
       componentContent: (
@@ -109,7 +108,7 @@ const MyBookService = () => {
       ),
     },
     {
-      id: 2,
+      id: 3,
       label: "Hoàn thành",
       icon: <ReceivedIcon/>,
       componentContent: (
@@ -117,7 +116,7 @@ const MyBookService = () => {
       ),
     },
     {
-      id: 3,
+      id: 4,
       label: "Đã hủy",
       icon: <CancelIcon/>,
       componentContent: (

@@ -1,13 +1,53 @@
-import React from "react";
-import Image from "next/image";
+import React, { useState } from "react";
+import Image from "next/legacy/image";
+import { loadStripe } from "@stripe/stripe-js";
+import { usePathname, useRouter } from "next/navigation";
 
 import { ApprovedIcon } from "@/components/Icons";
 import ButtonBtn from "@/components/common/Button";
 import CheckNotFound from "@/components/common/CheckNotFound";
 import { formatDateReceivedBooking } from "@/utils/convertDate";
 import { formatMoney } from "@/utils/formatMoney";
+import LoadingButton from "@/components/common/Loading";
+import { NEXT_PUBLIC_PK_STRIPE_KEY } from "@/app/constant.env";
+import { statusApiReducer } from "@/stores/reducers/statusAPI";
+import { paymentCheckout } from "@/services/payment";
+import { updatePaymentBooking } from "@/services/book";
+import { useAppDispatch } from "@/stores/hook";
 
 const PendingPage = ({ data }: any) => {
+  const dispatch = useAppDispatch();
+  const [isCheckout, setIsCheckout] = useState<boolean>(false);
+  const router = useRouter();
+  const pathName = usePathname();
+  const handlePayment = async (item) => {
+    const cart = [{ id: 1, name: "Đặt cọc trước", quantity: 1, price: item?.depositMoney / 100 }];
+    setIsCheckout(true);
+    try {
+      if (!NEXT_PUBLIC_PK_STRIPE_KEY) {
+        dispatch(statusApiReducer.actions.setMessageError("Stripe key không tồn tại"));
+        return;
+      }
+      const stripe: any = await loadStripe(NEXT_PUBLIC_PK_STRIPE_KEY);
+
+      const response = await paymentCheckout(cart);
+
+      const result = stripe.redirectToCheckout({
+        sessionId: response?.id
+      });
+
+      await updatePaymentBooking(+item?.id, { statusPayment: "DEPOSIT" });
+
+      if (result.error) {
+        dispatch(statusApiReducer.actions.setMessageError(result.error));
+      }
+      setIsCheckout(false);
+
+    } catch (error: any) {
+      setIsCheckout(false);
+      dispatch(statusApiReducer.actions.setMessageError(error.message));
+    }
+  };
   return (
     <div className="flex flex-col gap-5">
       <CheckNotFound data={data}>
@@ -43,15 +83,18 @@ const PendingPage = ({ data }: any) => {
                 </div>
               </div>
               <div
-                className="rrounded-t-[6px] p-4 bg-[--clr-orange-50] text-[13px] text-[--clr-gray-500] flex flex-col justify-end gap-3 w-full items-end">
+                className="rounded-t-[6px] p-4 bg-[--clr-orange-50] text-[13px] text-[--clr-gray-500] flex flex-col justify-end gap-3 w-full items-end">
                 <span
                   className="text-[14px] text-[--clr-red-400] font-[500]">Tiền cọc : {formatMoney(item?.depositMoney) || 0} VND</span>
                 <div className="flex gap-3">
-                  <ButtonBtn width={150} bg="var(--clr-orange-400)" onClick={() => {
-                  }}>Thanh toán</ButtonBtn>
-                  <ButtonBtn width={150} className="shadow-[0_5px_40px_rgba(0,0,0,0.05)]"
-                    onClick={() => {
-                    }}>Chat với nhà hàng</ButtonBtn>
+                  {
+                    item?.statusPayment === "UNPAID" &&
+                      <ButtonBtn startIcon={isCheckout && <LoadingButton/>} width={150} bg="var(--clr-blue-400)"
+                        onClick={() => handlePayment(item)}>Đặt cọc</ButtonBtn>
+                  }
+                  <ButtonBtn width={150} bg="var(--clr-green-400)"
+                    onClick={() => router.push(`${pathName}/${item?.id}`)}>Chi
+                    tiết</ButtonBtn>
                 </div>
               </div>
             </div>

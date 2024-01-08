@@ -4,7 +4,7 @@ import React, { useContext, useEffect, useState } from "react";
 import Badge from "@mui/material/Badge";
 import { styled } from "@mui/material/styles";
 import IconButton from "@mui/material/IconButton";
-import Image from "next/image";
+import Image from "next/legacy/image";
 import Box from "@mui/material/Box";
 import Menu from "@mui/material/Menu";
 import Divider from "@mui/material/Divider";

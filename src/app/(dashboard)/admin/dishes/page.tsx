@@ -49,7 +49,7 @@ const DishListPage = ({ searchParams }) => {
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [totalUsersCount, setTotalUsersCount] = useState<number>(0);
   const [search, setSearch] = useState<string>(getQueryParam("search") as string);
-  const [typeDishes, setTypeDishes] = useState<any[]>([]);
+  const [typeDish, setTypeDish] = useState<any[]>([]);
 
   //const
   const dispatch = useAppDispatch();
@@ -112,9 +112,9 @@ const DishListPage = ({ searchParams }) => {
 
   const fetchTypeDishes = async () => {
     try {
-      const { data } = await getAllTypeDish({ pageSize: 1000 });
-      setTypeDishes(
-        data?.map((item) => ({
+      const { typeDishes } = await getAllTypeDish({ pageSize: 1000 });
+      setTypeDish(
+        typeDishes?.map((item) => ({
           id: item?.id,
           value: item?.id,
           label: item?.typeName,
@@ -138,7 +138,6 @@ const DishListPage = ({ searchParams }) => {
     fetchAllDish();
   }, [pageIndex, pageSize, searchParams]);
 
-  // @ts-ignore
   return (
     <div className="text-[--clr-gray-500]">
       <PageHeader title="Quản lý món ăn"/>
@@ -154,7 +153,7 @@ const DishListPage = ({ searchParams }) => {
           <SelectFilter
             resetPageIndex={resetPageIndex}
             query={...searchParams}
-            options={[{ id: 0, label: "Tất cả" }, ...typeDishes]}
+            options={[{ id: 0, label: "Tất cả" }, ...typeDish]}
             value={searchParams?.typeId || 0}
             typeQuery="typeId"
             sx={{
@@ -242,7 +241,7 @@ const DishListPage = ({ searchParams }) => {
                       noWrap
                     >
                       {
-                        typeDishes.filter(
+                        typeDish.filter(
                           (item) => +item?.id === +dish?.typeId
                         )[0]?.label
                       }

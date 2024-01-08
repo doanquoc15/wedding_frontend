@@ -1,10 +1,6 @@
 import axios from "axios";
 
-import {
-  NEXT_CLOUDINARY_NAME,
-  NEXT_UPLOAD_PRESET,
-  NEXT_URL_CLOUD,
-} from "@/app/constant.env";
+import { NEXT_CLOUDINARY_NAME, NEXT_UPLOAD_PRESET, NEXT_URL_CLOUD, } from "@/app/constant.env";
 
 export const UploadImage = async (pics: any) => {
   if (!pics) {
@@ -14,6 +10,7 @@ export const UploadImage = async (pics: any) => {
     data.append("file", pics);
     data.append("upload_preset", NEXT_UPLOAD_PRESET as string);
     data.append("cloud_name", NEXT_CLOUDINARY_NAME as string);
+    data.append("folder", "chat-app");
 
     try {
       const response = await axios.post(NEXT_URL_CLOUD as string, data);

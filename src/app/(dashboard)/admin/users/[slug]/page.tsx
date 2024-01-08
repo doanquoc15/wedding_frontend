@@ -1,5 +1,5 @@
 "use client";
-import Image from "next/image";
+import Image from "next/legacy/image";
 import React, { useEffect, useState } from "react";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import { useForm } from "react-hook-form";

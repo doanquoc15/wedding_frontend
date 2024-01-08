@@ -7,7 +7,7 @@ const Apis = {
   GET_ME: "user/me/my-account",
 };
 
-export const GetUserById = async (id: number) => {
+export const getUserById = async (id: number) => {
   const { data }: any = await Api.get(`${Apis.USER_ID}/${id}`);
   return data;
 };

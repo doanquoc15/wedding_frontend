@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { Avatar, Button, Tooltip, Typography } from "@mui/material";
 import { usePathname } from "next/navigation";
-import Image from "next/image";
+import Image from "next/legacy/image";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
 
@@ -88,7 +88,7 @@ const DetailMenu = () => {
     setIsSubmitted(true);
     try {
       const capture: any = document.querySelector(".actual-receipt");
-      html2canvas(capture).then((canvas) => {
+      html2canvas(capture, { scale: 2 }).then((canvas) => {
         const imgData = canvas.toDataURL("img/png");
         const pdf = new jsPDF("p", "px", "a4", true);
         const pdfWidth = pdf.internal.pageSize.getWidth();
@@ -569,7 +569,7 @@ const DetailMenu = () => {
               serviceId={serviceId}
               comboMenuId={comboMenuId}
               comboMenuItem={covertDataMenuItems(organizeDishesByType(
-                handleJsonParse("menuComboCustomized") || menuData)
+                handleJsonParse("menuComboCustomized"))
               )}
               priceTotalDish={totalPrices()}/>
           </ModalPopup>

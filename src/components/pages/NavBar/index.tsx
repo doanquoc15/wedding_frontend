@@ -4,7 +4,7 @@ import React, { useContext, useEffect, useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Container from "@mui/material/Container";
 import { usePathname, useRouter } from "next/navigation";
-import Image from "next/image";
+import Image from "next/legacy/image";
 import Box from "@mui/material/Box";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
@@ -40,11 +40,12 @@ function ResponsiveAppBar() {
   };
 
   const [isHeaderFixed, setHeaderFixed] = useState<boolean>(false);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<any>(getUserLocal());
   const socketIo = useContext(SocketContext);
   const id = getUserLocal()?.id;
   const [notifications, setNotifications] = useState<any[]>([]);
   const [badge, setBadge] = useState<number>(0);
+  const [token, setToken] = useState<string>(CookiesStorage.getCookieData("token"));
 
   //constant
   const router = useRouter();
@@ -86,6 +87,7 @@ function ResponsiveAppBar() {
   CookiesStorage.getCookieData("role");
   useEffect(() => {
     const savedUser = LocalStorage.get("user");
+    setToken(CookiesStorage.getCookieData("token"));
     if (savedUser) {
       setUser(JSON.parse(savedUser));
     }
@@ -104,7 +106,6 @@ function ResponsiveAppBar() {
     if (socketIo)
       return () => {
         socketIo.off("updateBadge");
-        socketIo.off(String(savedUser?.id));
       };
   }, [user?.id]);
 
@@ -121,6 +122,7 @@ function ResponsiveAppBar() {
   useEffect(() => {
     if (!user) return;
     fetchAllNotificationByUserId(user?.id);
+    setToken(CookiesStorage.getCookieData("token"));
   }, [user?.id]);
   return (
     <AppBar style={{ background: "white", color: "var(--clr-gray-500)", zIndex: 1 }}
@@ -135,7 +137,6 @@ function ResponsiveAppBar() {
               height={50}
               priority={true}
               alt="Logo sky view restaurant"
-              objectFit="cover"
             />
           </div>
           <Typography
@@ -187,16 +188,18 @@ function ResponsiveAppBar() {
             ))}
           </Box>
 
-          {CookiesStorage.getCookieData("role") ?
-            <Box sx={{ flexGrow: 1, display: "flex", gap: "20px", justifyContent: "end" }}
+          {token || user ?
+            <Box sx={{ flexGrow: 1, display: "flex", gap: "40px", justifyContent: "end" }}
             >
               <BadgeCustom setBadge={setBadge} badge={badge}/>
               <Tooltip title="Tài khoản" onClick={() => router.push(PATH.ACCOUNT)}>
-                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  <Avatar alt="Avatar user" defaultValue={user?.name}
-                    src={user?.image || "https://inkythuatso.com/uploads/thumbnails/800/2022/03/4a7f73035bb4743ee57c0e351b3c8bed-29-13-53-17.jpg"}/>
-                  <span className="ml-2 text-[15px]">{user?.name}</span>
-                </IconButton>
+                <div className="flex items-center gap-3">
+                  <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                    <Avatar alt="Avatar user" defaultValue={user?.name}
+                      src={user?.image || "https://inkythuatso.com/uploads/thumbnails/800/2022/03/4a7f73035bb4743ee57c0e351b3c8bed-29-13-53-17.jpg"}/>
+                  </IconButton>
+                  <span className="ml-2 text-[15px] cursor-pointer">{user?.name}</span>
+                </div>
               </Tooltip>
             </Box> :
             <Box sx={{ flexGrow: 1, display: "flex", justifyContent: "end", gap: "10px" }}>
@@ -206,7 +209,8 @@ function ResponsiveAppBar() {
         </Toolbar>
       </Container>
     </AppBar>
-  );
+  )
+  ;
 }
 
 export default ResponsiveAppBar;

@@ -21,6 +21,13 @@ import IconButton from "@mui/material/IconButton";
 import AddTwoToneIcon from "@mui/icons-material/AddTwoTone";
 import Button from "@mui/material/Button";
 import { useRouter } from "next/navigation";
+import { Controller, useForm } from "react-hook-form";
+import RadioGroup from "@mui/material/RadioGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormControl from "@mui/material/FormControl";
+import Stack from "@mui/material/Stack";
+import Snackbar from "@mui/material/Snackbar";
+import MuiAlert, { AlertProps } from "@mui/material/Alert";
 
 import PageHeader from "@/components/AdminComponents/PageHeader";
 import { statusApiReducer } from "@/stores/reducers/statusAPI";
@@ -37,16 +44,35 @@ import SearchInFilter from "@/components/common/SearchInFilter";
 import { getQueryParam } from "@/utils/route";
 import { deleteBooking, getAllBooking, updateStatusBooking } from "@/services/book";
 import { formatMoney } from "@/utils/formatMoney";
-import SelectOption from "@/components/common/SelectOption";
 import SelectFilter from "@/components/common/SelectFilter";
 import DatePickerFilter from "@/components/common/DatePickerFilter";
 import { SocketContext } from "@/context/sockets";
+import BpRadio from "@/components/common/BpRadio";
 
-const options = [
+const optionsSelect = [
+  {
+    value: "NEW",
+    label: "Chờ xác nhận"
+  },
   {
     value: "PENDING",
-    label: "Chờ duyêt"
+    label: "Tạm dừng & Xác nhận thêm"
   },
+  {
+    value: "APPROVED",
+    label: "Xác nhận"
+  },
+  {
+    value: "FINISHED",
+    label: "Hoàn thành"
+  },
+  {
+    value: "REJECTED",
+    label: "Hủy"
+  }
+];
+
+const optionsNew = [
   {
     value: "APPROVED",
     label: "Xác nhận"
@@ -56,7 +82,57 @@ const options = [
     label: "Hủy"
   }
 ];
+
+const optionsApproved = [
+  {
+    value: "PENDING",
+    label: "Tạm dừng & Xác nhận thêm"
+  },
+  {
+    value: "FINISHED",
+    label: "Hoàn thành"
+  },
+  {
+    value: "REJECTED",
+    label: "Hủy"
+  }
+];
+
+const options = {
+  NEW: optionsNew,
+  PENDING: optionsNew,
+  APPROVED: optionsApproved
+};
+
+const STATUS_BOOKING_REVERT = {
+  NEW: "Chờ duyệt",
+  PENDING: "Tạm dừng & Xác nhận thêm",
+  APPROVED: "Đã xác nhận",
+  FINISHED: "Hoàn thành",
+  REJECTED: "Hủy"
+};
+
+const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
+  props,
+  ref,
+) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
+
+const vertical = "bottom";
+const horizontal = "center";
 const BookingPage = ({ searchParams }) => {
+  //useForm
+  const {
+    control,
+    setValue,
+  } = useForm({
+    // resolver: yupResolver(bookingSchema),
+    defaultValues: {
+      statusBooking: undefined,
+    },
+    mode: "all",
+  });
   //useState
   const theme = useTheme();
   const [pageSize, setPageSize] = useState(5);
@@ -70,6 +146,8 @@ const BookingPage = ({ searchParams }) => {
   const [search, setSearch] = useState<string | undefined>(getQueryParam("search"));
   const [statusBooking, setStatusBooking] = useState<string | undefined>();
   const [selectDate, setSelectDate] = useState<string | undefined>(getQueryParam("toTime"));
+  const [open, setOpen] = useState<boolean>(true);
+  const [countNew, setCounNew] = useState<number>(0);
   //const
   const dispatch = useAppDispatch();
   const router = useRouter();
@@ -116,14 +194,23 @@ const BookingPage = ({ searchParams }) => {
   };
   const handleCloseModalStatus = () => {
     setIsOpenModal(false);
+    setStatusBooking(undefined);
   };
 
   const handleClickCancel = () => {
+    setStatusBooking(undefined);
     setIsOpenModal(false);
   };
 
-  const handleOnChangeStatus = (value) => {
-    setStatusBooking(value);
+  const handleOnClickRadio = (e) => {
+    setStatusBooking(e.target.value);
+  };
+
+  const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpen(false);
   };
 
   const handleClickDelete = async () => {
@@ -142,14 +229,15 @@ const BookingPage = ({ searchParams }) => {
   const handleClickChangeStatus = async () => {
     setLoading(true);
     try {
-      await updateStatusBooking(Number(booking?.id), { statusBooking: statusBooking });
+      const status = optionsSelect?.filter(item => item?.label === statusBooking)[0]?.value;
+      await updateStatusBooking(Number(booking?.id), { statusBooking: status });
       dispatch(statusApiReducer.actions.setMessageSuccess(MESSAGE_SUCCESS.UPDATED_SUCCESS));
-
       setIsOpenModalStatus(false);
       fetchAllBooking();
     } catch (error: any) {
       dispatch(statusApiReducer.actions.setMessageError(error.message));
     } finally {
+      setStatusBooking(undefined);
       setLoading(false);
     }
   };
@@ -158,14 +246,39 @@ const BookingPage = ({ searchParams }) => {
     setPageIndex(0);
   };
 
+  const colorStatusBooking = {
+    NEW: "bg-[--clr-green-400]",
+    PENDING: "bg-[--clr-orange-400]",
+    FINISHED: "bg-[--clr-gray-500]",
+    APPROVED: "bg-[--clr-blue-400]",
+    REJECTED: "bg-[--clr-red-400]",
+  };
+
   useEffect(() => {
     fetchAllBooking();
   }, [pageIndex, pageSize, search, searchParams, selectDate]);
 
+  useEffect(() => {
+    const fetchBooking = async () => {
+      setLoading(true);
+      try {
+        const { booking } = await getAllBooking({ pageSize: 1000 });
+        setCounNew(booking?.filter(item => item?.statusBooking === "NEW")?.length);
+
+      } catch (error: any) {
+        dispatch(statusApiReducer.actions.setMessageError(error?.data?.message));
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchBooking();
+    setOpen(true);
+  }, []);
+
   // @ts-ignore
   return (
     <div className="text-[--clr-gray-500]">
-      <PageHeader title="Quản lý thông báo"/>
+      <PageHeader title="Quản lý đơn hàng"/>
       <div className="flex justify-between items-center mb-4">
         <div className="flex gap-2 items-center">
           <span className="text-[14px] text-[--clr-gray-500] italic">Tên người đặt</span>
@@ -174,7 +287,7 @@ const BookingPage = ({ searchParams }) => {
           <SelectFilter
             resetPageIndex={resetPageIndex}
             query={...searchParams}
-            options={[{ id: 0, label: "Tất cả" }, ...options]}
+            options={[{ id: 0, label: "Tất cả" }, ...optionsSelect]}
             value={searchParams?.status || 0}
             typeQuery="status"
             sx={{
@@ -217,6 +330,7 @@ const BookingPage = ({ searchParams }) => {
                 <TableCell sx={{ whiteSpace: "nowrap" }}>Giờ bắt đầu</TableCell>
                 <TableCell sx={{ whiteSpace: "nowrap" }}>Giờ kết thúc</TableCell>
                 <TableCell sx={{ whiteSpace: "nowrap" }}>Trạng thái</TableCell>
+                <TableCell sx={{ whiteSpace: "nowrap" }}>Mô tà</TableCell>
                 <TableCell sx={{ whiteSpace: "nowrap" }}>Hành động</TableCell>
               </TableRow>
             </TableHead>
@@ -363,9 +477,8 @@ const BookingPage = ({ searchParams }) => {
                       noWrap
                     >
                       <span
-                        className={`px-4 text-white rounded-[5px] ${booking?.statusBooking === "PENDING" ?
-                          "bg-[--clr-green-400]" : booking?.statusBooking === "REJECTED" ? "bg-[--clr-red-400]" :
-                            "bg-[--clr-blue-400]"}`}>{booking?.statusBooking}</span>
+                        className={`px-4 text-white text-center rounded-[5px] min-w-[150px] py-1 text-[14px] ${colorStatusBooking[booking?.statusBooking]}`}>
+                        {booking?.statusBooking}</span>
                       <IconButton
                         onClick={() => {
                           setBooking(booking);
@@ -382,7 +495,16 @@ const BookingPage = ({ searchParams }) => {
                       </IconButton>
                     </Typography>
                   </TableCell>
-
+                  <TableCell>
+                    <Typography
+                      variant="body1"
+                      color="text.primary"
+                      gutterBottom
+                      noWrap
+                    >
+                      {STATUS_BOOKING_REVERT[booking?.statusBooking]}
+                    </Typography>
+                  </TableCell>
                   <TableCell align="center" className="flex gap-3">
                     <Tooltip title="Chỉnh sửa" arrow>
                       <IconButton
@@ -473,31 +595,100 @@ const BookingPage = ({ searchParams }) => {
         closeModal={handleCloseModalStatus}
       >
         <div className="min-w-[500px] h-auto p-6 relative">
-          <div className="flex items-center gap-4 w-full actual-receipt">
-            <span>Trạng thái đơn hàng </span><SelectOption defaultValue={options[0]?.label}
-              options={options.filter(item => item?.value !== booking?.statusBooking)}
-              onChange={handleOnChangeStatus}/>
-          </div>
+          {
+            options[booking?.statusBooking] ?
+              <div className="flex flex-col gap-2 w-full actual-receipt">
+                <div className="font-semibold">Trạng thái đơn hàng</div>
+                <FormControl>
+                  <Controller
+                    control={control}
+                    name="statusBooking"
+                    render={({ field: { onChange } }) => (
+                      <RadioGroup
+                        row
+                        className="flex flex-col col-span-1"
+                        value={statusBooking}
+                      >
+                        {options[booking?.statusBooking]?.map((item, index) => (
+                          <FormControlLabel
+                            sx={{
+                              "& .MuiTypography-root": {
+                                width: "100%",
+                                fontSize: "13px",
+                                color: "#525253",
+                                height: "40px",
+                                display: "flex",
+                                alignItems: "center",
+                                fontFamily: "Nunito Sans",
+                              },
+                            }}
+                            key={index}
+                            onChange={(event: any) => {
+                              onChange(event);
+                              setStatusBooking(event.target.value);
+                              setValue("statusBooking", event.target.value);
+                            }}
+                            value={item?.label}
+                            control={
+                              <BpRadio
+                                onClick={(e) => handleOnClickRadio(e)}
+                                value={item?.label}
+                              />
+                            }
+                            label={item?.label}
+                          />
+                        ))}
+                      </RadioGroup>
+                    )}
+                  />
+                </FormControl>
+              </div> :
+              <div className="flex flex-col gap-4 w-full min-h-[100px] actual-receipt">
+                <p>Không thể thay đổi trạng thái đơn hàng này</p>
+              </div>
+          }
           <div className="flex justify-end mt-[0.25rem] gap-4">
-            <ButtonBtn
-              width={100}
-              bg="var(--clr-orange-400)"
-              onClick={handleClickCancel}
-              startIcon={<CheckIcon fill="white"/>}
-            >
-              <span className="font-semibold">Thoát</span>
-            </ButtonBtn>
-            <ButtonBtn
-              width={150}
-              bg="var(--clr-blue-400)"
-              onClick={handleClickChangeStatus}
-              startIcon={isLoading && <LoadingButton/>}
-            >
-              <span className="font-semibold whitespace-nowrap">Cập nhật</span>
-            </ButtonBtn>
+            {
+              options[booking?.statusBooking] ? <>
+                <ButtonBtn
+                  width={100}
+                  bg="var(--clr-orange-400)"
+                  onClick={handleClickCancel}
+                  startIcon={<CheckIcon fill="white"/>}
+                >
+                  <span className="font-semibold">Thoát</span>
+                </ButtonBtn>
+                <ButtonBtn
+                  width={150}
+                  bg="var(--clr-blue-400)"
+                  onClick={handleClickChangeStatus}
+                  startIcon={isLoading && <LoadingButton/>}
+                >
+                  <span className="font-semibold whitespace-nowrap">Cập nhật</span>
+                </ButtonBtn>
+              </> : <ButtonBtn
+                width={100}
+                bg="var(--clr-orange-400)"
+                onClick={handleClickCancel}
+                startIcon={<CheckIcon fill="white"/>}
+              >
+                <span className="font-semibold">Thoát</span>
+              </ButtonBtn>
+            }
           </div>
         </div>
       </ModalPopup>
+      {
+        countNew > 0 &&
+          <Stack spacing={2} sx={{ width: "100%", height: "150%" }}>
+            <Snackbar anchorOrigin={{ vertical, horizontal }} open={open} autoHideDuration={10000}
+              onClose={handleClose}>
+              <Alert onClose={handleClose} severity="info" sx={{ width: "100%" }}>
+                {`Có ${countNew} đơn hàng chờ xác nhận`}
+              </Alert>
+            </Snackbar>
+          </Stack>
+      }
     </div>
   );
 };

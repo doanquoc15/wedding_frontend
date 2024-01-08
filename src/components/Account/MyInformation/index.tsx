@@ -1,4 +1,4 @@
-import Image from "next/image";
+import Image from "next/legacy/image";
 import React, { useEffect, useState } from "react";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import { useForm } from "react-hook-form";
@@ -23,6 +23,7 @@ import { getMeRole, updateUser } from "@/services/user";
 import { LocalStorage } from "@/shared/config/localStorage";
 import { MESSAGE_SUCCESS } from "@/constants/errors";
 import { usersReducer } from "@/stores/reducers/user";
+import { removeNullUndefined } from "@/utils/deleteNullObject";
 
 const MyInformation = () => {
   //useForm
@@ -33,7 +34,7 @@ const MyInformation = () => {
     control,
     reset,
   } = useForm({
-    //resolver: yupResolver(editUserSchema),
+    // resolver: yupResolver(editUserSchema),
     defaultValues: {
       dateOfBirth: "",
       name: "",
@@ -42,7 +43,7 @@ const MyInformation = () => {
       gender: "",
       province: "",
       district: "",
-      award: ""
+      ward: ""
     },
     mode: "all",
   });
@@ -143,7 +144,7 @@ const MyInformation = () => {
       }
       code && handleProvinceChange(code, "p");
 
-      reset({
+      const setValue = {
         name: res?.name,
         email: res?.email,
         dateOfBirth: moment(res?.dateOfBirth).format(SHORT_DATE),
@@ -151,8 +152,12 @@ const MyInformation = () => {
         gender: res?.gender?.toUpperCase(),
         province: address && address[2]?.trim(),
         district: address && address[1]?.trim(),
-        award: address && address[0]?.trim(),
-      });
+        ward: address && address[0]?.trim(),
+      };
+
+      const removeNull = removeNullUndefined(setValue);
+
+      reset(removeNull);
 
       setImageChange(res?.image);
       setMyInfo(res);
@@ -167,7 +172,7 @@ const MyInformation = () => {
       ...data,
       dateOfBirth: data?.dateOfBirth && dayjs(data?.dateOfBirth).format(SHORT_DATE),
       image: imageChange || myInfo?.image,
-      address: `${data?.award}, ${data?.district}, ${data?.province}`,
+      address: `${data?.ward}, ${data?.district}, ${data?.province}`,
     };
     if (!moment(dataUpdate.dateOfBirth).isValid()) {
       delete dataUpdate.dateOfBirth;
@@ -374,7 +379,7 @@ const MyInformation = () => {
                 <label className="text-[#333] font-semibold">Phường/Xã</label>
                 <SelectField
                   disabled={!isEdit}
-                  name="award"
+                  name="ward"
                   label=""
                   labelDisplay=""
                   control={control}

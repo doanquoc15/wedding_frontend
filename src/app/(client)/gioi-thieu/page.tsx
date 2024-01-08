@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect } from "react";
-import Image from "next/image";
+import Image from "next/legacy/image";
 
 import { dataRestaurant } from "@/data";
 import ProductionImage from "@/statics/images/gioi-thieu.jpg";

@@ -1,5 +1,5 @@
 "use client";
-import Image from "next/image";
+import Image from "next/legacy/image";
 import React, { useEffect, useState } from "react";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 // eslint-disable-next-line import/order
@@ -14,7 +14,6 @@ import Error from "@/components/common/Error";
 import ButtonBtn from "@/components/common/Button";
 import LoadingButton from "@/components/common/Loading";
 import { createDishSchema } from "@/libs/validation/createDishSchema";
-import { getAllTypeDish } from "@/services/type-dish";
 import { statusApiReducer } from "@/stores/reducers/statusAPI";
 import { useAppDispatch } from "@/stores/hook";
 import SelectField from "@/components/common/SelectField";
@@ -22,6 +21,7 @@ import TextAreaField from "@/components/common/TextAreaField";
 import { MESSAGE_SUCCESS } from "@/constants/errors";
 import { UploadImage } from "@/services/upload";
 import { createDish, getDishById, updateDish } from "@/services/menu-item";
+import { getAllType } from "@/services/type-dish";
 
 const Detail_New_Dish = ({ params }) => {
   //useForm
@@ -88,9 +88,9 @@ const Detail_New_Dish = ({ params }) => {
   //get all type dish
   const fetchTypeDishes = async () => {
     try {
-      const { data, total } = await getAllTypeDish({ pageSize: 1000 });
+      const { typeDishes, total } = await getAllType({ pageSize: 1000 });
       setTypeDishes(
-        data?.map((item) => ({
+        typeDishes?.map((item) => ({
           id: item?.id,
           value: item?.id,
           label: item?.typeName,
@@ -190,7 +190,7 @@ const Detail_New_Dish = ({ params }) => {
                     className="w-full max-h-[40px] input-custom"
                     helperText={
                       errors?.dishName && (
-                        <Error message={errors?.dishName?.message as string} />
+                        <Error message={errors?.dishName?.message as string}/>
                       )
                     }
                   />
@@ -211,7 +211,7 @@ const Detail_New_Dish = ({ params }) => {
                     className="w-full max-h-[40px] input-custom"
                     helperText={
                       errors?.price && (
-                        <Error message={errors?.price?.message as string} />
+                        <Error message={errors?.price?.message as string}/>
                       )
                     }
                   />
@@ -256,7 +256,7 @@ const Detail_New_Dish = ({ params }) => {
           </div>
           <div className="mt-10">
             <ButtonBtn
-              startIcon={isLoading && <LoadingButton />}
+              startIcon={isLoading && <LoadingButton/>}
               type="submit"
               width={150}
             >

@@ -1,6 +1,8 @@
 import React, { useState } from "react";
-import Image from "next/image";
+import Image from "next/legacy/image";
 import moment from "moment";
+import { loadStripe } from "@stripe/stripe-js";
+import { usePathname, useRouter } from "next/navigation";
 
 import { CheckIcon, PendingIcon } from "@/components/Icons";
 import ButtonBtn from "@/components/common/Button";
@@ -11,10 +13,12 @@ import { DATE_CALENDAR_SHORT, SHORT_DATE } from "@/constants/common";
 import { formatMoney } from "@/utils/formatMoney";
 import ModalPopup from "@/components/common/ModalPopup";
 import LoadingButton from "@/components/common/Loading";
-import { updateBooking } from "@/services/book";
+import { updateBooking, updatePaymentBooking } from "@/services/book";
 import { useAppDispatch } from "@/stores/hook";
 import { statusApiReducer } from "@/stores/reducers/statusAPI";
 import { ERROR_MESSAGES } from "@/constants/errors";
+import { NEXT_PUBLIC_PK_STRIPE_KEY } from "@/app/constant.env";
+import { paymentCheckout } from "@/services/payment";
 
 interface PendingPageProps {
   data: any;
@@ -23,13 +27,18 @@ interface PendingPageProps {
 
 const PendingPage = (props: PendingPageProps) => {
   const { data, reFetchData } = props;
+
+  console.log(data);
   //useState
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [booking, setBooking] = useState<any>();
+  const [isCheckout, setIsCheckout] = useState<boolean>(false);
 
   //const
   const dispatch = useAppDispatch();
+  const router = useRouter();
+  const pathName = usePathname();
 
   //function
   const handleRejectedBooking = async () => {
@@ -68,6 +77,36 @@ const PendingPage = (props: PendingPageProps) => {
     return false;
   };
 
+  //handle payment
+  const handlePayment = async (item) => {
+    const cart = [{ id: 1, name: "Đặt cọc trước", quantity: 1, price: item?.depositMoney / 100 }];
+    setIsCheckout(true);
+    try {
+      if (!NEXT_PUBLIC_PK_STRIPE_KEY) {
+        dispatch(statusApiReducer.actions.setMessageError("Stripe key không tồn tại"));
+        return;
+      }
+      const stripe: any = await loadStripe(NEXT_PUBLIC_PK_STRIPE_KEY);
+
+      const response = await paymentCheckout(cart);
+
+      const result = stripe.redirectToCheckout({
+        sessionId: response?.id
+      });
+
+      await updatePaymentBooking(+item?.id, { statusPayment: "DEPOSIT" });
+
+      if (result.error) {
+        dispatch(statusApiReducer.actions.setMessageError(result.error));
+      }
+      setIsCheckout(false);
+
+    } catch (error: any) {
+      setIsCheckout(false);
+      dispatch(statusApiReducer.actions.setMessageError(error.message));
+    }
+  };
+
   //useEffect
   return (
     <div className="flex flex-col gap-5">
@@ -79,14 +118,16 @@ const PendingPage = (props: PendingPageProps) => {
                 <div className="flex justify-between pb-1 text-[16px] text-[--clr-blue-400]">
                   <span>Sky View - Restaurant</span>
                   <span
-                    className="flex gap-2 justify-between items-center"> <PendingIcon/><span>Dịch vụ đang chờ duyêt</span></span>
+                    className="flex gap-2 justify-between items-center"> <PendingIcon/><span>Chờ xác nhận</span></span>
                 </div>
                 <hr/>
                 <div className="pt-1 flex gap-3">
                   <span>
-                    <Image
-                      src={item?.comboMenu?.service?.image}
-                      width={100} height={100} priority={true} alt="book pending"/>
+                    {
+                      item?.comboMenu?.service?.image && <Image
+                        src={item?.comboMenu?.service?.image}
+                        width={100} height={100} priority={true} alt="book pending"/>
+                    }
                   </span>
                   <div className="flex flex-col w-full justify-around">
                     <span className="text-[16px] font-semibold">{item?.comboMenu?.comboName}</span>
@@ -104,15 +145,25 @@ const PendingPage = (props: PendingPageProps) => {
                 </div>
               </div>
               <div
-                className="rrounded-t-[6px] p-4 bg-[--clr-orange-50] text-[13px] text-[--clr-gray-500] flex flex-col justify-end gap-3 w-full ">
+                className="rounded-t-[6px] p-4 bg-[--clr-orange-50] text-[13px] text-[--clr-gray-500] flex flex-col justify-end gap-3 w-full ">
                 <span
                   className="text-[14px] text-[--clr-red-400] font-[500] flex justify-end">Tiền cọc : {formatMoney(item?.depositMoney) || 0} VND</span>
                 <div className="flex justify-between items-center w-full">
                   <span className="italic">Chỉ được hủy lịch trước ngày <span
                     className="text-[--clr-red-300]">{moment(beforeOneDay(item?.comeInAt)).format(DATE_CALENDAR_SHORT)}</span>
                   </span>
-                  <ButtonBtn width={150} bg="var(--clr-red-400)" onClick={() => handleOpenModalRejected(item)}>Hủy đơn
-                    hàng</ButtonBtn>
+                  <div className="flex gap-3">
+                    {
+                      item?.statusPayment === "UNPAID" &&
+                        <ButtonBtn startIcon={isCheckout && <LoadingButton/>} width={150} bg="var(--clr-blue-400)"
+                          onClick={() => handlePayment(item)}>Đặt cọc</ButtonBtn>
+                    }
+                    <ButtonBtn width={150} bg="var(--clr-red-400)" onClick={() => handleOpenModalRejected(item)}>Hủy đơn
+                      hàng</ButtonBtn>
+                    <ButtonBtn width={150} bg="var(--clr-green-400)"
+                      onClick={() => router.push(`${pathName}/${item?.id}`)}>Chi
+                      tiết</ButtonBtn>
+                  </div>
                 </div>
               </div>
             </div>
@@ -129,7 +180,8 @@ const PendingPage = (props: PendingPageProps) => {
           {checkDateRejected(beforeOneDay(booking?.comeInAt)) ? <>
             <div className="flex flex-col gap-4 w-full actual-receipt">
               <div className="py-3 text-[14px] text-[--clr-gray-500]">Bạn có chắc muốn hủy dịch vụ
-                {" "}<span className="italic font-semibold">{booking?.comboMenu?.comboName}</span> không ?</div>
+                {" "}<span className="italic font-semibold">{booking?.comboMenu?.comboName}</span> không ?
+              </div>
             </div>
             <div className="flex justify-end mt-[0.25rem] gap-4">
               <ButtonBtn

@@ -68,6 +68,7 @@ export interface MenuItem {
 
 export interface TypeDish {
   id: number;
+  description?: string;
   typeName: string;
   menuItems: MenuItem[];
 }
@@ -154,6 +155,7 @@ export interface IZones {
   id: number;
   zoneName: string;
   numberRoom: number;
+  priceRent: number
 }
 
 export interface SelectFieldPropsType extends SelectProps<any> {

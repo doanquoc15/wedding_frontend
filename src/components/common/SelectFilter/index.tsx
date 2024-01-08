@@ -1,7 +1,7 @@
 import { MenuItem, Select } from "@mui/material";
 import { useState } from "react";
 import { omit } from "lodash";
-import Image from "next/image";
+import Image from "next/legacy/image";
 import { usePathname, useRouter } from "next/navigation";
 
 import { SelectIcon } from "@/components/Icons";
@@ -110,7 +110,7 @@ export default function SelectFilter(props: SelectFilterType) {
             </div>
           );
         }
-        return <SelectIcon rotate={rotate} />;
+        return <SelectIcon rotate={rotate}/>;
       }}
       {...otherProps}
     >

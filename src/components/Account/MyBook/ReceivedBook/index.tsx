@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
-import Image from "next/image";
+import Image from "next/legacy/image";
 import StarsIcon from "@mui/icons-material/Stars";
 import { Controller, useForm } from "react-hook-form";
 import { Rating } from "@mui/material";
+import { usePathname, useRouter } from "next/navigation";
+import { loadStripe } from "@stripe/stripe-js";
 
 import CheckNotFound from "@/components/common/CheckNotFound";
 import { ReceivedIcon } from "@/components/Icons";
@@ -16,6 +18,10 @@ import { useAppDispatch } from "@/stores/hook";
 import { statusApiReducer } from "@/stores/reducers/statusAPI";
 import { ERROR_MESSAGES } from "@/constants/errors";
 import { LocalStorage } from "@/shared/config/localStorage";
+import LoadingButton from "@/components/common/Loading";
+import { NEXT_PUBLIC_PK_STRIPE_KEY } from "@/app/constant.env";
+import { paymentCheckout } from "@/services/payment";
+import { updatePaymentBooking } from "@/services/book";
 
 const PendingPage = ({ data }) => {
   //useForm
@@ -38,7 +44,7 @@ const PendingPage = ({ data }) => {
   const [rate, setRate] = useState(5);
   const [feedBack, setFeedBack] = useState<any>();
   const [listIdUser, setListIdUser] = useState<any>();
-
+  const [isCheckout, setIsCheckout] = useState<boolean>(false);
   //const
   const feedBackRate = {
     1: "Rất tệ",
@@ -49,7 +55,8 @@ const PendingPage = ({ data }) => {
   };
 
   const dispatch = useAppDispatch();
-
+  const router = useRouter();
+  const pathName = usePathname();
   //function
   const handleCloseModal = () => {
     setIsOpenModal(false);
@@ -90,6 +97,40 @@ const PendingPage = ({ data }) => {
     setRate(+value);
   };
 
+  const handlePayment = async (item) => {
+    let cart;
+    if (item?.statusPayment === "UNPAID") {
+      cart = [{ id: 1, name: "Thanh toán hết", quantity: 1, price: item?.totalMoney / 100 }];
+    } else if (item?.statusPayment === "DEPOSIT") {
+      cart = [{ id: 1, name: "Thanh toán phần còn lại", quantity: 1, price: (item?.totalMoney - item?.depositMoney) / 100 }];
+    }
+    setIsCheckout(true);
+    try {
+      if (!NEXT_PUBLIC_PK_STRIPE_KEY) {
+        dispatch(statusApiReducer.actions.setMessageError("Stripe key không tồn tại"));
+        return;
+      }
+      const stripe: any = await loadStripe(NEXT_PUBLIC_PK_STRIPE_KEY);
+
+      const response = await paymentCheckout(cart);
+
+      const result = stripe.redirectToCheckout({
+        sessionId: response?.id
+      });
+
+      await updatePaymentBooking(+item?.id, { statusPayment: "PAID" });
+
+      if (result.error) {
+        dispatch(statusApiReducer.actions.setMessageError(result.error));
+      }
+      setIsCheckout(false);
+
+    } catch (error: any) {
+      setIsCheckout(false);
+      dispatch(statusApiReducer.actions.setMessageError(error.message));
+    }
+  };
+
   //useEffect
   useEffect(() => {
     if (!booking) return;
@@ -111,9 +152,11 @@ const PendingPage = ({ data }) => {
                 <hr/>
                 <div className="pt-1 flex gap-3">
                   <span>
-                    <Image
-                      src={item?.comboMenu?.service?.image}
-                      width={100} height={100} priority={true} alt="book pending"/>
+                    {
+                      item?.comboMenu?.service?.image && <Image
+                        src={item?.comboMenu?.service?.image}
+                        width={100} height={100} priority={true} alt="book pending"/>
+                    }
                   </span>
                   <div className="flex flex-col w-full justify-around">
                     <span className="text-[16px] font-semibold">{item?.comboMenu?.comboName}</span>
@@ -133,12 +176,24 @@ const PendingPage = ({ data }) => {
               </div>
 
               <div
-                className="rrounded-t-[6px] p-4 bg-[--clr-orange-50] text-[13px] text-[--clr-gray-500] flex flex-col justify-end gap-3 w-full items-end">
+                className="rounded-t-[6px] p-4 bg-[--clr-orange-50] text-[13px] text-[--clr-gray-500] flex flex-col justify-end gap-3 w-full items-end">
                 <span
                   className="text-[14px] text-[--clr-red-400] font-[500]">Tiền cọc : {formatMoney(item?.depositMoney) || 0} VND</span>
                 <div className="flex gap-3">
+                  {
+                    item?.statusPayment === "UNPAID" &&
+                      <ButtonBtn startIcon={isCheckout && <LoadingButton/>} width={150} bg="var(--clr-blue-400)"
+                        onClick={() => handlePayment(item)}>Thanh toán hết</ButtonBtn>
+                  }{
+                    item?.statusPayment === "DEPOSIT" &&
+                    <ButtonBtn startIcon={isCheckout && <LoadingButton/>} width={200} bg="var(--clr-blue-400)"
+                      onClick={() => handlePayment(item)}>Thanh toán phần còn lại</ButtonBtn>
+                  }
                   <ButtonBtn startIcon={<StarsIcon/>} width={150} bg="var(--clr-orange-350)"
                     onClick={() => handleFeedBack(item)}>Đánh giá</ButtonBtn>
+                  <ButtonBtn width={150} bg="var(--clr-green-400)"
+                    onClick={() => router.push(`${pathName}/${item?.id}`)}>Chi
+                    tiết</ButtonBtn>
                 </div>
               </div>
 
