@@ -35,7 +35,7 @@ import { MESSAGE_SUCCESS } from "@/constants/errors";
 import SearchInFilter from "@/components/common/SearchInFilter";
 import { getQueryParam } from "@/utils/route";
 import { deleteDish, getAllDish } from "@/services/menu-item";
-import { getAllTypeDish } from "@/services/type-dish";
+import { getAllType } from "@/services/type-dish";
 import SelectFilter from "@/components/common/SelectFilter";
 
 const DishListPage = ({ searchParams }) => {
@@ -112,7 +112,7 @@ const DishListPage = ({ searchParams }) => {
 
   const fetchTypeDishes = async () => {
     try {
-      const { typeDishes } = await getAllTypeDish({ pageSize: 1000 });
+      const { typeDishes } = await getAllType({ pageSize: 1000 });
       setTypeDish(
         typeDishes?.map((item) => ({
           id: item?.id,
