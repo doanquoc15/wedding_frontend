@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { Avatar, Button, Tooltip, Typography } from "@mui/material";
 import { usePathname } from "next/navigation";
-import Image from "next/legacy/image";
+import Image from "next/image";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
 
@@ -23,6 +23,7 @@ import ModalPopup from "@/components/common/ModalPopup";
 import { CheckIcon } from "@/components/Icons";
 import DetailModalBook from "@/components/DetailModalBook";
 import LoadingButton from "@/components/common/Loading";
+import TabComment from "@/components/TabComment/page";
 
 const DetailMenu = () => {
   //useState
@@ -555,7 +556,7 @@ const DetailMenu = () => {
         </div>
         <div className="flex gap-5 items-center">
           {selectedItems.length > 0 &&
-              <ButtonBtn onClick={handleDeleteDishes} width={100} bg="var(--clr-red-400)">Xóa</ButtonBtn>}
+            <ButtonBtn onClick={handleDeleteDishes} width={100} bg="var(--clr-red-400)">Xóa</ButtonBtn>}
           <ButtonBtn width={100} onClick={handleChooseTable}>Đặt bàn</ButtonBtn>
           <ModalPopup
             open={isOpenModalChooseTable}
@@ -582,6 +583,7 @@ const DetailMenu = () => {
           </div>
         </div>
       </div>
+      <TabComment combo={dataCombo}/>
     </div>
   );
 };

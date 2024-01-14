@@ -45,8 +45,16 @@ const SignInPage = () => {
       const { data } = await SignInAPI(values);
       setIsSubmit(false);
       const roleName = data?.data?.user.role.roleName;
-      if (roleName === "CUSTOMER") router.push("/");
-      if (roleName === "ADMIN") router.push("/admin");
+      if (roleName === "CUSTOMER") {
+        console.log(1);
+        router.push("/");
+      }
+
+      if (roleName === "ADMIN") {
+        console.log(2);
+        router.push("/admin/dashboard");
+      }
+
       LocalStorage.add("user", JSON.stringify(data?.data?.user) || "{}");
       CookiesStorage.setCookieData("token", data?.data?.tokens?.accessToken);
       setCookie("role", data?.data?.user.role.roleName);
@@ -64,7 +72,7 @@ const SignInPage = () => {
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
   };
-  
+
   return (
     <Container component="main" maxWidth="lg">
       <Box

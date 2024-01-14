@@ -1,13 +1,14 @@
 "use client";
-import Image from "next/legacy/image";
-import React from "react";
+import Image from "next/image";
+import React, { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
 import { createSlug } from "@/utils/createSlug";
-import { paymentCheckout } from "@/services/payment";
-import { statusApiReducer } from "@/stores/reducers/statusAPI";
 import { useAppDispatch } from "@/stores/hook";
 import { formatMoney } from "@/utils/formatMoney";
+import RatingCustom from "@/components/common/RatingCustom";
+import DetailModalBook from "@/components/DetailModalBook";
+import ModalPopup from "@/components/common/ModalPopup";
 
 import Button from "../common/Button";
 
@@ -18,12 +19,23 @@ interface Combo {
   quantity: number;
 }
 
+const calculateStar = (data) => {
+  return data?.reduce((total, data) => total + data?.feedback?.rating, 0) / data?.length;
+};
+
+const calculateFeedBack = (data) => {
+  return data?.filter(item => item?.feedback)?.length;
+};
+
 const ComboMenuDetail = ({ menuCombo }) => {
   //useState
+  const [isOpenBooking, setIsOpenBooking] = useState<boolean>(false);
   //const
   const router = useRouter();
   const pathname = usePathname();
   const dispatch = useAppDispatch();
+
+  console.log(menuCombo);
 
   //functions
   const handleClickDetail = () => {
@@ -31,23 +43,27 @@ const ComboMenuDetail = ({ menuCombo }) => {
     router.push(`${pathname}/${slug}-${menuCombo.id}`);
   };
   const handleBooking = async () => {
-    try {
-      const res = await paymentCheckout([
-        {
-          id: menuCombo?.id,
-          name: menuCombo?.comboName,
-          price: 1000,
-          quantity: 1,
-        },
-      ]);
-    } catch (error: any) {
-      dispatch(statusApiReducer.actions.setMessageError(error?.message));
-    }
+    setIsOpenBooking(true);
+  };
+
+  const convertDataMenuItems = (menuItems) => {
+    return menuItems?.map((item) => ({
+      quantity: item?.quantity,
+      totalPrice: item?.totalPrice,
+      menuItemId: item?.menuItemId
+    }));
+  };
+
+  const handleCloseModalBooking = () => {
+    setIsOpenBooking(false);
+  };
+  const handleClickCancelBooking = () => {
+    setIsOpenBooking(false);
   };
   //useEffect
   return (
     <div className="flex flex-col">
-      <div className="w-[250px] h-[300px] border-2 border-gray-300 rounded-4 overflow-hidden relative">
+      <div className="w-[300px] h-[500px] border-2 border-gray-300 rounded-4 overflow-hidden relative">
         <Image
           src="https://cdn4.vectorstock.com/i/1000x1000/48/28/tropical-background-with-banana-leaves-vector-33234828.jpg"
           alt="bg combo"
@@ -69,6 +85,19 @@ const ComboMenuDetail = ({ menuCombo }) => {
               <span className="font-semibold text-[#126213]">Chi phí :</span>{" "}
               {formatMoney(menuCombo?.totalPrice)}/bàn
             </div>
+            <div className="text-[--clr-red-400]">
+              <span className="font-semibold text-[#126213]">Chi phí :</span>{" "}
+              {formatMoney(menuCombo?.totalPrice)}/bàn
+            </div>
+            <div className="text-[16px] font-bold flex items-center gap-3">
+              <span
+                className="text-yellow-400 pt-1">{calculateStar(menuCombo?.bookings).toFixed(1) || 0}</span>
+              <span
+                className="ml-2"><RatingCustom
+                  rating={calculateStar(menuCombo?.bookings)}/></span>
+              <span
+                className="text-[--clr-gray-500] pt-1">{calculateFeedBack(menuCombo?.bookings) || 0} Đánh giá</span>
+            </div>
           </div>
         </div>
         <div className="absolute bottom-6 left-[50%] translate-x-[-50%]">
@@ -86,6 +115,20 @@ const ComboMenuDetail = ({ menuCombo }) => {
           </div>
         </div>
       </div>
+      <ModalPopup
+        open={isOpenBooking}
+        title={"Đặt bàn"}
+        setOpen={setIsOpenBooking}
+        closeModal={handleCloseModalBooking}
+      >
+        <DetailModalBook
+          handleClickCancel={handleClickCancelBooking}
+          handleCloseModals={handleCloseModalBooking}
+          serviceId={+menuCombo?.serviceId}
+          comboMenuId={+menuCombo?.id}
+          comboMenuItem={convertDataMenuItems(menuCombo?.comboItems)}
+          priceTotalDish={menuCombo?.totalPrice}/>
+      </ModalPopup>
     </div>
   );
 };

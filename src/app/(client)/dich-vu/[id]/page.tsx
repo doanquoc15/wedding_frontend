@@ -1,6 +1,6 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import { Grid, Box } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Box, Grid } from "@mui/material";
 
 import { ComboMenu, TypeService } from "@/types/common";
 import { getComboByServiceId } from "@/services/combo";
@@ -11,26 +11,33 @@ import { breadCrumbReducer } from "@/stores/reducers/breadCrumb";
 import { SERVICE_BREADCRUMB } from "@/constants/common";
 import { getServiceById } from "@/services/service";
 import { statusApiReducer } from "@/stores/reducers/statusAPI";
+import CheckNotFound from "@/components/common/CheckNotFound";
+import Loading from "@/components/Loading";
 
 const BookingPage = ({ params }: { params: { id: string } }) => {
   //useState
-  const [comboMenus, setComboMenus] = useState<ComboMenu[]>();
+  const [comboMenus, setComboMenus] = useState<ComboMenu[]>([]);
   const [service, setService] = useState<TypeService>();
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   //const
   const dispatch = useAppDispatch();
 
   //function
   const fetchAllComboByService = async () => {
+    setIsLoading(true);
     try {
       const res = await getComboByServiceId(+params.id);
       setComboMenus(res);
     } catch (error: any) {
       dispatch(statusApiReducer.actions.setMessageError(error?.message));
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const fetchServiceById = async (serviceId: number) => {
+    setIsLoading(true);
     try {
       const res = await getServiceById(serviceId);
       setService(res);
@@ -47,6 +54,8 @@ const BookingPage = ({ params }: { params: { id: string } }) => {
       );
     } catch (error: any) {
       dispatch(statusApiReducer.actions.setMessageError(error?.message));
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -66,17 +75,20 @@ const BookingPage = ({ params }: { params: { id: string } }) => {
   }, [params.id]);
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <TitleHead title="Danh sách Combo menu" />
+      <TitleHead title="Danh sách Combo menu"/>
+      {isLoading && <Loading/>}
       <Grid
         container
         spacing={{ xs: 12, md: 12 }}
         columns={{ xs: 4, sm: 8, md: 12 }}
       >
-        {comboMenus?.map((combo, index) => (
-          <Grid item xs={2} sm={4} md={4} key={index}>
-            <ComboMenuDetail menuCombo={combo} />
-          </Grid>
-        ))}
+        <CheckNotFound data={comboMenus}>
+          {comboMenus?.map((combo, index) => (
+            <Grid item xs={2} sm={4} md={4} key={index}>
+              <ComboMenuDetail menuCombo={combo}/>
+            </Grid>
+          ))}
+        </CheckNotFound>
       </Grid>
     </Box>
   );

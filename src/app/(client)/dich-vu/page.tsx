@@ -1,9 +1,9 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Grid, Paper } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import Image from "next/legacy/image";
-import { useRouter, usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 import TitleHead from "@/components/TitleHead";
 import { TypeService } from "@/types/common";
@@ -16,6 +16,7 @@ import { breadCrumbReducer } from "@/stores/reducers/breadCrumb";
 import { SERVICE_BREADCRUMB } from "@/constants/common";
 import { CheckIcon } from "@/components/Icons";
 import { formatMoney } from "@/utils/formatMoney";
+import RatingCustom from "@/components/common/RatingCustom";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -50,13 +51,21 @@ const ServicePage = () => {
     }
   };
 
+  const calculateStar = (data) => {
+    return data?.reduce((total, data) => total + data?.feedback?.rating, 0) / data?.length;
+  };
+
+  const calculateFeedBack = (data) => {
+    return data?.filter(item => item?.feedback)?.length;
+  };
+
   const handleCloseModal = () => {
     setIsOpenModal(false);
   };
 
   const handleClickDetail = (service: TypeService) => {
     setService(service);
-    setIsOpenModal(true);
+    router.push(`/dich-vu/chi-tiet/${service?.id}`);
   };
 
   const handleClickCancel = () => {
@@ -86,7 +95,7 @@ const ServicePage = () => {
   }, []);
   return (
     <div>
-      <TitleHead title="Dịch vụ" />
+      <TitleHead title="Dịch vụ"/>
       <Box sx={{ flexGrow: 1 }}>
         <Grid
           container
@@ -96,7 +105,8 @@ const ServicePage = () => {
           {services?.map((service) => (
             <Grid item xs={2} sm={4} md={4} key={service.id}>
               <Item>
-                <div className="rounded-[50%] w-[100px] h-[100px] overflow-hidden border-[4px] border-[--clr-orange-300]">
+                <div
+                  className="rounded-[50%] w-[100px] h-[100px] overflow-hidden border-[4px] border-[--clr-orange-300]">
                   <Image
                     src={service?.image || ""}
                     alt="image service"
@@ -106,7 +116,31 @@ const ServicePage = () => {
                     objectFit="cover"
                   />
                 </div>
-                <div className="text-[20px] font-bold">{service?.serviceName}</div>
+                <div className="text-[16px] font-bold flex"><span
+                  className="min-w-[100px] block">Loại dịch vụ</span>: <span
+                  className="ml-2">{service?.serviceName}</span>
+                </div>
+                <div className="text-[16px] font-bold flex"><span
+                  className="min-w-[100px] block">Phí dịch vụ</span>: <span
+                  className="ml-2">{formatMoney(service?.price)} vnd</span>
+                </div>
+                <div className="text-[16px] font-bold flex"><span
+                  className="min-w-[100px] block">Menu hiện có</span>: <span
+                  className="ml-2">{service?.comboMenus?.length || 0}</span>
+                </div>
+                <div className="text-[16px] font-bold flex"><span
+                  className="min-w-[100px] block">Số lần được đặt</span>: <span
+                  className="ml-2">{service?.bookings?.length || 0}</span>
+                </div>
+                <div className="text-[16px] font-bold flex items-center gap-3">
+                  <span
+                    className="text-yellow-400 ">{calculateStar(service?.bookings).toFixed(1) || 0}</span>
+                  <span
+                    className="ml-2"><RatingCustom
+                      rating={calculateStar(service?.bookings)}/></span>
+                  <span
+                    className="text-[--clr-gray-500] ">{calculateFeedBack(service?.bookings) || 0} Đánh giá</span>
+                </div>
                 <div className="w-full flex justify-evenly">
                   <div>
                     <Button
@@ -121,7 +155,7 @@ const ServicePage = () => {
                       onClick={() => handleClickBooking(service)}
                       width={100}
                     >
-                      Đặt lịch
+                      Chọn combo
                     </Button>
                   </div>
                 </div>
@@ -165,7 +199,7 @@ const ServicePage = () => {
             <Button
               bg="var(--clr-orange-400)"
               onClick={handleClickCancel}
-              startIcon={<CheckIcon fill="white" />}
+              startIcon={<CheckIcon fill="white"/>}
             >
               <span className="font-semibold">Thoát</span>
             </Button>

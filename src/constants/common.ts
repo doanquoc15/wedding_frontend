@@ -107,5 +107,5 @@ export const PATH = {
   MANAGEMENT_BOOKING: "/admin/booking",
   MANAGEMENT_TYPE: "/admin/type-dish",
 
-  ACCOUNT: "tai-khoan/thong-tin"
+  ACCOUNT: "/tai-khoan/thong-tin"
 };

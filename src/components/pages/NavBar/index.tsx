@@ -119,6 +119,8 @@ function ResponsiveAppBar() {
     }
   };
 
+  console.log(pathname.split("/"));
+
   useEffect(() => {
     if (!user) return;
     fetchAllNotificationByUserId(user?.id);
@@ -180,8 +182,8 @@ function ResponsiveAppBar() {
                 href={page.link}
                 onClick={handleCloseNavMenu}
                 className={`whitespace-nowrap ${
-                  page.link === pathname && style.navbarItem
-                } ${page.link === pathname && style.selected}`}
+                  pathname.split("/").includes(page.link) && style.navbarItem
+                } ${pathname.split("/").includes(page.link) && style.selected}`}
               >
                 {page.title}
               </Link>

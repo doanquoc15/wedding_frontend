@@ -290,7 +290,8 @@ const DetailBookingPage = ({ params: { detail } }) => {
                       / bàn
                     </div>
                     <div><span
-                      className="font-[600] inline-block min-w-[130px]">Phí thuê khu</span>: {formatMoney(zones.filter(item => item?.zoneName === detailBooking?.zone?.zoneName)[0]?.priceRent) || 0} vnd
+                      className="font-[600] inline-block min-w-[130px]">Phí thuê khu</span>:
+                    {formatMoney(zones.filter(item => item?.zoneName === detailBooking?.zone?.zoneName)[0]?.priceRent) || 0} vnd
                     </div>
                     <div><span
                       className="font-[600] inline-block min-w-[130px]">Đặt cọc</span>: {formatMoney(detailBooking?.depositMoney)} vnd <span

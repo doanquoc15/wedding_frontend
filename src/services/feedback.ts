@@ -8,6 +8,10 @@ export const getAllFeedBack = async () => {
   const { data }: any = await Api.get(Apis.FEEDBACK_URL);
   return data;
 };
+export const getFeedbackByBooking = async (id: number) => {
+  const { data }: any = await Api.get(`${Apis.FEEDBACK_URL}/booking/${id}`);
+  return data;
+};
 
 export const createFeedBack = async (params: any) => {
   const { data }: any = await Api.post(Apis.FEEDBACK_URL, params);

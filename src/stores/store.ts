@@ -5,6 +5,7 @@ import { combineReducers } from "redux";
 // eslint-disable-next-line import/no-named-as-default
 import { setupListeners } from "@reduxjs/toolkit/query";
 
+// eslint-disable-next-line import/no-named-as-default
 import statusApiReducer from "./reducers/statusAPI";
 // eslint-disable-next-line import/no-named-as-default
 import usersReducer from "./reducers/user";

@@ -19,8 +19,15 @@ import ExpandMoreTwoToneIcon from "@mui/icons-material/ExpandMoreTwoTone";
 import AccountBoxTwoToneIcon from "@mui/icons-material/AccountBoxTwoTone";
 import LockOpenTwoToneIcon from "@mui/icons-material/LockOpenTwoTone";
 import AccountTreeTwoToneIcon from "@mui/icons-material/AccountTreeTwoTone";
+import { useRouter } from "next/navigation";
 
 import { getUserLocal } from "@/services/getUserLocal";
+import { CookiesStorage } from "@/shared/config/cookie";
+import { LocalStorage } from "@/shared/config/localStorage";
+import { LogoutAPI } from "@/services/auth";
+import { usersReducer } from "@/stores/reducers/user";
+import { statusApiReducer } from "@/stores/reducers/statusAPI";
+import { useAppDispatch } from "@/stores/hook";
 
 const MenuUserBox = styled(Box)(
   ({ theme }) => `
@@ -55,8 +62,23 @@ function HeaderUserBox() {
   const [isOpen, setOpen] = useState<boolean>(false);
   const [user, _] = useState<any>(getUserLocal());
 
+  const dispatch = useAppDispatch();
+  const router = useRouter();
   const handleOpen = (): void => {
     setOpen(true);
+  };
+
+  const handleLogout = async () => {
+    try {
+      CookiesStorage.clearCookieData("token");
+      CookiesStorage.clearCookieData("role");
+      LocalStorage.remove("user");
+      await LogoutAPI({});
+      dispatch(usersReducer.actions.setStatus());
+      router.push("/dang-nhap");
+    } catch (error: any) {
+      dispatch(statusApiReducer.actions.setMessageError(error.message));
+    }
   };
 
   const handleClose = (): void => {
@@ -82,7 +104,7 @@ function HeaderUserBox() {
           </UserBoxText>
         </Hidden>
         <Hidden smDown>
-          <ExpandMoreTwoToneIcon sx={{ ml: 1 }} />
+          <ExpandMoreTwoToneIcon sx={{ ml: 1 }}/>
         </Hidden>
       </div>
       <Popover
@@ -99,37 +121,37 @@ function HeaderUserBox() {
         }}
       >
         <MenuUserBox sx={{ minWidth: 210 }} display="flex">
-          <Avatar alt={user?.name} src={user?.avatar} />
+          <Avatar alt={user?.name} src={user?.avatar}/>
           <UserBoxText>
             <UserBoxLabel variant="body1">{user?.name}</UserBoxLabel>
           </UserBoxText>
         </MenuUserBox>
-        <Divider sx={{ mb: 0 }} />
+        <Divider sx={{ mb: 0 }}/>
         <List sx={{ p: 1 }} component="nav">
           <NextLink href="/management/profile" passHref>
             <ListItem button>
-              <AccountBoxTwoToneIcon fontSize="small" />
-              <ListItemText primary="My Profile" />
+              <AccountBoxTwoToneIcon fontSize="small"/>
+              <ListItemText primary="My Profile"/>
             </ListItem>
           </NextLink>
           <NextLink href="/applications/messenger" passHref>
             <ListItem button>
-              <InboxTwoToneIcon fontSize="small" />
-              <ListItemText primary="Messenger" />
+              <InboxTwoToneIcon fontSize="small"/>
+              <ListItemText primary="Messenger"/>
             </ListItem>
           </NextLink>
           <NextLink href="/management/profile/settings" passHref>
             <ListItem button>
-              <AccountTreeTwoToneIcon fontSize="small" />
-              <ListItemText primary="Account Settings" />
+              <AccountTreeTwoToneIcon fontSize="small"/>
+              <ListItemText primary="Account Settings"/>
             </ListItem>
           </NextLink>
         </List>
-        <Divider />
-        <Box sx={{ m: 1 }}>
+        <Divider/>
+        <Box sx={{ m: 1 }} onClick={handleLogout}>
           <Button color="primary" fullWidth>
-            <LockOpenTwoToneIcon sx={{ mr: 1 }} />
-            Sign out
+            <LockOpenTwoToneIcon sx={{ mr: 1 }}/>
+            Đăng xuất
           </Button>
         </Box>
       </Popover>

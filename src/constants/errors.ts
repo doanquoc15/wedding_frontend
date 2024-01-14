@@ -16,6 +16,7 @@ export const ERROR_MESSAGES = {
   COME_OUT: "Thời gian ra phải sau thời gian vào!",
   REJECTED_SUCCESS: "Hủy dịch vụ thành công",
   FEEDBACK_SUCCESS: "Gửi đánh giá thành công",
+  FEEDBACK_UPDATED_SUCCESS: "Tùy chỉnh đánh giá thành công",
   //dish
   DISH_NAME_REQUIRED: "Tên món ăn không được để trống",
   PRICE_REQUIRED: "Giá tiền không được để trống",

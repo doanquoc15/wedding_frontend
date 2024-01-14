@@ -13,7 +13,7 @@ import { formatDateReceivedBooking } from "@/utils/convertDate";
 import { formatMoney } from "@/utils/formatMoney";
 import ModalPopup from "@/components/common/ModalPopup";
 import TextAreaField from "@/components/common/TextAreaField";
-import { createFeedBack, getAllFeedbackByCombo } from "@/services/feedback";
+import { createFeedBack, getFeedbackByBooking, updateFeedBack } from "@/services/feedback";
 import { useAppDispatch } from "@/stores/hook";
 import { statusApiReducer } from "@/stores/reducers/statusAPI";
 import { ERROR_MESSAGES } from "@/constants/errors";
@@ -67,27 +67,43 @@ const PendingPage = ({ data }) => {
     setIsOpenModal(true);
   };
 
-  const fetchAllFeedBackByComboMenuId = async (comboMenuId: number) => {
-    try {
-      const res = await getAllFeedbackByCombo(comboMenuId);
-      setFeedBack(res);
-      setListIdUser(res?.map((item) => item?.userId));
-    } catch (error: any) {
-      dispatch(statusApiReducer.actions.setMessageError(error.message));
-    }
-  };
   const onSubmit = async (data: any) => {
     const dataCreate = {
       ...data,
-      comboMenuId: booking?.comboMenu?.id,
+      bookingId: booking?.id,
       userId: JSON.parse(LocalStorage.get("user") || "{}")?.id,
       rating: +rate
     };
     try {
-      const res = await createFeedBack(dataCreate);
-      dispatch(statusApiReducer.actions.setMessageSuccess(ERROR_MESSAGES.FEEDBACK_SUCCESS));
+      if (feedBack?.length === 0) {
+        await createFeedBack(dataCreate);
+        dispatch(statusApiReducer.actions.setMessageSuccess(ERROR_MESSAGES.FEEDBACK_SUCCESS));
+      } else {
+        const dataUpdate = {
+          ...feedBack,
+          rating: rate
+        };
+        await updateFeedBack(feedBack[0]?.id, dataUpdate);
+        dispatch(statusApiReducer.actions.setMessageSuccess(ERROR_MESSAGES.FEEDBACK_UPDATED_SUCCESS));
+      }
       setIsOpenModal(false);
       reset();
+    } catch (error: any) {
+      dispatch(statusApiReducer.actions.setMessageError(error.message));
+    }
+  };
+
+  const fetchFeedBackByBookingId = async (bookingId: number) => {
+    try {
+      const res = await getFeedbackByBooking(bookingId);
+      if (res?.length > 0) {
+        reset({
+          rate: res[0]?.rating,
+          comment: res[0]?.comment
+        });
+      }
+      setFeedBack(res);
+      setListIdUser(res?.map((item) => item?.userId));
     } catch (error: any) {
       dispatch(statusApiReducer.actions.setMessageError(error.message));
     }
@@ -102,7 +118,12 @@ const PendingPage = ({ data }) => {
     if (item?.statusPayment === "UNPAID") {
       cart = [{ id: 1, name: "Thanh toán hết", quantity: 1, price: item?.totalMoney / 100 }];
     } else if (item?.statusPayment === "DEPOSIT") {
-      cart = [{ id: 1, name: "Thanh toán phần còn lại", quantity: 1, price: (item?.totalMoney - item?.depositMoney) / 100 }];
+      cart = [{
+        id: 1,
+        name: "Thanh toán phần còn lại",
+        quantity: 1,
+        price: (item?.totalMoney - item?.depositMoney) / 100
+      }];
     }
     setIsCheckout(true);
     try {
@@ -134,7 +155,7 @@ const PendingPage = ({ data }) => {
   //useEffect
   useEffect(() => {
     if (!booking) return;
-    fetchAllFeedBackByComboMenuId(booking?.comboMenu?.id);
+    fetchFeedBackByBookingId(booking?.id);
   }, [booking]);
 
   return (
@@ -182,12 +203,12 @@ const PendingPage = ({ data }) => {
                 <div className="flex gap-3">
                   {
                     item?.statusPayment === "UNPAID" &&
-                      <ButtonBtn startIcon={isCheckout && <LoadingButton/>} width={150} bg="var(--clr-blue-400)"
-                        onClick={() => handlePayment(item)}>Thanh toán hết</ButtonBtn>
+                    <ButtonBtn startIcon={isCheckout && <LoadingButton/>} width={150} bg="var(--clr-blue-400)"
+                      onClick={() => handlePayment(item)}>Thanh toán hết</ButtonBtn>
                   }{
                     item?.statusPayment === "DEPOSIT" &&
-                    <ButtonBtn startIcon={isCheckout && <LoadingButton/>} width={200} bg="var(--clr-blue-400)"
-                      onClick={() => handlePayment(item)}>Thanh toán phần còn lại</ButtonBtn>
+                  <ButtonBtn startIcon={isCheckout && <LoadingButton/>} width={200} bg="var(--clr-blue-400)"
+                    onClick={() => handlePayment(item)}>Thanh toán phần còn lại</ButtonBtn>
                   }
                   <ButtonBtn startIcon={<StarsIcon/>} width={150} bg="var(--clr-orange-350)"
                     onClick={() => handleFeedBack(item)}>Đánh giá</ButtonBtn>
@@ -257,7 +278,8 @@ const PendingPage = ({ data }) => {
                 rows={5}
               />
             </div>
-            <ButtonBtn width={150} type="submit" bg="var(--clr-blue-400)">Gửi</ButtonBtn>
+            <ButtonBtn width={150} type="submit"
+              bg="var(--clr-blue-400)">{feedBack?.length !== 0 ? "Tuỳ chỉnh" : "Đánh giá"}</ButtonBtn>
           </form>
         </div>
       </ModalPopup>

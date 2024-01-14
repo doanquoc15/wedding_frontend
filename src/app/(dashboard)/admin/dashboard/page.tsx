@@ -136,7 +136,7 @@ const HomeDashBoard = () => {
 
     return receivedAndPaidTotalMoney;
   };
-  
+
   //useEffect
   useEffect(() => {
     fetchAllUsers();

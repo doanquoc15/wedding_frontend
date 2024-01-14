@@ -2,7 +2,7 @@ import { isNil } from "lodash";
 import { camelizeKeys } from "humps";
 
 import { stringifyParams } from "@/utils/api";
-import { CookieKey, ROUTER } from "@/constants/common";
+import { CookieKey } from "@/constants/common";
 import { ROUTE } from "@/constants/route";
 
 import axios from "./axiosClient";
@@ -26,7 +26,7 @@ function getNotAuthApi(path: string, options: any = {}, apiURL?: string) {
 }
 
 function getApi(path: string, options: any = {}, apiURL?: string) {
-  return axios.get(`${apiURL || API_URL }/${path.replace(/^\//, "")}`, {
+  return axios.get(`${apiURL || API_URL}/${path.replace(/^\//, "")}`, {
     ...defaultOptions,
     ...options,
     headers: {
@@ -152,7 +152,6 @@ function handleErrorStatus(error: any) {
 
       return error;
     case 403: {
-      window.location.href = ROUTER.FORBIDDEN;
       return error;
     }
     case 404:

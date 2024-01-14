@@ -1,30 +1,36 @@
 import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 
-const protectedRoutes = ["/tai-khoan",];
+const protectedRoutes = ["/tai-khoan", "/payment/success", "/payment/cancel"];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const role = request.cookies.get("role")?.value;
 
-  // // Check if the user is logged in
-  // if (role) {
-  //   // Check admin routes for admin role
-  //   if (pathname.startsWith("/admin") && role !== "ADMIN") {
-  //     return NextResponse.redirect(new URL("/", request.url));
-  //   } else {
-  //     return NextResponse.redirect(new URL("/admin", request.url));
-  //   }
-  // } else {
-  //   // Redirect to signin for protected routes when the user is not logged in
-  //   if (protectedRoutes.includes(pathname) || pathname.startsWith("/admin")) {
-  //     return NextResponse.redirect(new URL("/dang-nhap", request.url));
-  //   }
-  //
-  //   // Allow access to public routes when the user is not logged in
-  //   return NextResponse.next();
-  // }
+  if (role) {
+    if (pathname === "/dang-nhap" || pathname === "/dang-ky") {
+      return NextResponse.redirect(new URL("/", request.url));
+    }
+
+    if (pathname.startsWith("/admin") && role !== "ADMIN") {
+      return NextResponse.redirect(new URL("/", request.url));
+    } else if (
+      role === "ADMIN" &&
+      (!pathname.startsWith("/admin") || pathname === "/admin")
+    ) {
+      return NextResponse.redirect(new URL("/admin/dashboard", request.url));
+    }
+
+    return NextResponse.next();
+  } else {
+    if (protectedRoutes.includes(pathname) || pathname.startsWith("/admin")) {
+      return NextResponse.redirect(new URL("/dang-nhap", request.url));
+    }
+    return NextResponse.next();
+  }
 }
 
 export const config = {
-  matcher: ["/((?!_next|api/auth).*)(.+)"],
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico|auth/login).*)",
+    "/partner/:path*",],
 };
