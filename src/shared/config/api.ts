@@ -9,7 +9,7 @@ import axios from "./axiosClient";
 import { CookiesStorage } from "./cookie";
 
 const defaultOptions = {};
-const API_URL = "http://localhost:8080";
+const API_URL = "ep-jolly-math-73764918-pooler.ap-southeast-1.postgres.vercel-storage.com";
 
 export const generateToken = () => ({
   Authorization: `Bearer ${CookiesStorage.getCookieData("token")}`,
