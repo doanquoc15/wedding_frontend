@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 import moment from "moment/moment";
 import { Skeleton } from "@mui/lab";
 import Image from "next/legacy/image";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import TextField from "@mui/material/TextField";
 
 import icon_bag from "@/statics/images/ic_glass_bag.png";
 import icon_user from "@/statics/images/ic_glass_users.png";
@@ -14,13 +16,16 @@ import deposit from "@/statics/images/deposit.png";
 import { getAllUsers } from "@/services/user";
 import { statusApiReducer } from "@/stores/reducers/statusAPI";
 import { useAppDispatch } from "@/stores/hook";
-import { getAllBooking, getPercentBooking } from "@/services/book";
+import { getAllBooking, getCountBookingMonth, getPercentBooking } from "@/services/book";
 import { getAllService } from "@/services/service";
 import { getAllDish } from "@/services/menu-item";
 import { getAllComboMenu } from "@/services/combo";
 import ManagementChart from "@/app/(dashboard)/admin/charts/ManagementChart";
 import TwoSimplePieChart from "@/app/(dashboard)/admin/charts/TwoSimplePieChart";
 import { formatMoney } from "@/utils/formatMoney";
+import LineCharts from "@/app/(dashboard)/admin/charts/LineCharts";
+
+const currentYear = new Date().getFullYear();
 
 const HomeDashBoard = () => {
   const [totalUser, setTotalUser] = useState(0);
@@ -29,9 +34,13 @@ const HomeDashBoard = () => {
   const [totalDishes, setTotalDishes] = useState(0);
   const [totalComboMenu, setTotalComboMenu] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [filterDate, setFilterDate] = useState<any>("");
+  const [filterDate, setFilterDate] = useState<any>(currentYear);
   const [percentBooking, setPercentBooking] = useState<any>([]);
   const [allBooking, setAllBooking] = useState<any>([]);
+  const [allPayment, setAllPayment] = useState<any>(0);
+  const [depositPayment, setDepositPayment] = useState<any>(0);
+  const [pendingDepositPayment, setPendingDepositPayment] = useState<any>(0);
+  const [countBooking, setCountBooking] = useState<any>([]);
 
   //const
   const dispatch = useAppDispatch();
@@ -52,6 +61,17 @@ const HomeDashBoard = () => {
     } catch (error: any) {
       dispatch(statusApiReducer.actions.setMessageError(error?.message));
     }
+  };
+
+  console.log(filterDate, currentYear);
+
+  const getPendingDeposit = (data) => {
+    const dataApproved = data?.filter(item => item?.status === "APPROVED")[0]?.data;
+    const dataFinished = data?.filter(item => item?.status === "RECEIVED")[0]?.data;
+    const allData = dataApproved.concat(dataFinished);
+    const dataPEndingDeposit = allData?.filter(item => item?.statusPayment === "DEPOSIT");
+
+    return dataPEndingDeposit.reduce((total, item) => total + (item?.totalMoney - item.depositMoney), 0);
   };
 
   const fetchAllService = async () => {
@@ -96,14 +116,28 @@ const HomeDashBoard = () => {
   };
 
   const changeDate = (e) => {
-    const utcDate = moment(e).utc(true);
+    const utcDate = moment(e).utc(true).format("YYYY");
+
     setFilterDate(utcDate);
+  };
+
+  const calculatorStatusPayment = (data, statusBooking, statusPayment) => {
+    const type = statusPayment === "PAID" ? "totalMoney" : "depositMoney";
+    const dataStatusBooking = data?.filter(item => item?.status === statusBooking)[0]?.data;
+    const dataStatusPayment = dataStatusBooking?.filter(item => item?.statusPayment === statusPayment);
+    return dataStatusPayment?.reduce((total, item) => total + item?.[type], 0);
   };
 
   const fetchPercentBooking = async () => {
     setLoading(true);
     try {
       const data = await getPercentBooking();
+      setAllPayment(calculatorStatusPayment(data, "RECEIVED", "PAID"));
+      const deposit = calculatorStatusPayment(data, "PENDING", "DEPOSIT") + calculatorStatusPayment(data, "NEW", "DEPOSIT")
+        + calculatorStatusPayment(data, "RECEIVED", "DEPOSIT") + calculatorStatusPayment(data, "APPROVED", "DEPOSIT");
+      setAllPayment(calculatorStatusPayment(data, "RECEIVED", "PAID"));
+      setDepositPayment(deposit);
+      setPendingDepositPayment(getPendingDeposit(data));
       setAllBooking(data);
       setPercentBooking(data?.map(item => ({
         name: item?.status,
@@ -115,6 +149,15 @@ const HomeDashBoard = () => {
       dispatch(statusApiReducer.actions.setMessageError(error?.data?.message));
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchCountBookingMonth = async () => {
+    try {
+      const data = await getCountBookingMonth(filterDate);
+      setCountBooking(data);
+    } catch (error: any) {
+      dispatch(statusApiReducer.actions.setMessageError(error?.data?.message));
     }
   };
 
@@ -150,6 +193,11 @@ const HomeDashBoard = () => {
     fetchPercentBooking();
   }, []);
 
+  useEffect(() => {
+    console.log(1);
+    fetchCountBookingMonth();
+  }, [filterDate]);
+
   return (
     <div>
       {/*ManagementChart*/}
@@ -161,27 +209,8 @@ const HomeDashBoard = () => {
       {/*  onChange={(e) => changeDate(e)}*/}
       {/*  renderInput={(params) => <TextField {...params} helperText={null}/>}*/}
       {/*/>*/}
-      <div className="w-full bg-white h-[194px] flex items-center justify-evenly mb-6">
-        <div className="relative">
-          <div className="absolute z-10 top-[34%] left-[10%]">
-            <div className="text-clr-gray-125 text-xl">Doanh thu</div>
-            <div
-              className="text-clr-gray-125 text-2xl">{formatMoney(calculatorPayment(allBooking))} VND
-            </div>
-          </div>
-          <Image alt="Request card" src={payment}/>
-        </div>
-        <div className="relative">
-          <div className="absolute z-10 top-[34%] left-[10%]">
-            <div className="text-clr-gray-125 text-xl">Thanh toán</div>
-            <div
-              className="text-clr-gray-125 text-2xl">1000
-            </div>
-          </div>
-          <Image alt="Request card" src={deposit}/>
-        </div>
-      </div>
-      <span className="text-[20px] font-bold mb-3">Tổng quát</span>
+
+      <span className="text-[20px] font-bold my-10 block">Tổng quát</span>
       <div className="flex gap-5 justify-between">
         <ManagementChart icon={icon_user} total={totalUser} title="" subTitle="người dùng"/>
         <ManagementChart icon={icon_bag} total={totalBooking} title="" subTitle="đơn hàng"/>
@@ -189,8 +218,37 @@ const HomeDashBoard = () => {
         <ManagementChart icon={icon_dish} total={totalDishes} title="" subTitle="món ăn"/>
         <ManagementChart icon={icon_combo} total={totalComboMenu} title="" subTitle="combo"/>
       </div>
+      <hr className="border-b-[2px] border-l-amber-600 mt-4 mb-4"/>
+      <div className="w-full bg-white h-[194px] flex items-center justify-evenly mb-6">
+        <div className="relative">
+          <div className="absolute z-10 top-[34%] left-[10%]">
+            <div className="text-clr-gray-125 text-xl">Nhận cọc</div>
+            <div
+              className="text-clr-gray-125 text-2xl">{formatMoney(depositPayment)} VND
+            </div>
+          </div>
+          <Image alt="Request card" src={payment}/>
+        </div>
+        <div className="relative">
+          <div className="absolute z-10 top-[34%] left-[10%]">
+            <div className="text-clr-gray-125 text-xl">Thanh toán hết</div>
+            <div
+              className="text-clr-gray-125 text-2xl">{formatMoney(allPayment)} VND
+            </div>
+          </div>
+          <Image alt="Request card" src={deposit}/>
+        </div>
+        <div className="relative">
+          <div className="absolute z-10 top-[34%] left-[10%]">
+            <div className="text-clr-gray-125 text-xl">Chờ thanh toán</div>
+            <div
+              className="text-clr-gray-125 text-2xl">{formatMoney(pendingDepositPayment)} VND
+            </div>
+          </div>
+          <Image alt="Request card" src={payment}/>
+        </div>
+      </div>
 
-      <span className="text-[20px] font-bold mb-3">Đơn hàng</span>
       <div className="flex gap-5 justify-between">
         {
           percentBooking?.length > 0 ? percentBooking?.map((item, index) => (
@@ -199,6 +257,20 @@ const HomeDashBoard = () => {
           )) :
             Array.from({ length: 5 }, (_, index) => <Skeleton key={index} variant="circular" width={150} height={150}/>)
         }
+      </div>
+      <span className="text-[20px] font-bold py-10 block">Biểu đồ đơn hàng kết hoàn thành</span>
+      <div className=" flex flex-col gap-8">
+        {/*ManagementChart*/}
+        <DatePicker
+          views={["year"]}
+          label="year"
+          inputFormat="YYYY"
+          value={filterDate.toString()}
+          onChange={(e) => changeDate(e)}
+          renderInput={(params) => <TextField {...params} value={filterDate.toString()} helperText={null}/>}
+          className="max-w-[200px]"
+        />
+        <LineCharts data={countBooking}/>
       </div>
     </div>
   );

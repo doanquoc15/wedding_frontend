@@ -63,7 +63,7 @@ const SignInPage = () => {
       );
       dispatch(usersReducer.actions.setUserInfo(data?.data?.user));
     } catch (e: any) {
-      dispatch(statusApiReducer.actions.setMessageError("Đăng nhập thất bại!"));
+      dispatch(statusApiReducer.actions.setMessageError(e?.data?.message));
     } finally {
       setIsSubmit(false);
     }

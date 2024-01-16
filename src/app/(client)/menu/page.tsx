@@ -54,7 +54,7 @@ const MenuPage = () => {
         ...typeDishes,
       ]);
     } catch (error: any) {
-      dispatch(statusApiReducer.actions.setMessageError(error.message));
+      dispatch(statusApiReducer.actions.setMessageError(error.data.message));
     }
   };
 
@@ -69,7 +69,7 @@ const MenuPage = () => {
       setTotal(data.total);
       setFoodByType(data.menus);
     } catch (error: any) {
-      dispatch(statusApiReducer.actions.setMessageError(error.message));
+      dispatch(statusApiReducer.actions.setMessageError(error.data.message));
     }
   };
 

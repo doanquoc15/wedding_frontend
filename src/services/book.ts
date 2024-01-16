@@ -3,6 +3,7 @@ import Api from "@/shared/config/api";
 const Apis = {
   BOOK_URL: "/book",
   UPDATE_STATUS_BOOK_URL: "/book/status",
+  COUNT_BOOKING_URL: "/book/month",
   UPDATE_PAYMENT_BOOK_URL: "/book/payment",
   ALL_FOOD_BOOK_URL: "/book/food",
   CHECK_BOOK_URL: "/book/check-custom",
@@ -11,6 +12,10 @@ const Apis = {
 
 export const getAllBooking = async (params: object) => {
   const { data }: any = await Api.getWithParams(Apis.BOOK_URL, params);
+  return data;
+};
+export const getCountBookingMonth = async (year: string | number) => {
+  const { data }: any = await Api.get(`${Apis.COUNT_BOOKING_URL}/${year}`);
   return data;
 };
 

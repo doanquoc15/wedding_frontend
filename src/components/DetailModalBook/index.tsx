@@ -154,7 +154,7 @@ const DetailModalBook = (props: IDetailModalBookProps) => {
 
     } catch (error: any) {
       setIsCheckout(false);
-      dispatch(statusApiReducer.actions.setMessageError(error.message));
+      dispatch(statusApiReducer.actions.setMessageError(error.data.message));
     }
   };
 

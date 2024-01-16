@@ -77,7 +77,7 @@ function HeaderUserBox() {
       dispatch(usersReducer.actions.setStatus());
       router.push("/dang-nhap");
     } catch (error: any) {
-      dispatch(statusApiReducer.actions.setMessageError(error.message));
+      dispatch(statusApiReducer.actions.setMessageError(error.data.message));
     }
   };
 
