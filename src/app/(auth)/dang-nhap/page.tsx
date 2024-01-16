@@ -45,14 +45,13 @@ const SignInPage = () => {
       const { data } = await SignInAPI(values);
       setIsSubmit(false);
       const roleName = data?.data?.user.role.roleName;
+      console.log(roleName);
       if (roleName === "CUSTOMER") {
-        console.log(1);
         router.push("/");
       }
 
       if (roleName === "ADMIN") {
-        console.log(2);
-        router.push("/admin/dashboard");
+        router.push("/admin/dashboard/sss");
       }
 
       LocalStorage.add("user", JSON.stringify(data?.data?.user) || "{}");
