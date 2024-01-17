@@ -4,6 +4,7 @@ import React, { ReactNode } from "react";
 import Header from "@/components/pages/Header";
 import Footer from "@/components/pages/Footer";
 import NavBar from "@/components/pages/NavBar";
+import { getUserLocal } from "@/services/getUserLocal";
 import CustomChatMessage from "@/components/MesssageChat";
 
 const ClientLayout = ({ children }: {
@@ -14,7 +15,9 @@ const ClientLayout = ({ children }: {
       <Header/>
       <NavBar/>
       <div className="py-8 px-9">{children}</div>
-      <CustomChatMessage/>
+      {
+        getUserLocal()?.role?.roleName === "CUSTOMER" && <CustomChatMessage/>
+      }
       <Footer/>
     </div>
   );
