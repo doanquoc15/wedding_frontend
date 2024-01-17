@@ -182,8 +182,8 @@ function ResponsiveAppBar() {
                 href={page.link}
                 onClick={handleCloseNavMenu}
                 className={`whitespace-nowrap ${
-                  pathname.split("/").includes(page.link) && style.navbarItem
-                } ${pathname.split("/").includes(page.link) && style.selected}`}
+                  pathname.split("/")[1] === (page.link.slice(1)) && style.navbarItem
+                } ${pathname.split("/")[1] === (page.link.slice(1)) && style.selected}`}
               >
                 {page.title}
               </Link>

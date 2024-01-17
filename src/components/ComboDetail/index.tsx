@@ -20,7 +20,8 @@ interface Combo {
 }
 
 const calculateStar = (data) => {
-  return data?.reduce((total, data) => total + data?.feedback?.rating, 0) / data?.length;
+  const dataNew = data?.filter(item => item?.feedback);
+  return dataNew?.reduce((total, item) => total + item?.feedback?.rating || 0, 0) / dataNew?.length;
 };
 
 const calculateFeedBack = (data) => {
@@ -34,8 +35,6 @@ const ComboMenuDetail = ({ menuCombo }) => {
   const router = useRouter();
   const pathname = usePathname();
   const dispatch = useAppDispatch();
-
-  console.log(menuCombo);
 
   //functions
   const handleClickDetail = () => {

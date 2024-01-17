@@ -52,7 +52,8 @@ const ServicePage = () => {
   };
 
   const calculateStar = (data) => {
-    return data?.reduce((total, data) => total + data?.feedback?.rating, 0) / data?.length;
+    const dataNew = data?.filter(item => item?.feedback);
+    return dataNew?.reduce((total, item) => total + item?.feedback?.rating || 0, 0) / dataNew?.length;
   };
 
   const calculateFeedBack = (data) => {
@@ -134,7 +135,7 @@ const ServicePage = () => {
                 </div>
                 <div className="text-[16px] font-bold flex items-center gap-3">
                   <span
-                    className="text-yellow-400 ">{calculateStar(service?.bookings).toFixed(1) || 0}</span>
+                    className="text-yellow-400 ">{calculateStar(service?.bookings) ? calculateStar(service?.bookings).toFixed(1) : 0}</span>
                   <span
                     className="ml-2"><RatingCustom
                       rating={calculateStar(service?.bookings)}/></span>
@@ -142,14 +143,14 @@ const ServicePage = () => {
                     className="text-[--clr-gray-500] ">{calculateFeedBack(service?.bookings) || 0} Đánh giá</span>
                 </div>
                 <div className="w-full flex justify-evenly">
-                  <div>
-                    <Button
-                      onClick={() => handleClickDetail(service)}
-                      width={100}
-                    >
-                      Chi tiết
-                    </Button>
-                  </div>
+                  {/*<div>*/}
+                  {/*  /!*<Button*!/*/}
+                  {/*  /!*  onClick={() => handleClickDetail(service)}*!/*/}
+                  {/*  /!*  width={100}*!/*/}
+                  {/*  /!*>*!/*/}
+                  {/*  /!*  Chi tiết*!/*/}
+                  {/*  /!*</Button>*!/*/}
+                  {/*</div>*/}
                   <div>
                     <Button
                       onClick={() => handleClickBooking(service)}

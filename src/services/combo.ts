@@ -15,7 +15,8 @@ export const getComboByServiceId = async (serviceId: number) => {
   return data;
 };
 
-export const getMenuComboById = async (id: number) => {
+export const getMenuComboById = async (id: number | string) => {
+  console.log(id);
   const { data }: any = await Api.get(`${Apis.COMBO_URL}/${id}`);
   return data;
 };

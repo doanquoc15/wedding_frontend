@@ -75,7 +75,7 @@ export default function TabComment({ combo }) {
           {
             combo?.bookings?.map((item, index) => (
               <div key={index}>
-                <div className={"flex gap-4"}>
+                {item?.feedback && <div className={"flex gap-4"}>
                   <Avatar
                     alt="user name"
                     src={item?.user?.image}
@@ -87,7 +87,7 @@ export default function TabComment({ combo }) {
                     <p
                       className="text-[13px] text-gray-300 italic">{moment(item?.feedback?.createdAt).format("DD-MM-YYYY")}</p>
                   </div>
-                </div>
+                </div>}
                 <p className="ml-16 mt-3">{item?.feedback?.comment}</p>
               </div>
             ))
