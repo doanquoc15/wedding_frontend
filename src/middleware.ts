@@ -5,11 +5,15 @@ const protectedRoutes = ["/tai-khoan", "/payment/success", "/payment/cancel"];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const role = request.cookies.get("role")?.value;
+  const role = request.cookies.get("role")?.value.trim();
 
   // Check if the user is logged in
   if (role) {
     if (pathname === "/dang-nhap" || pathname === "/dang-ky") {
+      return NextResponse.redirect(new URL("/", request.url));
+    }
+
+    if (role === "CUSTOMER") {
       return NextResponse.redirect(new URL("/", request.url));
     }
 
