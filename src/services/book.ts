@@ -4,6 +4,7 @@ const Apis = {
   BOOK_URL: "/book",
   UPDATE_STATUS_BOOK_URL: "/book/status",
   COUNT_BOOKING_URL: "/book/month",
+  COUNT_STATUS_BOOKING_URL: "/book/status-booking",
   UPDATE_PAYMENT_BOOK_URL: "/book/payment",
   ALL_FOOD_BOOK_URL: "/book/food",
   CHECK_BOOK_URL: "/book/check-custom",
@@ -16,6 +17,10 @@ export const getAllBooking = async (params: object) => {
 };
 export const getCountBookingMonth = async (year: string | number) => {
   const { data }: any = await Api.get(`${Apis.COUNT_BOOKING_URL}/${year}`);
+  return data;
+};
+export const getCountStatusBookingMonth = async (year: string | number) => {
+  const { data }: any = await Api.get(`${Apis.COUNT_STATUS_BOOKING_URL}/${year}`);
   return data;
 };
 

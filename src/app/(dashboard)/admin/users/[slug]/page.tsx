@@ -8,6 +8,7 @@ import { TextField } from "@mui/material";
 import dayjs from "dayjs";
 import moment from "moment";
 import { useRouter } from "next/navigation";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 import { UploadImage } from "@/services/upload";
 import TextInputField from "@/components/common/TextInputField";
@@ -25,22 +26,23 @@ import { LocalStorage } from "@/shared/config/localStorage";
 import { MESSAGE_SUCCESS } from "@/constants/errors";
 import { usersReducer } from "@/stores/reducers/user";
 import LoadingButton from "@/components/common/Loading";
+import { createdUserSchema } from "@/libs/validation/userSchema";
 
 const Detail_New_User = ({ params }) => {
   //useForm
 
   const {
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid, isSubmitting },
     control,
     reset,
   } = useForm({
-    // resolver: yupResolver(createdUserSchema),
+    resolver: yupResolver(createdUserSchema),
     defaultValues: {
       dateOfBirth: undefined,
       name: "",
       email: "",
-      phone: "",
+      phone: null,
       gender: "",
       province: "",
       district: "",
@@ -420,6 +422,7 @@ const Detail_New_User = ({ params }) => {
 
           </div>
           <div className="mt-10">
+           
             <ButtonBtn startIcon={isLoading && <LoadingButton/>} type="submit"
               width={150}>{params?.slug === "new" ? "Tạo mới" : "Cập nhật"}</ButtonBtn>
           </div>

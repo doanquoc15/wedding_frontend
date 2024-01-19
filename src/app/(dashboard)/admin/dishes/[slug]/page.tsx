@@ -35,7 +35,7 @@ const Detail_New_Dish = ({ params }) => {
     defaultValues: {
       dishName: "",
       description: "",
-      price: 0,
+      price: undefined,
       image: "",
       typeId: "",
     },
@@ -224,6 +224,7 @@ const Detail_New_Dish = ({ params }) => {
               <div className="w-1/2">
                 <label className="text-[#333] font-semibold">Loại món ăn</label>
                 <SelectField
+                  error={!!errors.typeId}
                   name="typeId"
                   label=""
                   labelDisplay=""
@@ -236,12 +237,15 @@ const Detail_New_Dish = ({ params }) => {
                     maxLength: 400,
                   }}
                 />
+                <p className="mt-1"> {errors?.typeId && (
+                  <Error message={errors?.typeId?.message as string}/>
+                )}</p>
               </div>
               <div className="w-1/2">
                 <label className="text-[#333] font-semibold">Mô tả</label>
                 <div className="w-[400px]">
                   <TextAreaField
-                    error={!!errors.typeId}
+                    error={!!errors.description}
                     name="description"
                     label=""
                     placeholder="Nhập mô tả cho món ăn ..."
@@ -250,6 +254,9 @@ const Detail_New_Dish = ({ params }) => {
                     className="w-full"
                     rows={5}
                   />
+                  <p className="mt-1"> {errors?.description && (
+                    <Error message={errors?.description?.message as string}/>
+                  )}</p>
                 </div>
               </div>
             </div>

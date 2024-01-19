@@ -1,15 +1,16 @@
 import * as yup from "yup";
 
-import { GENDER } from "@/constants/common";
-
 export const createdUserSchema = yup.object().shape({
   dateOfBirth: yup.date()
     .max(new Date(), "Date of birth must be on or before today")
     .nullable(),
-  name: yup.string().required("Name is required"),
-  email: yup.string().email("Invalid email").required("Email is required"),
-  phone: yup.string().matches(/^[0-9]{10}$/, "Invalid phone number").required("Phone number is required").nullable(),
-  gender: yup.string().oneOf(Object.values(GENDER), "Không hợp lệ").nullable(),
+  name: yup.string().required("Trường tên là bắt buộc").min(2, "Phải nhiều hơn hai ký tự"),
+  email: yup.string().email("Email không hợp lệ").required("Email là bắt buộc"),
+  phone: yup.string().transform((_, value) => (value ? value : null)).matches(/^[0-9]{10}$/, "Số điện thoại không" +
+    " hợp lệ").trim("Không được có khoảng trắng")
+    .nullable()
+    .notRequired(),
+  gender: yup.string().nullable(),
   province: yup.string().nullable(),
   district: yup.string().nullable(),
   ward: yup.string().nullable(),

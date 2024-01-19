@@ -16,7 +16,7 @@ import deposit from "@/statics/images/deposit.png";
 import { getAllUsers } from "@/services/user";
 import { statusApiReducer } from "@/stores/reducers/statusAPI";
 import { useAppDispatch } from "@/stores/hook";
-import { getAllBooking, getCountBookingMonth, getPercentBooking } from "@/services/book";
+import { getAllBooking, getCountBookingMonth, getCountStatusBookingMonth, getPercentBooking } from "@/services/book";
 import { getAllService } from "@/services/service";
 import { getAllDish } from "@/services/menu-item";
 import { getAllComboMenu } from "@/services/combo";
@@ -24,6 +24,7 @@ import ManagementChart from "@/app/(dashboard)/admin/charts/ManagementChart";
 import TwoSimplePieChart from "@/app/(dashboard)/admin/charts/TwoSimplePieChart";
 import { formatMoney } from "@/utils/formatMoney";
 import LineCharts from "@/app/(dashboard)/admin/charts/LineCharts";
+import BarCharts from "@/app/(dashboard)/admin/charts/BarChart";
 
 const currentYear = new Date().getFullYear();
 
@@ -35,12 +36,14 @@ const HomeDashBoard = () => {
   const [totalComboMenu, setTotalComboMenu] = useState(0);
   const [loading, setLoading] = useState(false);
   const [filterDate, setFilterDate] = useState<any>(currentYear);
+  const [yearFilter, setYearFilter] = useState<any>(currentYear);
   const [percentBooking, setPercentBooking] = useState<any>([]);
   const [allBooking, setAllBooking] = useState<any>([]);
   const [allPayment, setAllPayment] = useState<any>(0);
   const [depositPayment, setDepositPayment] = useState<any>(0);
   const [pendingDepositPayment, setPendingDepositPayment] = useState<any>(0);
   const [countBooking, setCountBooking] = useState<any>([]);
+  const [countStatusBooking, setCountStatusBooking] = useState<any>([]);
 
   //const
   const dispatch = useAppDispatch();
@@ -62,8 +65,6 @@ const HomeDashBoard = () => {
       dispatch(statusApiReducer.actions.setMessageError(error?.message));
     }
   };
-
-  console.log(filterDate, currentYear);
 
   const getPendingDeposit = (data) => {
     const dataApproved = data?.filter(item => item?.status === "APPROVED")[0]?.data;
@@ -121,6 +122,12 @@ const HomeDashBoard = () => {
     setFilterDate(utcDate);
   };
 
+  const changeYear = (e) => {
+    const utcDate = moment(e).utc(true).format("YYYY");
+
+    setYearFilter(utcDate);
+  };
+
   const calculatorStatusPayment = (data, statusBooking, statusPayment) => {
     const type = statusPayment === "PAID" ? "totalMoney" : "depositMoney";
     const dataStatusBooking = data?.filter(item => item?.status === statusBooking)[0]?.data;
@@ -160,6 +167,14 @@ const HomeDashBoard = () => {
       dispatch(statusApiReducer.actions.setMessageError(error?.data?.message));
     }
   };
+  const fetchCountStatusBookingMonth = async () => {
+    try {
+      const data = await getCountStatusBookingMonth(yearFilter);
+      setCountStatusBooking(data);
+    } catch (error: any) {
+      dispatch(statusApiReducer.actions.setMessageError(error?.data?.message));
+    }
+  };
 
   const getTotalBooking = (data) => {
     return data.reduce((total, item) =>
@@ -194,9 +209,12 @@ const HomeDashBoard = () => {
   }, []);
 
   useEffect(() => {
-    console.log(1);
     fetchCountBookingMonth();
   }, [filterDate]);
+
+  useEffect(() => {
+    fetchCountStatusBookingMonth();
+  }, [yearFilter]);
 
   return (
     <div>
@@ -258,7 +276,7 @@ const HomeDashBoard = () => {
             Array.from({ length: 5 }, (_, index) => <Skeleton key={index} variant="circular" width={150} height={150}/>)
         }
       </div>
-      <span className="text-[20px] font-bold py-10 block">Biểu đồ đơn hàng kết hoàn thành</span>
+      <span className="text-[20px] font-bold py-10 block">Biểu đồ đơn hàng hoàn thành</span>
       <div className=" flex flex-col gap-8">
         {/*ManagementChart*/}
         <DatePicker
@@ -271,6 +289,21 @@ const HomeDashBoard = () => {
           className="max-w-[200px]"
         />
         <LineCharts data={countBooking}/>
+      </div>
+
+      <span className="text-[20px] font-bold py-10 block">Biểu đơn hàng theo trạng thái</span>
+      <div className=" flex flex-col gap-8">
+        {/*ManagementChart*/}
+        <DatePicker
+          views={["year"]}
+          label="year2"
+          inputFormat="YYYY"
+          value={yearFilter.toString()}
+          onChange={(e) => changeYear(e)}
+          renderInput={(params) => <TextField {...params} value={yearFilter.toString()} helperText={null}/>}
+          className="max-w-[200px]"
+        />
+        <BarCharts data={countStatusBooking}/>
       </div>
     </div>
   );

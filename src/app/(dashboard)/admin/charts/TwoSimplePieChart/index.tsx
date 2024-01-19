@@ -1,9 +1,14 @@
 import React from "react";
 import { Cell, Pie, PieChart, Tooltip } from "recharts";
 
-import { capitalizeFirstLetter } from "@/utils/capitalizeFirstLetter";
-
 const TwoSimplePieChart = ({ data }) => {
+  const nameVN = {
+    NEW: "Chờ xác nhận",
+    PENDING: "Xác nhận thêm",
+    RECEIVED: "Hoàn thành",
+    APPROVED: "Đã xác nhận",
+    REJECTED: "Hủy",
+  };
   return (
     <div className="relative">
       <PieChart width={200} height={200}>
@@ -19,7 +24,7 @@ const TwoSimplePieChart = ({ data }) => {
       <div
         className="flex flex-col items-center absolute top-[50%] left-[50%] translate-y-[-50%] translate-x-[-50%] text-[16px] w-full font-normal">
         <span className="leading-[28px] text-[16px] font-bold">{data[0]?.percent}%</span>
-        <span className="leading-[24px] text-[14px] font-semibold">{capitalizeFirstLetter(data[0]?.name)}</span>
+        <span className="leading-[24px] text-[14px] font-semibold">{nameVN[data[0]?.name]}</span>
       </div>
       <div className="text-center mt-2">{data[0]?.value || 0} đơn hàng</div>
     </div>

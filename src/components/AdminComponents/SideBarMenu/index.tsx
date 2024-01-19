@@ -7,7 +7,6 @@ import FastfoodIcon from "@mui/icons-material/Fastfood";
 import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
 import QueryStatsIcon from "@mui/icons-material/QueryStats";
 import ChecklistIcon from "@mui/icons-material/Checklist";
-import BadgeIcon from "@mui/icons-material/Badge";
 
 import ButtonBtn from "@/components/common/Button";
 
@@ -50,11 +49,6 @@ export const MENU_SIDEBAR_LIST = [
     title: "Loại món ăn",
     link: "/admin/type-dish",
     icon: <ChecklistIcon/>
-  }, {
-    id: 6,
-    title: "Nhân viên",
-    link: "/admin/employee",
-    icon: <BadgeIcon/>
   },
 
 ];

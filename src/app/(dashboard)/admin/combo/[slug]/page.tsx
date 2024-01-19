@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Avatar, Tooltip, Typography } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 import { getAllDish } from "@/services/menu-item";
 import { statusApiReducer } from "@/stores/reducers/statusAPI";
@@ -19,6 +20,7 @@ import LoadingButton from "@/components/common/Loading";
 import { createComboMenu, getMenuComboById, updateComboMenu } from "@/services/combo";
 import { MESSAGE_SUCCESS } from "@/constants/errors";
 import { PATH } from "@/constants/common";
+import { createdComboSchema } from "@/libs/validation/createdComboSchema";
 
 const CreateBookingPage = ({ params }) => {
   //useForm
@@ -28,11 +30,10 @@ const CreateBookingPage = ({ params }) => {
     reset,
     control,
   } = useForm({
-    // resolver: yupResolver(createdUserSchema),
+    resolver: yupResolver(createdComboSchema),
     defaultValues: {
-      comboName: undefined,
+      comboName: "",
       description: "",
-      totalPrice: 0,
       serviceId: "",
     },
     mode: "all",
@@ -212,8 +213,8 @@ const CreateBookingPage = ({ params }) => {
                   className: "border-0 h-full p-0 px-3",
                   maxLength: 256,
                 }}
-                error={!!errors?.comboName}
                 className="w-full max-h-[40px] input-custom"
+                error={!!errors?.comboName}
                 helperText={
                   errors?.comboName && (
                     <Error message={errors?.comboName?.message as string}/>
@@ -235,6 +236,9 @@ const CreateBookingPage = ({ params }) => {
                 className="w-full"
                 rows={5}
               />
+              <p className="mt-1"> {errors?.description && (
+                <Error message={errors?.description?.message as string}/>
+              )}</p>
             </div>
           </div>
           <div className="w-full">
@@ -250,7 +254,12 @@ const CreateBookingPage = ({ params }) => {
                 className: "border-0 h-[52px] px-4 py-0 !h-full !flex !items-center",
                 maxLength: 256,
               }}
+              error={!!errors?.serviceId}
+
             />
+            <p className="mt-1"> {errors?.serviceId && (
+              <Error message={errors?.serviceId?.message as string}/>
+            )}</p>
           </div>
           <ButtonBtn
             width={150}
