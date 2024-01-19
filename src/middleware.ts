@@ -12,7 +12,11 @@ export function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL("/", request.url));
     }
 
-    if (pathname.startsWith("/") && role !== "ADMIN") {
+    if (role === "CUSTOMER") {
+      return NextResponse.redirect(new URL("/", request.url));
+    }
+
+    if (pathname.startsWith("/admin") && role !== "ADMIN") {
       return NextResponse.redirect(new URL("/", request.url));
     } else if (
       role === "ADMIN" &&
