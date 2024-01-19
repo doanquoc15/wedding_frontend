@@ -4,41 +4,47 @@ import { useEffect, useState } from "react";
 import { Box } from "@mui/material";
 import Image from "next/legacy/image";
 
-import MainChefDetail from "@/components/MainChefDetail";
 import TitleHead from "@/components/TitleHead";
 import Slider from "@/components/common/SliderBar";
-import { TypeEmployee } from "@/types/common";
 import { useAppDispatch } from "@/stores/hook";
-import { statusApiReducer } from "@/stores/reducers/statusAPI";
-import { getAllEmployee } from "@/services/employee";
 import { breadCrumbReducer } from "@/stores/reducers/breadCrumb";
 import { HOME_BREADCRUMB } from "@/constants/common";
+import MySlick from "@/components/MySlick";
+import { getTopDish } from "@/services/menu-item";
+import { statusApiReducer } from "@/stores/reducers/statusAPI";
+import CardFood from "@/components/CardFood";
+import { getAllService } from "@/services/service";
+import CardService from "@/components/CardService";
 
 export default function Home() {
   //useState
-  const [employeeChefs, setEmployeeChefs] = useState<TypeEmployee[]>();
+  const [topDish, setTopDish] = useState<any>([]);
+  const [services, setServices] = useState<any>([]);
 
   //const
   const dispatch = useAppDispatch();
 
-  //function
-  const getEmployee = async () => {
+  const fetchTopDish = async () => {
     try {
-      const res = await getAllEmployee({});
-      setEmployeeChefs(
-        res?.employees?.filter(
-          (item: TypeEmployee) => item?.position === "CHEF"
-        )
-      );
+      const res = await getTopDish(10);
+      setTopDish(res);
+    } catch (error: any) {
+      dispatch(statusApiReducer.actions.setMessageError(error.data.message));
+    }
+
+  };
+  const getServices = async () => {
+    try {
+      const res = await getAllService({ pageSize: 100 });
+      setServices(res.data);
     } catch (error: any) {
       dispatch(statusApiReducer.actions.setMessageError(error?.data?.message));
     }
   };
 
-  //useEffect
   useEffect(() => {
-    getEmployee();
-    // eslint-disable-next-line
+    fetchTopDish();
+    getServices();
   }, []);
 
   useEffect(() => {
@@ -58,14 +64,29 @@ export default function Home() {
     <main>
       <Slider/>
       <TitleHead title="Trang Chủ"/>
-      <div className="w-full bg-[#f8ece0] py-7 px-7 rounded-[5px] mb-[30px]">
-        <div className="text-[25px] text-center">ĐẦU BẾP</div>
-        <div className="flex flex-wrap justify-between gap-10">
-          {employeeChefs?.map((chef: TypeEmployee) => (
-            <div key={chef?.id} className="">
-              <MainChefDetail chef={chef}/>
-            </div>
-          ))}
+      <div className="w-full py-7 px-7 rounded-[5px] mb-[30px]">
+        <div className="mt-6">
+          <MySlick title="Top 10 món ăn mới nhất">
+            {
+              topDish.map((item, index) => (
+                <div key={index}><CardFood data={item}/></div>
+              ))
+            }
+          </MySlick>
+        </div>
+      </div>
+      <div className="flex justify-center">
+        <p className="border-b-[1px] border-gray-400 w-[50%]"/>
+      </div>
+      <div className="w-full py-7 px-7 rounded-[5px] mb-[30px]">
+        <div className="mt-6">
+          <MySlick title="Dịch vụ hot">
+            {
+              services.map((item, index) => (
+                <div key={index} className="py-3"><CardService data={item}/></div>
+              ))
+            }
+          </MySlick>
         </div>
       </div>
       <Box

@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import React from "react";
+// eslint-disable-next-line import/no-unresolved
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 export const metadata: Metadata = {
   title: {

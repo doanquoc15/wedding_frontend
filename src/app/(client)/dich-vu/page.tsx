@@ -64,11 +64,6 @@ const ServicePage = () => {
     setIsOpenModal(false);
   };
 
-  const handleClickDetail = (service: TypeService) => {
-    setService(service);
-    router.push(`/dich-vu/chi-tiet/${service?.id}`);
-  };
-
   const handleClickCancel = () => {
     setIsOpenModal(false);
   };
@@ -143,14 +138,6 @@ const ServicePage = () => {
                     className="text-[--clr-gray-500] ">{calculateFeedBack(service?.bookings) || 0} Đánh giá</span>
                 </div>
                 <div className="w-full flex justify-evenly">
-                  {/*<div>*/}
-                  {/*  /!*<Button*!/*/}
-                  {/*  /!*  onClick={() => handleClickDetail(service)}*!/*/}
-                  {/*  /!*  width={100}*!/*/}
-                  {/*  /!*>*!/*/}
-                  {/*  /!*  Chi tiết*!/*/}
-                  {/*  /!*</Button>*!/*/}
-                  {/*</div>*/}
                   <div>
                     <Button
                       onClick={() => handleClickBooking(service)}

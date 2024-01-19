@@ -3,6 +3,7 @@ import { IResponse } from "@/types/common";
 
 const Apis = {
   URL_DISH: "/menu-item",
+  URL_TOP_DISH: "/menu-item/top",
 };
 
 export const getAllDish = async (options?: any) => {
@@ -17,6 +18,11 @@ export const createDish = async (params: any) => {
 
 export const getDishById = async (id: number) => {
   const { data }: any = await Api.get(`${Apis.URL_DISH}/${id}`);
+  return data;
+};
+
+export const getTopDish = async (numb: number) => {
+  const { data }: any = await Api.get(`${Apis.URL_TOP_DISH}/${numb}`);
   return data;
 };
 
