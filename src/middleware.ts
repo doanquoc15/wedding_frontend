@@ -10,20 +10,22 @@ export function middleware(request: NextRequest) {
   // Check if the user is logged in
   if (role) {
     if (pathname === "/dang-nhap" || pathname === "/dang-ky") {
-      return NextResponse.redirect(new URL("/", request.url));
-    }
-
-    if (role === "CUSTOMER") {
-      return NextResponse.redirect(new URL("/", request.url));
+      if (role === "ADMIN") {
+        return NextResponse.redirect(new URL("/admin/dashboard", request.url));
+      } else {
+        return NextResponse.redirect(new URL("/", request.url));
+      }
     }
 
     // Check admin routes for admin role
     if (pathname.startsWith("/admin") && role !== "ADMIN") {
+      console.log(1);
       return NextResponse.redirect(new URL("/", request.url));
     } else if (
       role === "ADMIN" &&
       (!pathname.startsWith("/admin") || pathname === "/admin")
     ) {
+      console.log(2);
       return NextResponse.redirect(new URL("/admin/dashboard", request.url));
     }
 
@@ -42,7 +44,12 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!api|_next/static|_next/image|favicon.ico|auth/login).*)",
-    "/partner/:path*",
+    {
+      source: "/((?!api|_next/static|_next/image|favicon.ico).*)",
+      missing: [
+        { type: "header", key: "next-router-prefetch" },
+        { type: "header", key: "purpose", value: "prefetch" },
+      ],
+    },
   ],
 };
