@@ -128,6 +128,14 @@ const DetailMenu = () => {
         }))
       );
 
+      localStorage.setItem(
+        "menuComboCustomized",
+        JSON.stringify(res.comboItems?.map((item) => ({
+          ...item?.menuItem,
+          quantity: item?.quantity,
+        })))
+      );
+
       setCheckedMenus(
         res.comboItems?.map((item) => ({
           ...item?.menuItem,
