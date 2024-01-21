@@ -183,6 +183,7 @@ export default function SignUpPage() {
               src={Restaurant_gif}
               alt="restaurant gif"
               objectFit="cover"
+              height={710}
               width={1000}
             />
           </Grid>
