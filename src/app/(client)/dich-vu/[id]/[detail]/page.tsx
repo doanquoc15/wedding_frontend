@@ -24,6 +24,7 @@ import { CheckIcon } from "@/components/Icons";
 import DetailModalBook from "@/components/DetailModalBook";
 import LoadingButton from "@/components/common/Loading";
 import TabComment from "@/components/TabComment/page";
+import { getUserLocal } from "@/services/getUserLocal";
 
 const DetailMenu = () => {
   //useState
@@ -283,7 +284,10 @@ const DetailMenu = () => {
   };
 
   const handleOpenModel = () => {
-    setIsOpenModal(true);
+    if (getUserLocal()?.id) {
+      setIsOpenModal(true);
+    } else
+      dispatch(statusApiReducer.actions.setMessageError("Bạn cần đăng nhập để xem trước bản PDF"));
   };
 
   const convertDataMenuBook = () => {
@@ -310,7 +314,12 @@ const DetailMenu = () => {
   };
 
   const handleChooseTable = () => {
-    setIsOpenModalChooseTable(true);
+    if (getUserLocal()?.id) {
+      setIsOpenModalChooseTable(true);
+
+    } else {
+      dispatch(statusApiReducer.actions.setMessageError("Bạn cần đăng nhập để đặt bàn"));
+    }
   };
 
   const covertDataMenuItems = (menuData) => (
@@ -333,7 +342,11 @@ const DetailMenu = () => {
     setSelectedItems([]);
   };
   const handleAdd = () => {
-    setIsEdit(true);
+    if (getUserLocal()?.id) {
+      setIsEdit(true);
+    } else {
+      dispatch(statusApiReducer.actions.setMessageError("Bạn cần đăng nhập để thay đổi món ăn"));
+    }
   };
 
   //useEffect
@@ -497,6 +510,7 @@ const DetailMenu = () => {
                           <Button
                             variant="outlined"
                             className="text-black"
+                            disabled={!getUserLocal()?.id}
                             onClick={() => handleDecrease(data)}
                           >
                             -
@@ -505,6 +519,7 @@ const DetailMenu = () => {
                             {dishQuantities[data.id] || data.quantity}
                           </Typography>
                           <Button
+                            disabled={!getUserLocal()?.id}
                             variant="outlined"
                             onClick={() => handleIncrease(data)}
                           >
@@ -514,6 +529,7 @@ const DetailMenu = () => {
                         <CheckBox
                           name="food"
                           label={""}
+                          disabled={!getUserLocal()?.id}
                           onChange={() => handleCheckboxClick(data)}
                           checked={selectedItems.includes(data.id)}
                         />

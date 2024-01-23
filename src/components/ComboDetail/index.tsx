@@ -9,6 +9,8 @@ import { formatMoney } from "@/utils/formatMoney";
 import RatingCustom from "@/components/common/RatingCustom";
 import DetailModalBook from "@/components/DetailModalBook";
 import ModalPopup from "@/components/common/ModalPopup";
+import { getUserLocal } from "@/services/getUserLocal";
+import { statusApiReducer } from "@/stores/reducers/statusAPI";
 
 import Button from "../common/Button";
 
@@ -42,7 +44,11 @@ const ComboMenuDetail = ({ menuCombo }) => {
     router.push(`${pathname}/${slug}-${menuCombo.id}`);
   };
   const handleBooking = async () => {
-    setIsOpenBooking(true);
+    if (getUserLocal()?.id) {
+      setIsOpenBooking(true);
+    } else {
+      dispatch(statusApiReducer.actions.setMessageError("Bạn cần đăng nhập để đặt bàn"));
+    }
   };
 
   const convertDataMenuItems = (menuItems) => {
@@ -90,12 +96,12 @@ const ComboMenuDetail = ({ menuCombo }) => {
             </div>
             <div className="text-[16px] font-bold flex items-center gap-3">
               <span
-                className="text-yellow-400 pt-1">{calculateStar(menuCombo?.bookings).toFixed(1) || 0}</span>
+                className="text-yellow-400 pt-1">{calculateStar(menuCombo?.bookings) || 0}</span>
               <span
                 className="ml-2"><RatingCustom
-                  rating={calculateStar(menuCombo?.bookings)}/></span>
+                  rating={calculateStar(menuCombo?.bookings) || 0}/></span>
               <span
-                className="text-[--clr-gray-500] pt-1">{calculateFeedBack(menuCombo?.bookings) || 0} Đánh giá</span>
+                className="text-[--clr-gray-500] pt-1">{calculateFeedBack(menuCombo?.bookings) > 0 && calculateFeedBack(menuCombo?.bookings)?.toFixed(1) || 0} Đánh giá</span>
             </div>
           </div>
         </div>

@@ -143,7 +143,7 @@ const ServicePage = () => {
                       onClick={() => handleClickBooking(service)}
                       width={100}
                     >
-                      Chọn combo
+                      Xem combo
                     </Button>
                   </div>
                 </div>

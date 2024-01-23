@@ -19,13 +19,11 @@ export function middleware(request: NextRequest) {
 
     // Check admin routes for admin role
     if (pathname.startsWith("/admin") && role !== "ADMIN") {
-      console.log(1);
       return NextResponse.redirect(new URL("/", request.url));
     } else if (
       role === "ADMIN" &&
       (!pathname.startsWith("/admin") || pathname === "/admin")
     ) {
-      console.log(2);
       return NextResponse.redirect(new URL("/admin/dashboard", request.url));
     }
 

@@ -24,7 +24,6 @@ import { useRouter } from "next/navigation";
 import { getUserLocal } from "@/services/getUserLocal";
 import { CookiesStorage } from "@/shared/config/cookie";
 import { LocalStorage } from "@/shared/config/localStorage";
-import { LogoutAPI } from "@/services/auth";
 import { usersReducer } from "@/stores/reducers/user";
 import { statusApiReducer } from "@/stores/reducers/statusAPI";
 import { useAppDispatch } from "@/stores/hook";
@@ -73,7 +72,6 @@ function HeaderUserBox() {
       CookiesStorage.clearCookieData("token");
       CookiesStorage.clearCookieData("role");
       LocalStorage.remove("user");
-      await LogoutAPI({});
       dispatch(usersReducer.actions.setStatus());
       router.push("/dang-nhap");
     } catch (error: any) {

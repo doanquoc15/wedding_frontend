@@ -21,7 +21,7 @@ import { statusApiReducer } from "@/stores/reducers/statusAPI";
 import stylesCommon from "@/constants/style";
 import DatePickerField from "@/components/common/DatePickerField";
 import ButtonBtn from "@/components/common/Button";
-import { createUser, getMeRole, updateUser } from "@/services/user";
+import { createUser, getUserById, updateUser } from "@/services/user";
 import { LocalStorage } from "@/shared/config/localStorage";
 import { MESSAGE_SUCCESS } from "@/constants/errors";
 import { usersReducer } from "@/stores/reducers/user";
@@ -137,7 +137,7 @@ const Detail_New_User = ({ params }) => {
   const fetchUserById = async () => {
     let code;
     try {
-      const res = await getMeRole();
+      const res = await getUserById(params?.slug);
       LocalStorage.add("user", JSON.stringify(res));
       const pro = await getAllProvince();
       const address = res?.address?.split(",");
@@ -422,7 +422,7 @@ const Detail_New_User = ({ params }) => {
 
           </div>
           <div className="mt-10">
-           
+
             <ButtonBtn startIcon={isLoading && <LoadingButton/>} type="submit"
               width={150}>{params?.slug === "new" ? "Tạo mới" : "Cập nhật"}</ButtonBtn>
           </div>

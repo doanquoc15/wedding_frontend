@@ -92,15 +92,15 @@ const BadgeCustom = ({ setBadge, badge }) => {
       setNotificationList((res));
       setBadge(0);
       handleClose();
-      fetchAllNotificationByUserId(getUserLocal()?.id);
+      getUserLocal()?.id && fetchAllNotificationByUserId(getUserLocal()?.id);
     } catch (error: any) {
       dispatch(statusApiReducer.actions.setMessageError(error?.data?.message));
     }
   };
 
   useEffect(() => {
-    if (!isFetchedUnreadNotification && getUserLocal()?.id) return;
-    fetchAllNotificationByUserId(getUserLocal()?.id);
+    if (!isFetchedUnreadNotification && !getUserLocal()?.id) return;
+    getUserLocal()?.id && fetchAllNotificationByUserId(getUserLocal()?.id);
   }, [getUserLocal()?.id, isFetchedUnreadNotification]);
 
   return (

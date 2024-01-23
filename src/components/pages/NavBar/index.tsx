@@ -24,9 +24,9 @@ import { LocalStorage } from "@/shared/config/localStorage";
 import logo_sky_view from "@/statics/images/logo-c-skyview.png";
 import BadgeCustom from "@/components/Badge";
 import { dataPages } from "@/data";
-import { statusApiReducer } from "@/stores/reducers/statusAPI";
 import { getNotificationUnRead } from "@/services/notification";
 import { PATH } from "@/constants/common";
+import { statusApiReducer } from "@/stores/reducers/statusAPI";
 
 function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
@@ -40,7 +40,7 @@ function ResponsiveAppBar() {
   };
 
   const [isHeaderFixed, setHeaderFixed] = useState<boolean>(false);
-  const [user, setUser] = useState<any>(getUserLocal());
+  const [user, setUser] = useState<any>();
   const socketIo = useContext(SocketContext);
   const id = getUserLocal()?.id;
   const [notifications, setNotifications] = useState<any[]>([]);
@@ -76,13 +76,18 @@ function ResponsiveAppBar() {
 
   //useEffect
   useEffect(() => {
+    setUser(null);
+  }, [def]);
+
+  useEffect(() => {
+    setUser("");
     if (typeof window === "undefined") return;
     window.addEventListener("scroll", handleScroll);
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, [def]);
+  }, []);
 
   CookiesStorage.getCookieData("role");
   useEffect(() => {
@@ -98,7 +103,7 @@ function ResponsiveAppBar() {
 
     if (!savedUser) return;
     socketIo.on("updateBadge", (authorId) => {
-      fetchAllNotificationByUserId(user?.id);
+      // fetchAllNotificationByUserId(user?.id);
       if (savedUser?.id === authorId)
         setBadge((prev) => +prev + 1);
     });
@@ -110,6 +115,7 @@ function ResponsiveAppBar() {
   }, [user?.id]);
 
   const fetchAllNotificationByUserId = async (id) => {
+    console.log(113);
     try {
       const count = await getNotificationUnRead(id);
       dispatch(usersReducer.actions.setIsFetchedNotification(true));
@@ -119,13 +125,12 @@ function ResponsiveAppBar() {
     }
   };
 
-  console.log(pathname.split("/"));
-
   useEffect(() => {
     if (!user) return;
-    fetchAllNotificationByUserId(user?.id);
+    user?.id && fetchAllNotificationByUserId(user?.id);
     setToken(CookiesStorage.getCookieData("token"));
   }, [user?.id]);
+
   return (
     <AppBar style={{ background: "white", color: "var(--clr-gray-500)", zIndex: 1 }}
       position={handleFixedHeader()}
@@ -190,7 +195,7 @@ function ResponsiveAppBar() {
             ))}
           </Box>
 
-          {token || user ?
+          {user ?
             <Box sx={{ flexGrow: 1, display: "flex", gap: "40px", justifyContent: "end" }}
             >
               <BadgeCustom setBadge={setBadge} badge={badge}/>
@@ -198,7 +203,7 @@ function ResponsiveAppBar() {
                 <div className="flex items-center gap-3">
                   <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                     <Avatar alt="Avatar user" defaultValue={user?.name}
-                      src={user?.image || "https://inkythuatso.com/uploads/thumbnails/800/2022/03/4a7f73035bb4743ee57c0e351b3c8bed-29-13-53-17.jpg"}/>
+                      src={user?.image}/>
                   </IconButton>
                   <span className="ml-2 text-[15px] cursor-pointer">{user?.name}</span>
                 </div>

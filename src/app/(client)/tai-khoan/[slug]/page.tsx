@@ -7,7 +7,6 @@ import { usePathname, useRouter } from "next/navigation";
 import SettingIcon from "@/statics/svg/ic-setting.svg";
 import { CookiesStorage } from "@/shared/config/cookie";
 import { LocalStorage } from "@/shared/config/localStorage";
-import { LogoutAPI } from "@/services/auth";
 import { useAppDispatch } from "@/stores/hook";
 import { statusApiReducer } from "@/stores/reducers/statusAPI";
 import MyInformation from "@/components/Account/MyInformation";
@@ -71,7 +70,6 @@ const SettingPage = () => {
       CookiesStorage.clearCookieData("token");
       CookiesStorage.clearCookieData("role");
       LocalStorage.remove("user");
-      await LogoutAPI({});
       dispatch(usersReducer.actions.setStatus());
       router.push("/");
     } catch (error: any) {
