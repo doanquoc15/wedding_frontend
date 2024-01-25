@@ -330,7 +330,6 @@ const BookingPage = ({ searchParams }) => {
                 <TableCell sx={{ whiteSpace: "nowrap" }}>Giờ bắt đầu</TableCell>
                 <TableCell sx={{ whiteSpace: "nowrap" }}>Giờ kết thúc</TableCell>
                 <TableCell sx={{ whiteSpace: "nowrap" }}>Trạng thái</TableCell>
-                <TableCell sx={{ whiteSpace: "nowrap" }}>Mô tà</TableCell>
                 <TableCell sx={{ whiteSpace: "nowrap" }}>Hành động</TableCell>
               </TableRow>
             </TableHead>
@@ -477,32 +476,25 @@ const BookingPage = ({ searchParams }) => {
                       noWrap
                     >
                       <span
-                        className={`px-4 text-white text-center rounded-[5px] min-w-[150px] py-1 text-[14px] ${colorStatusBooking[booking?.statusBooking]}`}>
-                        {booking?.statusBooking}</span>
-                      <IconButton
-                        onClick={() => {
-                          setBooking(booking);
-                          setIsOpenModalStatus(true);
-                        }}
-                        sx={{
-                          "&:hover": { background: theme.colors.error.lighter },
-                          color: "var(--clr-orange-400)"
-                        }}
-                        color="inherit"
-                        size="small"
-                      >
-                        <DriveFileRenameOutlineIcon className="cursor-pointer" fontSize="small"/>
-                      </IconButton>
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography
-                      variant="body1"
-                      color="text.primary"
-                      gutterBottom
-                      noWrap
-                    >
-                      {STATUS_BOOKING_REVERT[booking?.statusBooking]}
+                        className={`px-4 text-white text-center rounded-[5px] min-w-[200px] py-1 text-[14px] ${colorStatusBooking[booking?.statusBooking]}`}>
+                        {STATUS_BOOKING_REVERT[booking?.statusBooking]}</span>
+                      {
+                        (booking?.statusBooking === "REJECTED" || booking?.statusBooking === "FINISHED") ? null :
+                          <IconButton
+                            onClick={() => {
+                              setBooking(booking);
+                              setIsOpenModalStatus(true);
+                            }}
+                            sx={{
+                              "&:hover": { background: theme.colors.error.lighter },
+                              color: "var(--clr-orange-400)"
+                            }}
+                            color="inherit"
+                            size="small"
+                          >
+                            <DriveFileRenameOutlineIcon className="cursor-pointer" fontSize="small"/>
+                          </IconButton>
+                      }
                     </Typography>
                   </TableCell>
                   <TableCell align="center" className="flex gap-3">
@@ -680,17 +672,18 @@ const BookingPage = ({ searchParams }) => {
       </ModalPopup>
       {
         countNew > 0 &&
-          <Stack spacing={2} sx={{ width: "100%", height: "150%" }}>
-            <Snackbar anchorOrigin={{ vertical, horizontal }} open={open} autoHideDuration={10000}
-              onClose={handleClose}>
-              <Alert onClose={handleClose} severity="info" sx={{ width: "100%" }}>
-                {`Có ${countNew} đơn hàng chờ xác nhận`}
-              </Alert>
-            </Snackbar>
-          </Stack>
+        <Stack spacing={2} sx={{ width: "100%", height: "150%" }}>
+          <Snackbar anchorOrigin={{ vertical, horizontal }} open={open} autoHideDuration={10000}
+            onClose={handleClose}>
+            <Alert onClose={handleClose} severity="info" sx={{ width: "100%" }}>
+              {`Có ${countNew} đơn hàng chờ xác nhận`}
+            </Alert>
+          </Snackbar>
+        </Stack>
       }
     </div>
-  );
+  )
+  ;
 };
 
 export default BookingPage;

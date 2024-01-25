@@ -90,10 +90,7 @@ const ComboMenuDetail = ({ menuCombo }) => {
               <span className="font-semibold text-[#126213]">Chi phí :</span>{" "}
               {formatMoney(menuCombo?.totalPrice)}/bàn
             </div>
-            <div className="text-[--clr-red-400]">
-              <span className="font-semibold text-[#126213]">Chi phí :</span>{" "}
-              {formatMoney(menuCombo?.totalPrice)}/bàn
-            </div>
+           
             <div className="text-[16px] font-bold flex items-center gap-3">
               <span
                 className="text-yellow-400 pt-1">{calculateStar(menuCombo?.bookings) || 0}</span>
@@ -101,7 +98,8 @@ const ComboMenuDetail = ({ menuCombo }) => {
                 className="ml-2"><RatingCustom
                   rating={calculateStar(menuCombo?.bookings) || 0}/></span>
               <span
-                className="text-[--clr-gray-500] pt-1">{calculateFeedBack(menuCombo?.bookings) > 0 && calculateFeedBack(menuCombo?.bookings)?.toFixed(1) || 0} Đánh giá</span>
+                className="text-[--clr-gray-500] pt-1">
+                {calculateFeedBack(menuCombo?.bookings) > 0 && calculateFeedBack(menuCombo?.bookings)?.toFixed(1) || 0} Đánh giá</span>
             </div>
           </div>
         </div>
