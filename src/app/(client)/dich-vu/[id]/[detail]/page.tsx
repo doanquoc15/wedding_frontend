@@ -196,7 +196,7 @@ const DetailMenu = () => {
     console.log(menu);
     const prev = JSON.parse(LocalStorage.get("menuComboCustomized") as string);
 
-    if (prev?.filter(item => item?.id === menu?.id).length > 0 || menuData?.filter(item => item?.id === menu?.id).length > 0``) {
+    if (prev?.filter(item => item?.id === menu?.id).length > 0 || menuData?.filter(item => item?.id === menu?.id).length > 0) {
       dispatch(statusApiReducer.actions.setMessageError("Món ăn đã tồn tại"));
       return;
     }
