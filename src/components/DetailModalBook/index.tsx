@@ -30,6 +30,8 @@ import { tableSchema } from "@/libs/validation/tableSchema";
 import { getUserLocal } from "@/services/getUserLocal";
 import { NEXT_PUBLIC_PK_STRIPE_KEY } from "@/app/constant.env";
 import { paymentCheckout } from "@/services/payment";
+import { getMenuComboById } from "@/services/combo";
+import { LocalStorage } from "@/shared/config/localStorage";
 
 import { CheckIcon } from "../Icons";
 import BpRadio from "../common/BpRadio";
@@ -73,8 +75,22 @@ const DetailModalBook = (props: IDetailModalBookProps) => {
 
   //useState
   const [priceDesposit, setPriceDesposit] = useState<any>();
+  const [allFoodBooking, setAllFoodBooking] = useState<any[]>([]);
 
   //functions
+
+  const getAllFoodCurrent = async (id: number) => {
+    try {
+      const data = await getMenuComboById(id);
+      setAllFoodBooking(data?.comboItems?.map(item => ({
+        quantity: item.quantity,
+        totalPrice: item.totalPrice,
+        menuItemId: item.menuItemId,
+      })));
+    } catch (error: any) {
+      dispatch(statusApiReducer.actions.setMessageError(error?.message));
+    }
+  };
   const onSubmit = async (data: any) => {
     const timeZone = moment().format("Z");
     const date = moment(data.date).format(SHORT_DATE);
@@ -98,10 +114,11 @@ const DetailModalBook = (props: IDetailModalBookProps) => {
         comboMenuId,
         totalMoney: calculatorAllPrice(+data.numberTable),
         depositMoney: calculatorAllPrice(+data.numberTable) * 15 / 100,
-        comboItems: comboMenuItem,
+        comboItems: JSON.stringify(comboMenuItem) === JSON.stringify(allFoodBooking) ? [] : comboMenuItem,
         userId: getUserLocal()?.id
       };
       const { booking } = await createBooking(dataBook);
+      LocalStorage.add("id", booking?.id);
       setPriceDesposit(calculatorAllPrice(data.numberTable) * 15 / 100 / 100);
 
       setBooking(booking);
@@ -145,7 +162,10 @@ const DetailModalBook = (props: IDetailModalBookProps) => {
         sessionId: response?.id
       });
 
-      await updatePaymentBooking(+booking?.id, { statusPayment: "DEPOSIT" });
+      const id = LocalStorage.get("id") || "{}";
+      const idB = booking?.id || Number(JSON.parse(id));
+
+      await updatePaymentBooking(idB, { statusPayment: "DEPOSIT" });
 
       if (result.error) {
         dispatch(statusApiReducer.actions.setMessageError(result.error));
@@ -187,6 +207,12 @@ const DetailModalBook = (props: IDetailModalBookProps) => {
     fetchServiceById(serviceId);
     //eslint-disable-next-line
   }, [serviceId]);
+
+  useEffect(() => {
+    if (!comboMenuId) return;
+    getAllFoodCurrent(comboMenuId);
+    //eslint-disable-next-line
+  }, [comboMenuId]);
 
   return (
     <div>

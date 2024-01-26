@@ -18,10 +18,12 @@ const MySlider = ({ children, ...data }) => {
     speed: 500,
     slidesToShow: slidesToShow,
     slidesToScroll: 1,
-    nextArrow: <NextArrow disabled={currentSlide === data.length - slidesToShow} onClick={undefined}/>,
+    nextArrow: <NextArrow disabled={currentSlide === 10 - slidesToShow} onClick={undefined}/>,
     prevArrow: <PrevArrow disabled={currentSlide === 0} onClick={undefined}/>,
     beforeChange: (_, next) => setCurrentSlide(next),
   };
+
+  console.log(currentSlide, data);
 
   return (
     <div>
