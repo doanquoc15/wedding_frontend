@@ -92,7 +92,7 @@ const PendingPage = ({ data }) => {
       dispatch(statusApiReducer.actions.setMessageError(error.message));
     }
   };
-
+  console.log(feedBack);
   const fetchFeedBackByBookingId = async (bookingId: number) => {
     try {
       const res = await getFeedbackByBooking(bookingId);
@@ -100,6 +100,10 @@ const PendingPage = ({ data }) => {
         reset({
           rate: res[0]?.rating,
           comment: res[0]?.comment
+        });
+      } else {
+        reset({
+          comment: ""
         });
       }
       setFeedBack(res);

@@ -19,6 +19,7 @@ import { statusApiReducer } from "@/stores/reducers/statusAPI";
 import { ERROR_MESSAGES } from "@/constants/errors";
 import { NEXT_PUBLIC_PK_STRIPE_KEY } from "@/app/constant.env";
 import { paymentCheckout } from "@/services/payment";
+import { getUserLocal } from "@/services/getUserLocal";
 
 interface PendingPageProps {
   data: any;
@@ -43,7 +44,7 @@ const NewBookingPage = (props: PendingPageProps) => {
   const handleRejectedBooking = async () => {
     setIsLoading(true);
     try {
-      await updateBooking(booking?.id, { statusPayment: "UNPAID", statusBooking: "REJECTED" });
+      await updateBooking(booking?.id, { userId: getUserLocal()?.id, statusPayment: "UNPAID", statusBooking: "REJECTED" });
       dispatch(statusApiReducer.actions.setMessageSuccess(ERROR_MESSAGES.REJECTED_SUCCESS));
       reFetchData();
       setIsOpenModal(false);
@@ -154,8 +155,8 @@ const NewBookingPage = (props: PendingPageProps) => {
                   <div className="flex gap-3">
                     {
                       item?.statusPayment === "UNPAID" &&
-                        <ButtonBtn startIcon={isCheckout && <LoadingButton/>} width={150} bg="var(--clr-blue-400)"
-                          onClick={() => handlePayment(item)}>Đặt cọc</ButtonBtn>
+                      <ButtonBtn startIcon={isCheckout && <LoadingButton/>} width={150} bg="var(--clr-blue-400)"
+                        onClick={() => handlePayment(item)}>Đặt cọc</ButtonBtn>
                     }
                     <ButtonBtn width={150} bg="var(--clr-red-400)" onClick={() => handleOpenModalRejected(item)}>Hủy đơn
                       hàng</ButtonBtn>

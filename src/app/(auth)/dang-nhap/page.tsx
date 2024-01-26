@@ -17,6 +17,7 @@ import { setCookie } from "cookies-next";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import IconButton from "@mui/material/IconButton";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 import LoadingButton from "@/components/common/Loading";
 import { SignInType } from "@/types/common";
@@ -27,9 +28,16 @@ import { CookiesStorage } from "@/shared/config/cookie";
 import { usersReducer } from "@/stores/reducers/user";
 import { LocalStorage } from "@/shared/config/localStorage";
 import { SocketContext } from "@/context/sockets";
+import { signInSchema } from "@/libs/validation/signInSchema";
+import Error from "@/components/common/Error";
 
 const SignInPage = () => {
-  const { register, handleSubmit } = useForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<any>({ resolver: yupResolver(signInSchema), mode: "all" });
+
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState<boolean>(true);
 
@@ -128,6 +136,12 @@ const SignInPage = () => {
                   label="Email"
                   name="email"
                   autoComplete="email"
+                  error={!!errors?.email}
+                  helperText={
+                    errors?.email && (
+                      <Error message={errors?.email?.message as string}/>
+                    )
+                  }
                   autoFocus
                 />
                 <TextField
@@ -139,6 +153,12 @@ const SignInPage = () => {
                   label="Mật khẩu"
                   type={showPassword ? "password" : "text"}
                   id="password"
+                  error={!!errors?.password}
+                  helperText={
+                    errors?.password && (
+                      <Error message={errors?.password?.message as string}/>
+                    )
+                  }
                   autoComplete="current-password"
                   InputProps={{
                     endAdornment: (
@@ -159,7 +179,7 @@ const SignInPage = () => {
                   sx={{ color: "var(--clr-gray-500)", fontSize: "13px" }}
                 />
                 <Button
-                  startIcon={isSubmit && <LoadingButton/>}
+                  startIcon={isSubmitting && <LoadingButton/>}
                   type="submit"
                   fullWidth
                   variant="contained"

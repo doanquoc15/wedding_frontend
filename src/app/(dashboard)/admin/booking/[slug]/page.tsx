@@ -58,6 +58,7 @@ const Detail_New_Booking = ({ params }) => {
     control,
     reset,
     setValue,
+    getValues,
   } = useForm({
     resolver: yupResolver(bookingSchema),
     defaultValues: {
@@ -84,13 +85,16 @@ const Detail_New_Booking = ({ params }) => {
   const [userOption, setUserOption] = useState<IUser[]>([]);
   const [allFoodBooking, setAllFoodBooking] = useState<any[]>([]);
   const [allFoodBookingCurrent, setAllFoodBookingCurrent] = useState<any[]>([]);
-  const [foodCombo, setFoodCombo] = useState<any[]>([]);
+  const [numberTb, setNumberTb] = useState<any>(0);
   const [menuItems, setMenuItems] = useState<any[]>([]);
   const [search, setSearch] = useState<string>("");
   const [checkedDishes, setCheckedDishes] = useState<{
     [key: string]: number
   }>({});
   const [isChange, setIsChange] = useState<boolean>(false);
+  const [priceService, setPriceService] = useState<any>(0);
+  const [priceAllFood, setPriceAllFood] = useState<any>(0);
+  const [priceZone, setPriceZone] = useState<any>(0);
   //const
   const dispatch = useAppDispatch();
   const router = useRouter();
@@ -103,7 +107,8 @@ const Detail_New_Booking = ({ params }) => {
       });
       setServiceOption(data?.map(item => ({
         label: item?.serviceName,
-        value: item?.id
+        value: item?.id,
+        price: item?.price
       })) || []);
     } catch (error: any) {
       dispatch(statusApiReducer.actions.setMessageError(error?.data?.message));
@@ -175,6 +180,7 @@ const Detail_New_Booking = ({ params }) => {
   const fetchBookingById = async (id: number) => {
     try {
       const data = await getBookingById(id);
+      setNumberTb(data?.numberTable);
       fetchComboById(data?.serviceId);
       reset({
         userId: data?.userId,
@@ -187,6 +193,8 @@ const Detail_New_Booking = ({ params }) => {
         comboMenuId: data?.comboMenuId,
         zoneId: data?.zone?.zoneName
       });
+      setPriceService(data?.comboMenu?.service?.price);
+      setPriceZone(data?.zone?.priceRent);
       setZoneCurrent(data?.zone?.zoneName);
     } catch (error: any) {
       dispatch(statusApiReducer.actions.setMessageError(error?.message));
@@ -195,6 +203,9 @@ const Detail_New_Booking = ({ params }) => {
 
   const handleChangeService = (id: number) => {
     setIsChange(true);
+    setPriceService(serviceOption?.filter(item => +item?.value === +id)[0]?.price);
+    setPriceAllFood(0);
+    setAllFoodBooking([]);
     fetchComboById(+id);
   };
 
@@ -204,7 +215,6 @@ const Detail_New_Booking = ({ params }) => {
 
   const onSubmit = async (data) => {
     let dataItems;
-    const zonePrice = zones?.filter(item => item?.zoneName === zoneCurrent)[0]?.priceRent || 0;
     const timeZone = moment().format("Z");
     const date = moment(data.date).format(SHORT_DATE);
     const comeIn = moment(new Date(date + " " + data.comeInAt)).utc(true)
@@ -213,12 +223,12 @@ const Detail_New_Booking = ({ params }) => {
     const comeOut = moment(new Date(date + " " + data.comeOutAt)).utc(true)
       .subtract(timeZone, "hours")
       .toISOString();
-    console.log(JSON.stringify(allFoodBooking) === JSON.stringify(allFoodBookingCurrent));
     if (JSON.stringify(allFoodBooking) !== JSON.stringify(allFoodBookingCurrent)) {
       dataItems = [...allFoodBooking];
     } else {
       dataItems = [];
     }
+
     const dataBook = {
       ...data,
       numberTable: Number(data.numberTable),
@@ -229,8 +239,8 @@ const Detail_New_Booking = ({ params }) => {
       comeOutAt: comeOut,
       serviceId: +data?.serviceId,
       comboMenuId: +data?.comboMenuId,
-      totalMoney: totalMoney + zonePrice,
-      depositMoney: (totalMoney + zonePrice) * 15 / 100,
+      totalMoney: priceAllFood * Number(data.numberTable) + priceZone + priceService,
+      depositMoney: (priceAllFood * Number(data.numberTable) + priceZone + priceService) * 15 / 100,
       comboItems: dataItems
     };
 
@@ -325,6 +335,10 @@ const Detail_New_Booking = ({ params }) => {
     fetchAllDishes();
   };
 
+  useEffect(() => {
+    setPriceAllFood(allFoodBooking?.reduce((acc, item) => acc + item?.totalPrice, 0));
+  }, [allFoodBooking]);
+
   function mergeMenuItems(arr1, arr2) {
     const mergedItems = {};
 
@@ -371,8 +385,6 @@ const Detail_New_Booking = ({ params }) => {
     fetchAllFoodBooking(params?.slug);
     //eslint-disable-next-line
   }, [params?.slug]);
-
-  console.log({ checkedDishes });
 
   return (
     <div>
@@ -429,6 +441,7 @@ const Detail_New_Booking = ({ params }) => {
                   name="numberTable"
                   label=""
                   control={control}
+                  onChange={e => setNumberTb(e.target.value)}
                   inputProps={{
                     className: "border-0 h-full p-0 px-3",
                     maxLength: 256,
@@ -508,6 +521,7 @@ const Detail_New_Booking = ({ params }) => {
                             onChange(event);
                             setZoneCurrent(event.target.value);
                             setValue("zoneId", event.target.value);
+                            setPriceZone(zones?.filter(item => item?.zoneName === event.target.value)[0]?.priceRent || 0);
                           }}
                           value={item?.zoneName}
                           control={
@@ -621,176 +635,196 @@ const Detail_New_Booking = ({ params }) => {
                 <span className="font-semibold">Hủy thay đổi</span>
               </ButtonBtn>
             </div>
-            <TableContainer>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell sx={{ whiteSpace: "nowrap" }}>STT</TableCell>
-                    <TableCell sx={{ whiteSpace: "nowrap" }}>Tên món ăn</TableCell>
-                    <TableCell sx={{ whiteSpace: "nowrap" }}>Số lượng</TableCell>
-                    <TableCell sx={{ whiteSpace: "nowrap" }}>Giá</TableCell>
-                    <TableCell sx={{ whiteSpace: "nowrap" }}>Tổng giá</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {
-                    allFoodBooking?.map((item, index) => (
-                      <TableRow
-                        key={index}
-                        hover
-                      >
-                        <TableCell>
-                          <Typography
-                            variant="body1"
-                            color="text.primary"
-                            gutterBottom
-                            noWrap
-                          >
-                            {index + 1}
-                          </Typography>
-                        </TableCell>
-                        <TableCell>
-                          <Typography
-                            variant="body1"
-                            color="text.primary"
-                            gutterBottom
-                            noWrap
-                          >
-                            {item?.dishName}
-                          </Typography>
-                        </TableCell>
-                        <TableCell>
-                          <Typography
-                            variant="body1"
-                            color="text.primary"
-                            gutterBottom
-                            noWrap
-                          >
-                            {item?.quantity}
-                          </Typography>
-                        </TableCell><TableCell>
-                          <Typography
-                            variant="body1"
-                            color="text.primary"
-                            gutterBottom
-                            noWrap
-                          >
-                            {item?.totalPrice / item?.quantity}
-                          </Typography>
-                        </TableCell>
-                        <TableCell>
-                          <Typography
-                            variant="body1"
-                            color="text.primary"
-                            gutterBottom
-                            noWrap
-                          >
-                            {item?.totalPrice}
-                          </Typography>
-                        </TableCell>
+            <div className="flex flex-col gap-10">
+              <TableContainer>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell sx={{ whiteSpace: "nowrap" }}>STT</TableCell>
+                      <TableCell sx={{ whiteSpace: "nowrap" }}>Tên món ăn</TableCell>
+                      <TableCell sx={{ whiteSpace: "nowrap" }}>Số lượng</TableCell>
+                      <TableCell sx={{ whiteSpace: "nowrap" }}>Giá (VND)</TableCell>
+                      <TableCell sx={{ whiteSpace: "nowrap" }}>Tổng giá (VND)</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {
+                      allFoodBooking?.map((item, index) => (
+                        <TableRow
+                          key={index}
+                          hover
+                        >
+                          <TableCell>
+                            <Typography
+                              variant="body1"
+                              color="text.primary"
+                              gutterBottom
+                              noWrap
+                            >
+                              {index + 1}
+                            </Typography>
+                          </TableCell>
+                          <TableCell>
+                            <Typography
+                              variant="body1"
+                              color="text.primary"
+                              gutterBottom
+                              noWrap
+                            >
+                              {item?.dishName}
+                            </Typography>
+                          </TableCell>
+                          <TableCell>
+                            <Typography
+                              variant="body1"
+                              color="text.primary"
+                              gutterBottom
+                              noWrap
+                            >
+                              {item?.quantity}
+                            </Typography>
+                          </TableCell><TableCell>
+                            <Typography
+                              variant="body1"
+                              color="text.primary"
+                              gutterBottom
+                              noWrap
+                            >
+                              {formatMoney(item?.totalPrice / item?.quantity)}
+                            </Typography>
+                          </TableCell>
+                          <TableCell>
+                            <Typography
+                              variant="body1"
+                              color="text.primary"
+                              gutterBottom
+                              noWrap
+                            >
+                              {formatMoney(item?.totalPrice)}
+                            </Typography>
+                          </TableCell>
 
-                      </TableRow>
-                    ))
-                  }
-                </TableBody>
-              </Table>
-            </TableContainer>
+                        </TableRow>
+                      ))
+                    }
+                  </TableBody>
+                </Table>
+              </TableContainer>
+              <div>
+                <div className={"flex gap-3 items-center font-semibold text-[15px] text-[--clr-gray-500] "}>
+                  <span
+                    className="minw-w-[240px]">Tiền món ăn</span><span>{formatMoney(priceAllFood)} vnd / 1 bàn</span>
+                </div>
+                <div className={"flex gap-3 items-center font-semibold text-[15px] text-[--clr-gray-500]"}>
+                  <span className="minw-w-[240px]">Tiền dịch vụ</span><span>{formatMoney(priceService)} vnd</span></div>
+                <div className={"flex gap-3 items-center font-semibold text-[15px] text-[--clr-gray-500]"}>
+                  <span className="minw-w-[240px]">Tiền thuê khu</span><span>{formatMoney(priceZone)} vnd</span></div>
+                <div className={"flex gap-3 items-center font-semibold text-[17px] text-[--clr-gray-500]"}>
+                  <span
+                    className="minw-w-[240px]">Tổng cộng</span><span>{formatMoney((priceAllFood *
+                  Number(getValues("numberTable")) + priceZone + priceService))} vnd</span>
+                </div>
+              </div>
+            </div>
           </div>
         }
 
       </form>
       <hr className="mt-4"/>
       {
-        (isChange && params?.slug !== "new") && (<div className="justify-center flex flex-col mt-5">
-          <div className="w-3/5 pl-4">
-            <div className="flex items-center gap-5 min-w-[600px]">
-              <SearchInFilter
-                onSearch={handleSearch}
-                isResetAll={true}
-                width="450px"
-              />
-              <ButtonBtn onClick={handlePushFood} width={100}>Thêm món</ButtonBtn>
-            </div>
-            <div className="overflow-auto sticky w-full">
-              {groupDishesByType(menuItems).length > 0 &&
-                groupDishesByType(menuItems)?.map((dish: any, index) => (
-                  <div key={index} className="w-full">
-                    <div className="flex items-center justify-center max-w-full pr-3">
-                      <hr className="border-[1px] border-blue-400 w-full"/>
-                      <div className="font-bold text-[16px] mx-2 whitespace-nowrap">
-                        {dish.typeName}
+        (isChange && params?.slug !== "new" && groupDishesByType(menuItems).length > 0) && (
+          <div className="justify-center flex flex-col mt-5">
+            <div className="w-3/5 pl-4">
+              <div className="flex items-center gap-5 min-w-[600px]">
+                <SearchInFilter
+                  onSearch={handleSearch}
+                  isResetAll={true}
+                  width="450px"
+                />
+                <ButtonBtn onClick={handlePushFood} width={100}>Thêm món</ButtonBtn>
+              </div>
+              <div className="overflow-auto sticky w-full">
+                {groupDishesByType(menuItems).length > 0 &&
+                  groupDishesByType(menuItems)?.map((dish: any, index) => (
+                    <div key={index} className="w-full">
+                      <div className="flex items-center justify-center max-w-full pr-3">
+                        <hr className="border-[1px] border-blue-400 w-full"/>
+                        <div className="font-bold text-[16px] mx-2 whitespace-nowrap">
+                          {dish.typeName}
+                        </div>
+                        <hr className="border-[1px] border-blue-400 w-full"/>
                       </div>
-                      <hr className="border-[1px] border-blue-400 w-full"/>
-                    </div>
-                    {dish?.dishes?.map((menu) => (
-                      <div
-                        key={menu.id}
-                        className="flex items-center gap-3 py-4 px-4 cursor-pointer hover:bg-gray-100 w-full"
-                      >
-                        <Avatar
-                          alt="Image food"
-                          src={
-                            menu.image ||
-                            "https://lavenderstudio.com.vn/wp-content/uploads/2017/03/chup-san-pham.jpg"
-                          }
-                          sx={{ width: 60, height: 60 }}
-                        />
-                        <div className="flex items-center w-full flex-1">
-                          <div className="flex gap-1">
-                            <div className="flex flex-col gap-1 max-w-[200px]">
-                              <Typography
-                                variant="body1"
-                                className="whitespace-nowrap text-left"
-                              >
-                                {menu.dishName}
-                              </Typography>
+                      {dish?.dishes?.map((menu) => (
+                        <div
+                          key={menu.id}
+                          className="flex items-center gap-3 py-4 px-4 cursor-pointer hover:bg-gray-100 w-full"
+                        >
+                          <Avatar
+                            alt="Image food"
+                            src={
+                              menu.image ||
+                              "https://lavenderstudio.com.vn/wp-content/uploads/2017/03/chup-san-pham.jpg"
+                            }
+                            sx={{ width: 60, height: 60 }}
+                          />
+                          <div className="flex items-center w-full flex-1">
+                            <div className="flex gap-1">
+                              <div className="flex flex-col gap-1 max-w-[200px]">
+                                <Typography
+                                  variant="body1"
+                                  className="whitespace-nowrap text-left"
+                                >
+                                  {menu.dishName}
+                                </Typography>
+                                <Typography
+                                  variant="body2"
+                                  className="whitespace-nowrap text-left truncate w-[190px] italic"
+                                >
+                                  <Tooltip title={menu?.description}>
+                                    {menu?.description || (
+                                      <div className="italic">Chưa có mô tả</div>
+                                    )}
+                                  </Tooltip>
+                                </Typography>
+                              </div>
                               <Typography
                                 variant="body2"
-                                className="whitespace-nowrap text-left truncate w-[190px] italic"
+                                color="textSecondary"
+                                className="block"
+                                width={150}
                               >
-                                <Tooltip title={menu?.description}>
-                                  {menu?.description || (
-                                    <div className="italic">Chưa có mô tả</div>
-                                  )}
-                                </Tooltip>
+                                Giá: {formatMoney(menu?.price)} VND
                               </Typography>
-                            </div>
-                            <Typography
-                              variant="body2"
-                              color="textSecondary"
-                              className="block"
-                              width={150}
-                            >
-                              Giá: {formatMoney(menu?.price)} VND
-                            </Typography>
-                            <div className="flex items-center">
-                              <input
-                                className="ml-2 w-[20px] px-2 py-1 border border-gray-300 rounded-lg"
-                                style={{ height: "32px" }}
-                                type="checkbox"
-                                onChange={(e) => {
-                                  handleToggleDish(menu.id, e.target.checked ? 1 : 0);
-                                }}
-                                checked={!!checkedDishes[menu.id]}
-                              />
-                              <span className="px-4 text-[--clr-gray-500]">Số lượng</span>
-                              <input
-                                type="number"
-                                value={checkedDishes[menu.id]}
-                                onChange={(e) => handleToggleDish(menu.id, parseInt(e.target.value))}
-                                min={0}
-                                className="ml-2 w-16 px-2 py-1 border border-gray-300 rounded"
-                              />
+                              <div className="flex items-center">
+                                <input
+                                  className="ml-2 w-[20px] px-2 py-1 border border-gray-300 rounded-lg"
+                                  style={{ height: "32px" }}
+                                  type="checkbox"
+                                  onChange={(e) => {
+                                    const isChecked = e.target.checked;
+                                    const value = isChecked ? 1 : 0;
+                                    handleToggleDish(menu.id, value);
+                                  }}
+                                  checked={!!checkedDishes[menu.id]}
+                                />
+                                <span className="px-4 text-[--clr-gray-500]">Số lượng</span>
+                                <input
+                                  type="number"
+                                  value={checkedDishes[menu.id] || ""}
+                                  onChange={(e) => handleToggleDish(menu.id, parseInt(e.target.value))}
+                                  min={0}
+                                  className="ml-2 w-16 px-2 py-1 border border-gray-300 rounded"
+                                />
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
-                  </div>
-                ))}
+                      ))}
+                    </div>
+                  ))}
+              </div>
             </div>
-          </div>
-        </div>)
+          </div>)
       }
 
       <BackToTop/>

@@ -6,7 +6,6 @@ import FormControl from "@mui/material/FormControl";
 import Image from "next/legacy/image";
 import TextField from "@mui/material/TextField";
 import moment from "moment";
-import { yupResolver } from "@hookform/resolvers/yup";
 import { loadStripe } from "@stripe/stripe-js";
 
 import TextInputField from "@/components/common/TextInputField";
@@ -26,7 +25,6 @@ import DatePickerField from "@/components/common/DatePickerField";
 import stylesCommon from "@/constants/style";
 import { SHORT_DATE } from "@/constants/common";
 import { createBooking, updatePaymentBooking } from "@/services/book";
-import { tableSchema } from "@/libs/validation/tableSchema";
 import { getUserLocal } from "@/services/getUserLocal";
 import { NEXT_PUBLIC_PK_STRIPE_KEY } from "@/app/constant.env";
 import { paymentCheckout } from "@/services/payment";
@@ -56,9 +54,10 @@ const DetailModalBook = (props: IDetailModalBookProps) => {
     formState: { errors, isValid, isSubmitting },
     control,
     reset,
+    setError,
     setValue,
   } = useForm({
-    resolver: yupResolver(tableSchema),
+    // resolver: yupResolver(tableSchema),
     defaultValues: {
       numberTable: 0,
       numberOfGuest: 0,
@@ -119,6 +118,7 @@ const DetailModalBook = (props: IDetailModalBookProps) => {
       };
       const { booking } = await createBooking(dataBook);
       LocalStorage.add("id", booking?.id);
+      console.log(booking);
       setPriceDesposit(calculatorAllPrice(data.numberTable) * 15 / 100 / 100);
 
       setBooking(booking);
@@ -146,14 +146,19 @@ const DetailModalBook = (props: IDetailModalBookProps) => {
   };
 
   // payment integration
-  const makePayment = async (item) => {
+  const makePayment = async () => {
     const cart = [{ id: 1, name: "Đặt cọc trước", quantity: 1, price: priceDesposit }];
+
+    const idB = Number(LocalStorage.get("id")) || booking?.id;
+
+    await updatePaymentBooking(idB, { statusPayment: "DEPOSIT" });
     setIsCheckout(true);
     try {
       if (!NEXT_PUBLIC_PK_STRIPE_KEY) {
-        dispatch(statusApiReducer.actions.setMessageError("Stripe key không tồn tại"));
+        dispatch(statusApiReducer.actions.setMessageError("Stripe key không tồn tại! Thử lại sau!"));
         return;
       }
+
       const stripe: any = await loadStripe(NEXT_PUBLIC_PK_STRIPE_KEY);
 
       const response = await paymentCheckout(cart);
@@ -161,11 +166,6 @@ const DetailModalBook = (props: IDetailModalBookProps) => {
       const result = stripe.redirectToCheckout({
         sessionId: response?.id
       });
-
-      const id = LocalStorage.get("id") || "{}";
-      const idB = booking?.id || Number(JSON.parse(id));
-
-      await updatePaymentBooking(idB, { statusPayment: "DEPOSIT" });
 
       if (result.error) {
         dispatch(statusApiReducer.actions.setMessageError(result.error));
@@ -313,9 +313,7 @@ const DetailModalBook = (props: IDetailModalBookProps) => {
                     className="w-full max-h-[40px] input-custom"
                     helperText={
                       errors?.numberOfGuest && (
-                        <Error
-                          message={errors?.numberOfGuest?.message as string}
-                        />
+                        <Error message={errors?.numberOfGuest?.message as string}/>
                       )
                     }
                   />

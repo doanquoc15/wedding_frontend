@@ -98,6 +98,12 @@ const optionsApproved = [
   }
 ];
 
+const Payment = {
+  PAID: "Đã thanh toán",
+  UNPAID: "Chưa thanh toán",
+  DEPOSIT: "Đặt cọc"
+};
+
 const options = {
   NEW: optionsNew,
   PENDING: optionsNew,
@@ -330,6 +336,7 @@ const BookingPage = ({ searchParams }) => {
                 <TableCell sx={{ whiteSpace: "nowrap" }}>Giờ bắt đầu</TableCell>
                 <TableCell sx={{ whiteSpace: "nowrap" }}>Giờ kết thúc</TableCell>
                 <TableCell sx={{ whiteSpace: "nowrap" }}>Trạng thái</TableCell>
+                <TableCell sx={{ whiteSpace: "nowrap" }}>Thanh toán</TableCell>
                 <TableCell sx={{ whiteSpace: "nowrap" }}>Hành động</TableCell>
               </TableRow>
             </TableHead>
@@ -495,6 +502,16 @@ const BookingPage = ({ searchParams }) => {
                             <DriveFileRenameOutlineIcon className="cursor-pointer" fontSize="small"/>
                           </IconButton>
                       }
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography
+                      variant="body1"
+                      color="text.primary"
+                      gutterBottom
+                      noWrap
+                    >
+                      <span>{Payment[booking?.statusPayment]}</span>
                     </Typography>
                   </TableCell>
                   <TableCell align="center" className="flex gap-3">

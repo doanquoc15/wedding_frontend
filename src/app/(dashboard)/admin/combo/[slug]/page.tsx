@@ -267,7 +267,7 @@ const CreateBookingPage = ({ params }) => {
             type="submit"
             startIcon={isLoading && <LoadingButton/>}
           >
-            <span className="font-semibold whitespace-nowrap">Thêm mới</span>
+            <span className="font-semibold whitespace-nowrap">{params.slug !== "new" ? "Cập nhật" : "Thêm mới"}</span>
           </ButtonBtn>
 
         </div>
@@ -345,7 +345,7 @@ const CreateBookingPage = ({ params }) => {
                           <span className="px-4 text-[--clr-gray-500]">Số lượng</span>
                           <input
                             type="number"
-                            value={checkedDishes[menu.id]}
+                            value={checkedDishes[menu.id] || ""}
                             onChange={(e) => handleToggleDish(menu.id, parseInt(e.target.value))}
                             min={0}
                             className="ml-2 w-16 px-2 py-1 border border-gray-300 rounded"

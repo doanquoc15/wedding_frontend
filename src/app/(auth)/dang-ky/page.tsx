@@ -20,17 +20,18 @@ import { useRouter } from "next/navigation";
 import { SignUpType } from "@/types/common";
 import LoadingButton from "@/components/common/Loading";
 import { SignUpAPI } from "@/services/auth";
-import { signInSchema } from "@/libs/validation/signupSchema";
 import Restaurant_gif from "@/statics/images/animation_restaurant.gif";
 import { useAppDispatch } from "@/stores/hook";
 import { statusApiReducer } from "@/stores/reducers/statusAPI";
+import { signUpSchema } from "@/libs/validation/signupSchema";
+import Error from "@/components/common/Error";
 
 export default function SignUpPage() {
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<SignUpType>({ resolver: yupResolver(signInSchema) });
+  } = useForm<SignUpType>({ resolver: yupResolver(signUpSchema), mode: "all" });
 
   //ueState
   const [showPassword, setShowPassword] = useState<boolean>(true);
@@ -112,6 +113,11 @@ export default function SignUpPage() {
                 id="password"
                 autoComplete="current-password"
                 error={!!errors?.password}
+                helperText={
+                  errors?.password && (
+                    <Error message={errors?.password?.message as string}/>
+                  )
+                }
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
