@@ -68,7 +68,7 @@ const ComboMenuDetail = ({ menuCombo }) => {
   //useEffect
   return (
     <div className="flex flex-col">
-      <div className="w-[300px] h-[500px] border-2 border-gray-300 rounded-4 overflow-hidden relative">
+      <div className="w-[300px] h-[500px] border-2 border-gray-300 rounded-[10px] overflow-hidden relative">
         <Image
           src="https://cdn4.vectorstock.com/i/1000x1000/48/28/tropical-background-with-banana-leaves-vector-33234828.jpg"
           alt="bg combo"

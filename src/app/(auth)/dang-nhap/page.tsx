@@ -36,7 +36,7 @@ const SignInPage = () => {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<any>({ resolver: yupResolver(signInSchema), mode: "all" });
+  } = useForm<any>({ resolver: yupResolver(signInSchema), mode: "onBlur" });
 
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState<boolean>(true);

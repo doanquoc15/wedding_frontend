@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, {useState} from "react";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
@@ -8,30 +8,30 @@ import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import { Container, InputAdornment } from "@mui/material";
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
+import {Container, InputAdornment} from "@mui/material";
+import {useForm} from "react-hook-form";
+import {yupResolver} from "@hookform/resolvers/yup";
 import Image from "next/legacy/image";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import IconButton from "@mui/material/IconButton";
-import { useRouter } from "next/navigation";
+import {useRouter} from "next/navigation";
 
-import { SignUpType } from "@/types/common";
+import {SignUpType} from "@/types/common";
 import LoadingButton from "@/components/common/Loading";
-import { SignUpAPI } from "@/services/auth";
+import {SignUpAPI} from "@/services/auth";
 import Restaurant_gif from "@/statics/images/animation_restaurant.gif";
-import { useAppDispatch } from "@/stores/hook";
-import { statusApiReducer } from "@/stores/reducers/statusAPI";
-import { signUpSchema } from "@/libs/validation/signupSchema";
+import {useAppDispatch} from "@/stores/hook";
+import {statusApiReducer} from "@/stores/reducers/statusAPI";
+import {signUpSchema} from "@/libs/validation/signupSchema";
 import Error from "@/components/common/Error";
 
 export default function SignUpPage() {
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<SignUpType>({ resolver: yupResolver(signUpSchema), mode: "all" });
+    formState: {errors, isSubmitting},
+  } = useForm<SignUpType>({resolver: yupResolver(signUpSchema), mode: "onBlur"});
 
   //ueState
   const [showPassword, setShowPassword] = useState<boolean>(true);
@@ -165,7 +165,7 @@ export default function SignUpPage() {
                 fullWidth
                 variant="contained"
                 className="bg-blue-500"
-                sx={{ mt: 3, mb: 2 }}
+                sx={{mt: 3, mb: 2}}
               >
                 Đăng ký
               </Button>
@@ -183,7 +183,7 @@ export default function SignUpPage() {
             xs={false}
             sm={4}
             md={7}
-            sx={{ objectFit: "contain", height: "100%", overflow: "hidden" }}
+            sx={{objectFit: "contain", height: "100%", overflow: "hidden"}}
           >
             <Image
               src={Restaurant_gif}
