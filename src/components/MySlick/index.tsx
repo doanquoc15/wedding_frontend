@@ -23,7 +23,6 @@ const MySlider = ({ children, ...data }) => {
     beforeChange: (_, next) => setCurrentSlide(next),
   };
 
-  console.log(currentSlide, data);
 
   return (
     <div>

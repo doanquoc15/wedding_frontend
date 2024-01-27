@@ -50,7 +50,6 @@ export const updateBooking = async (id: number, params: any) => {
 };
 
 export const updateStatusBooking = async (id: number, params: any) => {
-  console.log(id);
   const { data }: any = await Api.patch(`${Apis.UPDATE_STATUS_BOOK_URL}/${id}`, params);
   return data;
 };

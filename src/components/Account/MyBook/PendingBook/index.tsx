@@ -29,7 +29,6 @@ interface PendingPageProps {
 const PendingPage = (props: PendingPageProps) => {
   const { data, reFetchData } = props;
 
-  console.log(data);
   //useState
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);

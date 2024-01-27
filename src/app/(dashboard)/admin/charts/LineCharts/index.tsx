@@ -3,7 +3,6 @@ import { CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis } from "r
 
 const LineCharts = ({ data }) => {
   const CustomTooltip = ({ payload }: any) => {
-    console.log(payload);
     if (payload) {
       return (
         <div

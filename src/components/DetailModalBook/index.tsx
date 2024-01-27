@@ -101,7 +101,6 @@ const DetailModalBook = (props: IDetailModalBookProps) => {
     const comeOut = moment(new Date(date + " " + data.comeOutAt)).utc(true)
       .subtract(timeZone, "hours")
       .toISOString();
-    console.log(date);
     try {
       const dataBook = {
         ...data,
@@ -120,7 +119,6 @@ const DetailModalBook = (props: IDetailModalBookProps) => {
       };
       const { booking } = await createBooking(dataBook);
       LocalStorage.add("id", booking?.id);
-      console.log(booking);
       setPriceDesposit(calculatorAllPrice(data.numberTable) * 15 / 100 / 100);
 
       setBooking(booking);

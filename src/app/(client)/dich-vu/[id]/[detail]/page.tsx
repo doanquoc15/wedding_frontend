@@ -53,7 +53,6 @@ const DetailMenu = () => {
   const pathname = usePathname();
   const id = pathname?.split("-")[pathname?.split("-").length - 1];
   const breadCrumbs = localStorage.getItem("breadcrumb");
-  console.log(selectedItems);
 
   //function
   const calculatorPrice = (data) => {

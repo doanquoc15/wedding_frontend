@@ -115,7 +115,6 @@ function ResponsiveAppBar() {
   }, [user?.id]);
 
   const fetchAllNotificationByUserId = async (id) => {
-    console.log(113);
     try {
       const count = await getNotificationUnRead(id);
       dispatch(usersReducer.actions.setIsFetchedNotification(true));
