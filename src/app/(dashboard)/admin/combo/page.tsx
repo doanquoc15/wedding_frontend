@@ -210,7 +210,7 @@ const ServicePage = ({ searchParams }) => {
                       gutterBottom
                       noWrap
                     >
-                      {index + 1}
+                      {pageIndex * pageSize + index + 1}
                     </Typography>
                   </TableCell>
                   <TableCell>

@@ -32,7 +32,7 @@ import MuiAlert, { AlertProps } from "@mui/material/Alert";
 import PageHeader from "@/components/AdminComponents/PageHeader";
 import { statusApiReducer } from "@/stores/reducers/statusAPI";
 import { useAppDispatch } from "@/stores/hook";
-import { PATH } from "@/constants/common";
+import { PATH, SHORT_DATE } from "@/constants/common";
 import CheckNotFound from "@/components/common/CheckNotFound";
 import Loading from "@/components/Loading";
 import ModalPopup from "@/components/common/ModalPopup";
@@ -152,6 +152,7 @@ const BookingPage = ({ searchParams }) => {
   const [search, setSearch] = useState<string | undefined>(getQueryParam("search"));
   const [statusBooking, setStatusBooking] = useState<string | undefined>();
   const [selectDate, setSelectDate] = useState<string | undefined>(getQueryParam("toTime"));
+  const [selectDateEnd, setSelectDateEnd] = useState<string | undefined>(getQueryParam("endTime"));
   const [open, setOpen] = useState<boolean>(true);
   const [countNew, setCounNew] = useState<number>(0);
   //const
@@ -163,12 +164,18 @@ const BookingPage = ({ searchParams }) => {
   const fetchAllBooking = async () => {
     setLoading(true);
     try {
-      const { booking, total } = await getAllBooking({
+      const query = {
         pageSize,
         pageIndex: pageIndex + 1,
         search,
         statusBooking: searchParams?.status,
-        toTime: selectDate
+        toTime: selectDate,
+        endTime: selectDateEnd
+      };
+      if (!isDateValid(selectDateEnd)) delete query.endTime;
+      if (!isDateValid(selectDate)) delete query.toTime;
+      const { booking, total } = await getAllBooking({
+        ...query
       });
       setAllBooking(booking);
       setTotalBookingCount(total);
@@ -179,13 +186,21 @@ const BookingPage = ({ searchParams }) => {
       setLoading(false);
     }
   };
+
+  const isDateValid = (dateString) => {
+    return moment(dateString, true).isValid();
+  };
+
   const handleSearch = (querySearch: string) => {
     setSearch(querySearch);
     setPageIndex(0);
   };
 
-  const handleChangeDate = (dateChange) => {
+  const handleChangeDateTo = (dateChange) => {
     setSelectDate(dateChange);
+  };
+  const handleChangeDateEnd = (dateChange) => {
+    setSelectDateEnd(dateChange);
   };
 
   const handleLimitChange = (event) => {
@@ -262,7 +277,7 @@ const BookingPage = ({ searchParams }) => {
 
   useEffect(() => {
     fetchAllBooking();
-  }, [pageIndex, pageSize, search, searchParams, selectDate]);
+  }, [pageIndex, pageSize, search, searchParams, selectDateEnd]);
 
   useEffect(() => {
     const fetchBooking = async () => {
@@ -285,9 +300,17 @@ const BookingPage = ({ searchParams }) => {
   return (
     <div className="text-[--clr-gray-500]">
       <PageHeader title="Quản lý đơn hàng"/>
+      <Button
+        sx={{ mt: { xs: 2, md: 0, marginBottom: "10px" } }}
+        variant="contained"
+        onClick={() => router.push(`${PATH.MANAGEMENT_BOOKING}/new`)}
+        startIcon={<AddTwoToneIcon fontSize="small"/>}
+      >
+        Thêm đơn hàng
+      </Button>
       <div className="flex justify-between items-center mb-4">
         <div className="flex gap-2 items-center">
-          <span className="text-[14px] text-[--clr-gray-500] italic">Tên người đặt</span>
+          <span className="text-[14px] text-[--clr-gray-500] italic">Người đặt</span>
           <SearchInFilter onSearch={handleSearch} isResetAll={true}/>
           <span className="text-[14px] text-[--clr-gray-500] italic">Trạng thái</span>
           <SelectFilter
@@ -304,17 +327,17 @@ const BookingPage = ({ searchParams }) => {
               boxShadow: "0px 4px 4px rgba(0, 0, 0, 0.08)",
             }}
           />
-          <span className="text-[14px] text-[--clr-gray-500] italic">Ngày nhận</span>
-          <DatePickerFilter onChangeDate={handleChangeDate} typeQuery="toTime"/>
+          <span className="text-[14px] text-[--clr-gray-500] italic">Từ</span>
+          <DatePickerFilter maxDate={moment(selectDateEnd).format(SHORT_DATE)}
+            onChangeDate={handleChangeDateTo}
+            typeQuery="toTime"/>
+          <span className="text-[14px] text-[--clr-gray-500] italic">Đến</span>
+          <DatePickerFilter
+            minDate={moment(selectDate).format(SHORT_DATE)}
+            onChangeDate={handleChangeDateEnd}
+            typeQuery="endTime"/>
         </div>
-        <Button
-          sx={{ mt: { xs: 2, md: 0, marginBottom: "10px" } }}
-          variant="contained"
-          onClick={() => router.push(`${PATH.MANAGEMENT_BOOKING}/new`)}
-          startIcon={<AddTwoToneIcon fontSize="small"/>}
-        >
-          Thêm đơn hàng
-        </Button>
+
       </div>
 
       {isLoading && <Loading/>}
@@ -353,7 +376,7 @@ const BookingPage = ({ searchParams }) => {
                       gutterBottom
                       noWrap
                     >
-                      {index + 1}
+                      {pageIndex * pageSize + index + 1}
                     </Typography>
                   </TableCell>
                   <TableCell>

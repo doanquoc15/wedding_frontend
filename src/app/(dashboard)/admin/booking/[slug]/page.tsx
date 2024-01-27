@@ -72,7 +72,7 @@ const Detail_New_Booking = ({ params }) => {
       serviceId: undefined,
       comboMenuId: undefined,
     },
-    mode: "all",
+    mode: "onBlur",
   });
 
   //useState
@@ -547,6 +547,7 @@ const Detail_New_Booking = ({ params }) => {
               <div className="w-[326px]">
                 <DatePickerField
                   name="date"
+                  error={!!errors.date}
                   label=""
                   openTo="day"
                   views={["year", "month", "day"]}
@@ -566,7 +567,7 @@ const Detail_New_Booking = ({ params }) => {
                       inputProps={{
                         className: "border-0 w-full cursor-pointer text-[13px]",
                         ...params.inputProps,
-                        readOnly: true,
+                        readOnly: false,
                       }}
                       sx={{
                         "& .MuiFormLabel-root": {

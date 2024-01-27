@@ -45,7 +45,7 @@ const MyInformation = () => {
       district: "",
       ward: ""
     },
-    mode: "all",
+    mode: "onBlur",
   });
 
   //useState
@@ -291,6 +291,7 @@ const MyInformation = () => {
                 <div className="w-[326px]">
                   <DatePickerField
                     disabled={!isEdit}
+                    error={!!errors.dateOfBirth}
                     name="dateOfBirth"
                     label=""
                     openTo="day"
@@ -306,13 +307,13 @@ const MyInformation = () => {
                     }}
                     renderInput={(params) => (
                       <TextField
-                        required={true}
+                        required={false}
                         disabled={!isEdit}
                         {...params}
                         inputProps={{
                           className: "border-0 w-full cursor-pointer text-[13px]",
                           ...params.inputProps,
-                          readOnly: true,
+                          readOnly: false,
                         }}
                         sx={{
                           "& .MuiFormLabel-root": {
@@ -329,11 +330,6 @@ const MyInformation = () => {
                       />
                     )}
                   />
-                  <div>
-                    {errors?.dateOfBirth && (
-                      <Error message={errors?.dateOfBirth?.message as string}/>
-                    )}
-                  </div>
                 </div>
 
               </div>

@@ -408,6 +408,7 @@ const DetailModalBook = (props: IDetailModalBookProps) => {
                 </div>
                 <div className="w-[326px]">
                   <DatePickerField
+                    error={!!errors.date}
                     name="date"
                     label=""
                     openTo="day"
@@ -428,7 +429,7 @@ const DetailModalBook = (props: IDetailModalBookProps) => {
                         inputProps={{
                           className: "border-0 w-full cursor-pointer text-[13px]",
                           ...params.inputProps,
-                          readOnly: true,
+                          readOnly: false,
                         }}
                         sx={{
                           "& .MuiFormLabel-root": {

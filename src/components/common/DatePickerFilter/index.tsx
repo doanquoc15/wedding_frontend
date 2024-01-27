@@ -8,7 +8,7 @@ import moment from "moment/moment";
 import { SHORT_DATE } from "@/constants/common";
 
 export default function DatePickerFilter(props: any) {
-  const { name, onChangeDate, typeQuery, ...desktopDatePickerProps } = props;
+  const { name, onChangeDate, typeQuery, minDate, maxDate, ...desktopDatePickerProps } = props;
   const [selectedDate, setSelectedDate] = useState(null);
   const router = useRouter();
   const path = usePathname();
@@ -25,13 +25,16 @@ export default function DatePickerFilter(props: any) {
     }
     return params;
   };
-
+  const isDateValid = (dateString) => {
+    return moment(dateString, true).isValid();
+  };
   const handleDateChange = (date) => {
     const params = getParams()
     ;
     const formattedDate = date ? moment(date).utc(true).format(SHORT_DATE) as string : "";
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     onChangeDate && onChangeDate(formattedDate);
-    if (!formattedDate) {
+    if (!formattedDate || !isDateValid(formattedDate)) {
       const queryString = new URLSearchParams(
         omit(params, typeQuery)
       ).toString();
@@ -48,16 +51,20 @@ export default function DatePickerFilter(props: any) {
   };
   return (
     <DatePicker
-      {...desktopDatePickerProps}
       value={selectedDate}
-      onChange={(date) => {
-        handleDateChange(date);
+      onChange={(e: any) => {
+        const utcDate = moment(e).utc(true);
+        handleDateChange(utcDate);
       }}
       format="DD/MM/YYYY"
+      required={false}
+      minDate={minDate}
+      maxDate={maxDate}
       autoFocus={false}
       InputProps={{
         id: `${name}`,
       }}
+      {...desktopDatePickerProps}
       renderInput={(props) => <TextField {...props} size='small' helperText={null}/>}
     />
   );

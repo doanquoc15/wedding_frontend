@@ -27,6 +27,7 @@ import { MESSAGE_SUCCESS } from "@/constants/errors";
 import { usersReducer } from "@/stores/reducers/user";
 import LoadingButton from "@/components/common/Loading";
 import { createdUserSchema } from "@/libs/validation/userSchema";
+import { removeNullUndefined } from "@/utils/deleteNullObject";
 
 const Detail_New_User = ({ params }) => {
   //useForm
@@ -48,7 +49,7 @@ const Detail_New_User = ({ params }) => {
       district: "",
       ward: "",
     },
-    mode: "all",
+    mode: "onBlur",
   });
 
   //useState
@@ -74,7 +75,7 @@ const Detail_New_User = ({ params }) => {
   };
 
   const handleProvinceChange = async (provinceName, type = "p") => {
-    const districtName = JSON.parse(LocalStorage.get("user") || "{}")?.address?.split(",")[1].trim();
+    const districtName = JSON.parse(LocalStorage.get("users") || "{}")?.address?.split(",")[1].trim();
 
     let code;
     if (typeof provinceName === "number") {
@@ -138,7 +139,7 @@ const Detail_New_User = ({ params }) => {
     let code;
     try {
       const res = await getUserById(params?.slug);
-      LocalStorage.add("user", JSON.stringify(res));
+      LocalStorage.add("users", JSON.stringify(res));
       const pro = await getAllProvince();
       const address = res?.address?.split(",");
       if (address) {
@@ -155,7 +156,7 @@ const Detail_New_User = ({ params }) => {
           gender: res?.gender?.toUpperCase(),
           province: address && address[2]?.trim(),
           district: address && address[1]?.trim(),
-          ward: address && address[0]?.trim() as string,
+          ward: address && address[0]?.trim(),
         });
         setImageChange(res?.image);
       } else {
@@ -175,18 +176,19 @@ const Detail_New_User = ({ params }) => {
       ...data,
       dateOfBirth: data?.dateOfBirth && dayjs(data?.dateOfBirth).format(SHORT_DATE),
       image: imageChange || myInfo?.image,
-      address: `${data?.award}, ${data?.district}, ${data?.province}`,
+      address: `${data?.ward}, ${data?.district}, ${data?.province}`,
     };
     if (!moment(dataUpdate.dateOfBirth).isValid()) {
       delete dataUpdate.dateOfBirth;
     }
+    const dataNew = removeNullUndefined(dataUpdate);
 
     try {
       if (params?.slug === "new") {
-        await createUser(dataUpdate);
+        await createUser(dataNew);
         dispatch(statusApiReducer.actions.setMessageUpdate(MESSAGE_SUCCESS.CREATED_USER_SUCCESS));
       } else {
-        await updateUser(params?.slug, dataUpdate);
+        await updateUser(params?.slug, dataNew);
         dispatch(statusApiReducer.actions.setMessageUpdate(MESSAGE_SUCCESS.UPDATED_SUCCESS));
       }
       await getAllProvince();
@@ -205,8 +207,7 @@ const Detail_New_User = ({ params }) => {
 
   useEffect(() => {
     getAllProvinces(); //get all province
-    fetchUserById(); //fetch user current
-
+    fetchUserById();
     //eslint-disable-next-line
   }, []);
 
@@ -300,6 +301,7 @@ const Detail_New_User = ({ params }) => {
                 <label className="text-[#333] font-semibold">Ngày sinh</label>
                 <div className="w-[326px]">
                   <DatePickerField
+                    error={!!errors.dateOfBirth}
                     name="dateOfBirth"
                     label=""
                     openTo="day"
@@ -315,12 +317,13 @@ const Detail_New_User = ({ params }) => {
                     }}
                     renderInput={(params) => (
                       <TextField
-                        required={true}
+
+                        required={false}
                         {...params}
                         inputProps={{
                           className: "border-0 w-full cursor-pointer text-[13px]",
                           ...params.inputProps,
-                          readOnly: true,
+                          readOnly: false,
                         }}
                         sx={{
                           "& .MuiFormLabel-root": {
@@ -337,11 +340,6 @@ const Detail_New_User = ({ params }) => {
                       />
                     )}
                   />
-                  <div>
-                    {errors?.dateOfBirth && (
-                      <Error message={errors?.dateOfBirth?.message as string}/>
-                    )}
-                  </div>
                 </div>
 
               </div>
