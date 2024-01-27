@@ -16,7 +16,7 @@ const ClientLayout = ({ children }: {
       <NavBar/>
       <div className="py-8 px-9">{children}</div>
       {
-        getUserLocal()?.role?.roleName === "CUSTOMER" && <CustomChatMessage/>
+        getUserLocal()?.role?.roleName !== "ADMIN" && <CustomChatMessage/>
       }
       <Footer/>
     </div>
