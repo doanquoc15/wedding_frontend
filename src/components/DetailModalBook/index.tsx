@@ -7,6 +7,7 @@ import Image from "next/legacy/image";
 import TextField from "@mui/material/TextField";
 import moment from "moment";
 import { loadStripe } from "@stripe/stripe-js";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 import TextInputField from "@/components/common/TextInputField";
 import Error from "@/components/common/Error";
@@ -30,6 +31,7 @@ import { NEXT_PUBLIC_PK_STRIPE_KEY } from "@/app/constant.env";
 import { paymentCheckout } from "@/services/payment";
 import { getMenuComboById } from "@/services/combo";
 import { LocalStorage } from "@/shared/config/localStorage";
+import { tableSchema } from "@/libs/validation/tableSchema";
 
 import { CheckIcon } from "../Icons";
 import BpRadio from "../common/BpRadio";
@@ -57,7 +59,7 @@ const DetailModalBook = (props: IDetailModalBookProps) => {
     setError,
     setValue,
   } = useForm({
-    // resolver: yupResolver(tableSchema),
+    resolver: yupResolver(tableSchema),
     defaultValues: {
       numberTable: 0,
       numberOfGuest: 0,
@@ -92,14 +94,14 @@ const DetailModalBook = (props: IDetailModalBookProps) => {
   };
   const onSubmit = async (data: any) => {
     const timeZone = moment().format("Z");
-    const date = moment(data.date).format(SHORT_DATE);
+    const date = moment(new Date(data.date)).format(SHORT_DATE);
     const comeIn = moment(new Date(date + " " + data.comeInAt)).utc(true)
       .subtract(timeZone, "hours")
       .toISOString();
     const comeOut = moment(new Date(date + " " + data.comeOutAt)).utc(true)
       .subtract(timeZone, "hours")
       .toISOString();
-
+    console.log(date);
     try {
       const dataBook = {
         ...data,

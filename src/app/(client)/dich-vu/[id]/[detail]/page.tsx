@@ -43,11 +43,17 @@ const DetailMenu = () => {
   const [comboMenuId, setComboMenuId] = useState<number>();
   const [selectedItems, setSelectedItems] = useState<any>([]);
 
+  //new
+  const [menuConvert, setMenuConvert] = useState<any>([]);
+  const [allDishConvert, setAllDishConvert] = useState<any>([]);
+  const [allPrice, setAllPrice] = useState<any>(0);
+
   //const
   const dispatch = useAppDispatch();
   const pathname = usePathname();
   const id = pathname?.split("-")[pathname?.split("-").length - 1];
   const breadCrumbs = localStorage.getItem("breadcrumb");
+  console.log(selectedItems);
 
   //function
   const calculatorPrice = (data) => {
@@ -79,8 +85,17 @@ const DetailMenu = () => {
 
   const fetchMenuItemTypeDish = async () => {
     try {
-      const res = await getAllDish({ pageSize: 100, search });
-      setMenuItems(res?.menus);
+      const { menus } = await getAllDish({ pageSize: 100, search });
+      setMenuItems(menus);
+      setAllDishConvert(menus?.map(item => ({
+        menuItemId: item.id,
+        quantity: 1,
+        price: item.price,
+        dishName: item.dishName,
+        typeName: item.typeDish.typeName,
+        description: item.description || "",
+        image: item.image
+      })));
     } catch (error: any) {
       dispatch(statusApiReducer.actions.setMessageError(error?.message));
     }
@@ -119,7 +134,16 @@ const DetailMenu = () => {
       const res = await getMenuComboById(
         Number(pathname?.split("-")[pathname?.split("-").length - 1])
       );
-
+      setMenuConvert(res.comboItems.map(item => ({
+        menuItemId: item.menuItemId,
+        quantity: item.quantity,
+        price: item.menuItem.price,
+        dishName: item.menuItem.dishName,
+        image: item.menuItem.image,
+        typeName: item.menuItem.typeDish.typeName,
+        description: item.menuItem.description || null
+      }))
+      );
       setServiceId(res?.serviceId);
       setComboMenuId(res?.id);
       setMenuData(
@@ -192,86 +216,65 @@ const DetailMenu = () => {
     return Object.values(dishesByType);
   };
 
-  const handleClickDish = (menu) => {
-    console.log(menu);
-    const prev = JSON.parse(LocalStorage.get("menuComboCustomized") as string);
+  function convertMenuByType(menuArray) {
+    const menuByType = {};
 
-    if (prev?.filter(item => item?.id === menu?.id).length > 0 || menuData?.filter(item => item?.id === menu?.id).length > 0) {
+    menuArray.forEach(item => {
+      const type = item.typeName;
+
+      if (!menuByType[type]) {
+        menuByType[type] = [];
+      }
+      menuByType[type].push(item);
+    });
+
+    return menuByType;
+  }
+
+  const handleClickDish = (menu) => {
+
+    if (menuConvert?.filter(item => item?.menuItemId === menu?.menuItemId).length > 0) {
       dispatch(statusApiReducer.actions.setMessageError("Món ăn đã tồn tại"));
       return;
     }
-    setCheckedMenus((prevSelectedItems) => [
-      ...prevSelectedItems,
-      { ...menu, quantity: dishQuantities[menu.id] || 1 },
-    ]);
 
-    if (prev) {
-      localStorage.setItem(
-        "menuComboCustomized",
-        JSON.stringify([
-          ...prev,
-          { ...menu, quantity: dishQuantities[menu.id] || 1 },
-        ])
-      );
-    } else {
-      localStorage.setItem(
-        "menuComboCustomized",
-        JSON.stringify([
-          ...checkedMenus,
-          { ...menu, quantity: dishQuantities[menu.id] || 1 },
-        ])
-      );
-    }
+    setMenuConvert((prevMenus) => [...prevMenus, { ...menu, quantity: 1 }]);
   };
 
   // Function to handle increasing the quantity
-  const handleIncrease = (menu) => {
-    setMenuData((prevMenus) => (
-      prevMenus.map((item) => {
-        if (item.id === menu.id) {
-          return {
-            ...item,
-            quantity: (item?.quantity || 1) + 1,
-          };
-        }
-        return item;
-      })
-    ));
 
-    setDishQuantities((prevQuantities) => ({
-      ...prevQuantities,
-      [menu.id]: (menu?.quantity || 1) + 1,
-    }));
+  const calculateTotalPrice = () => {
+    let totalPrice = 0;
+    menuConvert.forEach(item => {
+      totalPrice += item.price * item.quantity;
+    });
+    return totalPrice;
   };
+
+  const handleIncrease = (menu) => {
+    setMenuConvert((prevMenus) => prevMenus.map(item => ({
+      ...item,
+      quantity: item.menuItemId === menu.menuItemId ? item.quantity + 1 : item.quantity
+    })));
+  }
+  ;
 
   // Function to handle decreasing the quantity
   const handleDecrease = (menu) => {
-    setMenuData((prevMenus) => (
-      prevMenus.map((item) => {
-        if (item.id === menu.id) {
-          return {
-            ...item,
-            quantity: (item?.quantity || 1) - 1,
-          };
+    setMenuConvert((prevMenus) => {
+      const updatedMenus = prevMenus.map(item => {
+        if (item.menuItemId === menu.menuItemId) {
+          const updatedQuantity = item.quantity - 1;
+          if (updatedQuantity === 0) {
+            return null;
+          } else {
+            return { ...item, quantity: updatedQuantity };
+          }
         }
         return item;
-      })
-    ));
-    setDishQuantities((prevQuantities) => {
-      const newQuantity = (prevQuantities[menu.id] || menu?.quantity) - 1;
-      if (newQuantity < 1) {
-        const dataLocalStorages = JSON.parse(localStorage?.getItem("menuComboCustomized") as string);
-        if (dataLocalStorages) {
-          localStorage.setItem("menuComboCustomized",
-            JSON.stringify(dataLocalStorages.filter(item => item?.id !== menu?.id)));
-        } else {
-          setMenuData(pre => pre.filter(item => item.id !== menu.id));
-        }
-      }
-      return {
-        ...prevQuantities,
-        [menu.id]: newQuantity,
-      };
+      });
+
+      return updatedMenus.filter(item => item !== null);
     });
   };
 
@@ -300,7 +303,7 @@ const DetailMenu = () => {
 
   //handle click Checkbox
   const handleCheckboxClick = (item) => {
-    const itemId = item.id;
+    const itemId = item.menuItemId;
     if (selectedItems.includes(itemId)) {
       setSelectedItems((prevSelectedItems) =>
         prevSelectedItems.filter((selectedId) => selectedId !== itemId)
@@ -319,23 +322,16 @@ const DetailMenu = () => {
     }
   };
 
-  const covertDataMenuItems = (menuData) => (
-    menuData.flatMap(menu => menu.dishes.map(dish => ({
-      menuItemId: dish.id,
+  const covertDataMenuItems = (menuConvert) => (
+    menuConvert?.map(dish => ({
+      menuItemId: dish.menuItemId,
       quantity: dish.quantity,
       totalPrice: dish.quantity * dish.price
-    }))));
+    })));
 
   //handle delete dishes
   const handleDeleteDishes = () => {
-
-    const dataLocalStorages = JSON.parse(localStorage?.getItem("menuComboCustomized") as string);
-    if (dataLocalStorages?.length > 0) {
-      localStorage.setItem("menuComboCustomized",
-        JSON.stringify(dataLocalStorages.filter(item => !selectedItems.includes(item?.id))));
-    } else {
-      setMenuData(pre => pre.filter(item => !selectedItems.includes(item?.id)));
-    }
+    setMenuConvert(prev => prev.filter(item => !selectedItems.includes(item.menuItemId)));
     setSelectedItems([]);
   };
   const handleAdd = () => {
@@ -365,10 +361,8 @@ const DetailMenu = () => {
   }, [search]);
 
   useEffect(() => {
-    return () => {
-      LocalStorage.remove("menuComboCustomized");
-    };
-  }, []);
+    setAllPrice(calculateTotalPrice());
+  }, [menuConvert]);
 
   return (
     <div className="flex flex-col gap-5">
@@ -383,17 +377,17 @@ const DetailMenu = () => {
                 width="450px"
               />
               <div className="overflow-auto sticky w-full">
-                {organizeDishesByType(menuItems).length > 0 &&
-                  organizeDishesByType(menuItems)?.map((dish: any, index) => (
+                {
+                  Object.keys(convertMenuByType(allDishConvert)).map((typeName, index) => (
                     <div key={index}>
                       <div className="flex items-center justify-center max-w-full pr-3">
                         <hr className="border-[1px] border-blue-400 w-full"/>
                         <div className="font-bold text-[16px] mx-2 whitespace-nowrap">
-                          {dish.typeName}
+                          {index + 1}. {typeName}
                         </div>
                         <hr className="border-[1px] border-blue-400 w-full"/>
                       </div>
-                      {dish?.dishes?.map((menu) => (
+                      {convertMenuByType(allDishConvert)[typeName]?.map((menu) => (
                         <div
                           key={menu.id}
                           className="flex items-center gap-3 py-4 px-4 cursor-pointer hover:bg-gray-100"
@@ -464,31 +458,31 @@ const DetailMenu = () => {
         </div>
         <div className="max-h-[450px] items-center ml-5 p-6 w-2/3 overflow-auto">
           <div className="sticky">
-            {convertDataMenuBook().length > 0 &&
-              convertDataMenuBook()?.map((item: any, index) => (
+            <div>
+              {Object.keys(convertMenuByType(menuConvert)).map((typeName, index) => (
                 <div key={index}>
                   <div className="mb-5 text-[16px] font-semibold text-blue-400">
-                    {index + 1}. {item?.typeName}
+                    {index + 1}. {typeName}
                   </div>
-                  {item?.dishes?.map((data, index) => (
-                    <div key={index} className="flex items-center gap-5 mb-6">
+                  {convertMenuByType(menuConvert)[typeName].map((data, dataIndex) => (
+                    <div key={dataIndex} className="flex items-center gap-5 mb-6">
                       <Avatar
                         alt="Image food"
                         src={
-                          data?.image ||
+                          data.image ||
                           "https://lavenderstudio.com.vn/wp-content/uploads/2017/03/chup-san-pham.jpg"
                         }
                         sx={{ width: 100, height: 100 }}
                       />
                       <div className="flex items-center">
                         <div className="flex flex-col min-w-[350px] gap-1">
-                          <Typography variant="h6">{data?.dishName}</Typography>
+                          <Typography variant="h6">{data.dishName}</Typography>
 
                           <Typography
                             variant="body2"
                             className="max-w-[300px] italic"
                           >
-                            {data?.description || (
+                            {data.description || (
                               <div className="italic">Chưa có mô tả</div>
                             )}
                           </Typography>
@@ -500,7 +494,7 @@ const DetailMenu = () => {
                           width={150}
                         >
                           Giá:{" "}
-                          {formatMoney(data.price * (dishQuantities[data.id] || data?.quantity))}
+                          {formatMoney(data.price * (dishQuantities[data.id] || data.quantity))}
                           VND
                         </Typography>
                         <div className="flex items-center ml-2 gap-2 mr-4">
@@ -528,13 +522,14 @@ const DetailMenu = () => {
                           label={""}
                           disabled={!getUserLocal()?.id}
                           onChange={() => handleCheckboxClick(data)}
-                          checked={selectedItems.includes(data.id)}
+                          checked={selectedItems.includes(data.menuItemId)}
                         />
                       </div>
                     </div>
                   ))}
                 </div>
               ))}
+            </div>
           </div>
         </div>
       </div>
@@ -590,15 +585,14 @@ const DetailMenu = () => {
               handleCloseModals={handleCloseModalChooseTable}
               serviceId={serviceId}
               comboMenuId={comboMenuId}
-              comboMenuItem={covertDataMenuItems(organizeDishesByType(
-                handleJsonParse("menuComboCustomized"))
+              comboMenuItem={covertDataMenuItems(menuConvert
               )}
               priceTotalDish={totalPrices()}/>
           </ModalPopup>
           <div>
             Tổng tiền:{" "}
             <span>
-              {formatMoney(totalPrices())}
+              {formatMoney(allPrice)}
               VND
             </span>
           </div>
