@@ -223,6 +223,7 @@ const Detail_New_Booking = ({ params }) => {
     const comeOut = moment(new Date(date + " " + data.comeOutAt)).utc(true)
       .subtract(timeZone, "hours")
       .toISOString();
+    console.log(allFoodBooking, allFoodBookingCurrent);
     if (JSON.stringify(allFoodBooking) !== JSON.stringify(allFoodBookingCurrent)) {
       dataItems = [...allFoodBooking];
     } else {
@@ -269,6 +270,8 @@ const Detail_New_Booking = ({ params }) => {
       dispatch(statusApiReducer.actions.setMessageError(error?.message));
     }
   };
+
+  console.log(allFoodBooking);
 
   //get all food
   const fetchAllDishes = async () => {
@@ -366,7 +369,8 @@ const Detail_New_Booking = ({ params }) => {
     }));
     setAllFoodBooking(mergeMenuItems(allFoodBooking, dataFood));
   };
-
+  console.log({ allFoodBooking });
+  console.log({ allFoodBookingCurrent });
   //useEffect
   useEffect(() => {
     fetchAllUsers();

@@ -23,7 +23,6 @@ const MySlider = ({ children, ...data }) => {
     beforeChange: (_, next) => setCurrentSlide(next),
   };
 
-
   return (
     <div>
       <div className={"px-8 flex gap-4 items-center"}>

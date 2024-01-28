@@ -1,5 +1,5 @@
 import { MenuItem } from "@mui/material";
-import Image from "next/legacy/image";
+import Image from "next/image";
 import React from "react";
 import moment from "moment/moment";
 
@@ -10,7 +10,7 @@ const Notification = ({ handleClickNotification, isUnRead, item }) => {
   return (
     <>
       <MenuItem onClick={() => handleClickNotification(item)}>
-        <Image height={30} width={30} src={isUnRead ? BlueBell : RedBell} alt="Bell"/>
+        <Image height={70} width={70} src={isUnRead ? BlueBell : RedBell} alt="Bell"/>
         <div className="flex h-[32px] pt-[2px] flex-col ml-2 w-full text-clr-gray-500 justify-center">
           <div
             className="h-4 text-[13px] max-w-[256px] w-[256px] truncate leading-[12px] text-clr-blue-700 text-normal">
